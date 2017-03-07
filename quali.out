@@ -1,0 +1,59 @@
+\BOOKMARK [0][]{symbolentry.3}{Lista de S\355mbolos}{}% 1
+\BOOKMARK [0][]{abbreviation.4}{Lista de Abreviaturas}{}% 2
+\BOOKMARK [0][]{section*.3}{Lista de Figuras}{}% 3
+\BOOKMARK [0][]{section*.4}{Lista de Tabelas}{}% 4
+\BOOKMARK [0][]{chapter.1}{Introdu\347\343o}{}% 5
+\BOOKMARK [1][]{section.1.1}{Objetivos e Contribui\347\365es Esperadas}{chapter.1}% 6
+\BOOKMARK [1][]{section.1.2}{Organiza\347\343o do Texto}{chapter.1}% 7
+\BOOKMARK [0][]{chapter.2}{Busca Aut\364noma}{}% 8
+\BOOKMARK [1][]{section.2.1}{Sele\347\343o de Algoritmos e Resolvedores Aut\364nomos}{chapter.2}% 9
+\BOOKMARK [1][]{section.2.2}{Configura\347\343o Off-line}{chapter.2}% 10
+\BOOKMARK [2][]{subsection.2.2.1}{Computa\347\343o Evolucion\341ria}{section.2.2}% 11
+\BOOKMARK [2][]{subsection.2.2.2}{Busca Estoc\341stica Local}{section.2.2}% 12
+\BOOKMARK [2][]{subsection.2.2.3}{Aprendizagem Computacional}{section.2.2}% 13
+\BOOKMARK [1][]{section.2.3}{Controle On-line}{chapter.2}% 14
+\BOOKMARK [2][]{subsection.2.3.1}{Configura\347\343o Adaptativa de Par\342metros}{section.2.3}% 15
+\BOOKMARK [2][]{subsection.2.3.2}{Atribui\347\343o de Cr\351dito}{section.2.3}% 16
+\BOOKMARK [2][]{subsection.2.3.3}{Aprendizagem por Refor\347o}{section.2.3}% 17
+\BOOKMARK [0][]{chapter.3}{Ajuste Aut\364nomo}{}% 18
+\BOOKMARK [1][]{section.3.1}{OpenTuner}{chapter.3}% 19
+\BOOKMARK [2][]{subsection.3.1.1}{Contexto}{section.3.1}% 20
+\BOOKMARK [2][]{subsection.3.1.2}{Arquitetura}{section.3.1}% 21
+\BOOKMARK [1][]{section.3.2}{T\351cnicas}{chapter.3}% 22
+\BOOKMARK [2][]{subsection.3.2.1}{M\351todos Num\351ricos}{section.3.2}% 23
+\BOOKMARK [2][]{subsection.3.2.2}{Computa\347\343o Evolucion\341ria}{section.3.2}% 24
+\BOOKMARK [2][]{subsection.3.2.3}{Busca Estoc\341stica Local}{section.3.2}% 25
+\BOOKMARK [2][]{subsection.3.2.4}{Aprendizagem Computacional}{section.3.2}% 26
+\BOOKMARK [1][]{section.3.3}{Benchmarks}{chapter.3}% 27
+\BOOKMARK [2][]{subsection.3.3.1}{Resolvedores de Problemas NP-Completos}{section.3.3}% 28
+\BOOKMARK [2][]{subsection.3.3.2}{Sele\347\343o e Configura\347\343o de Algoritmos}{section.3.3}% 29
+\BOOKMARK [2][]{subsection.3.3.3}{Configura\347\343o de Compiladores}{section.3.3}% 30
+\BOOKMARK [2][]{subsection.3.3.4}{Tempo de Medi\347\343o}{section.3.3}% 31
+\BOOKMARK [0][]{chapter.4}{Estudos de Caso}{}% 32
+\BOOKMARK [1][]{section.4.1}{Sele\347\343o de Par\342metros de Compila\347\343o para GPUs}{chapter.4}% 33
+\BOOKMARK [2][]{subsection.4.1.1}{Introdu\347\343o}{section.4.1}% 34
+\BOOKMARK [2][]{subsection.4.1.2}{Resultados}{section.4.1}% 35
+\BOOKMARK [2][]{subsection.4.1.3}{Tempo de Medi\347\343o Pequeno}{section.4.1}% 36
+\BOOKMARK [2][]{subsection.4.1.4}{Conclus\343o e Trabalhos Futuros}{section.4.1}% 37
+\BOOKMARK [1][]{section.4.2}{Ajuste Aut\364nomo e Computa\347\343o Distribu\355da}{chapter.4}% 38
+\BOOKMARK [2][]{subsection.4.2.1}{Introdu\347\343o}{section.4.2}% 39
+\BOOKMARK [2][]{subsection.4.2.2}{Resultados}{section.4.2}% 40
+\BOOKMARK [2][]{subsection.4.2.3}{Programa\347\343o Paralela e Distribu\355da no OpenTuner}{section.4.2}% 41
+\BOOKMARK [2][]{subsection.4.2.4}{Conclus\343o e Trabalhos Futuros}{section.4.2}% 42
+\BOOKMARK [1][]{section.4.3}{Sele\347\343o de Par\342metros de S\355ntese de Alto-N\355vel para FPGAs}{chapter.4}% 43
+\BOOKMARK [2][]{subsection.4.3.1}{Introdu\347\343o}{section.4.3}% 44
+\BOOKMARK [2][]{subsection.4.3.2}{Resultados}{section.4.3}% 45
+\BOOKMARK [2][]{subsection.4.3.3}{Tempo de Medi\347\343o Grande}{section.4.3}% 46
+\BOOKMARK [2][]{subsection.4.3.4}{Conclus\343o e Trabalhos Futuros}{section.4.3}% 47
+\BOOKMARK [0][]{chapter.5}{Ajuste Aut\364nomo Paralelo e Distribu\355do}{}% 48
+\BOOKMARK [1][]{section.5.1}{A Linguagem Julia}{chapter.5}% 49
+\BOOKMARK [1][]{section.5.2}{StochasticSearch.jl}{chapter.5}% 50
+\BOOKMARK [2][]{subsection.5.2.1}{Objetivo}{section.5.2}% 51
+\BOOKMARK [2][]{subsection.5.2.2}{Arquitetura}{section.5.2}% 52
+\BOOKMARK [2][]{subsection.5.2.3}{Resultados}{section.5.2}% 53
+\BOOKMARK [2][]{subsection.5.2.4}{Conclus\343o e Trabalhos Futuros}{section.5.2}% 54
+\BOOKMARK [0][]{chapter.6}{Plano de Trabalho}{}% 55
+\BOOKMARK [1][]{section.6.1}{Objetivo e Trabalhos Futuros}{chapter.6}% 56
+\BOOKMARK [1][]{section.6.2}{Cronograma}{chapter.6}% 57
+\BOOKMARK [0][]{appendix*.5}{Refer\352ncias Bibliogr\341ficas}{}% 58
+\BOOKMARK [0][]{appendix*.5}{\315ndice Remissivo}{}% 59
