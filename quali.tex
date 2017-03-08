@@ -13,7 +13,7 @@
 % Pacotes
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[brazilian]{babel}
+\usepackage[english]{babel}
 \usepackage[pdftex]{graphicx}           % usamos arquivos pdf/png como figuras
 \usepackage{setspace}                   % espaçamento flexível
 \usepackage{indentfirst}                % indentação do primeiro parágrafo
@@ -147,7 +147,7 @@ framexrightmargin=10pt
   {\normalsize\bfseries\itshape}{\thesubsubsection}{1em}{#1}
 
 % Setting custom lists
-\newcommand{\listabbreviationname}{\itshape \Large Lista de Abreviaturas}
+\newcommand{\listabbreviationname}{\itshape \Large List of Abbreviations}
 
 \newlistof{abbreviation}{abb}{\listabbreviationname}
 
@@ -160,7 +160,7 @@ framexrightmargin=10pt
 \cftpagenumbersoff{abbreviation}
 
 % Setting custom lists
-\newcommand{\listsymbolentryname}{\itshape \Large Lista de Símbolos}
+\newcommand{\listsymbolentryname}{\itshape \Large List of Symbols}
 
 \newlistof{symbolentry}{synt}{\listsymbolentryname}
 
@@ -192,34 +192,34 @@ framexrightmargin=10pt
 \thispagestyle{empty}
 \begin{center}
     \vspace*{2.3cm}
-    \textbf{\Large{Título do trabalho a ser apresentado à \\
-    CPG para a dissertação/tese}}\\
+    \textbf{\Large{Parallel and Distributed Autotuning \\
+                   for High-Performance Computing}}\\
 
     \vspace*{1.2cm}
     \Large{Pedro Bruel}
 
     \vskip 2cm
     \textsc{
-    Qualificação apresentada\\[-0.25cm]
-    ao\\[-0.25cm]
-    Instituto de Matemática e Estatística\\[-0.25cm]
-    da\\[-0.25cm]
-    Universidade de São Paulo\\[-0.25cm]
-    para\\[-0.25cm]
-    obtenção do título\\[-0.25cm]
-    de\\[-0.25cm]
-    Doutor em Ciências}
+    Text submitted\\[-0.25cm]
+    to the\\[-0.25cm]
+    Institute de Mathematics and Statistics\\[-0.25cm]
+    of the\\[-0.25cm]
+    University of São Paulo\\[-0.25cm]
+    for the\\[-0.25cm]
+    Qualifying examination\\[-0.25cm]
+    for the\\[-0.25cm]
+    Doctoral Degree in\\[-0.25cm]
+    Computer Science}
 
     \vskip 1.5cm
-    Programa: Ciência da Computação\\
-    Orientador: Prof. Dr. Alfredo Goldman Vel Lejbman
+    Advisor: Professor Alfredo Goldman Vel Lejbman
 
        \vskip 1cm
-    \normalsize{Durante o desenvolvimento deste trabalho o autor recebeu auxílio
-    financeiro do CNPq \textnumero XXXX}
+    \normalsize{During the development of this work, the author was supported
+    by CNPq \textnumero XXXX, Hewlett-Packard Enterprise and CAPES}
 
     \vskip 0.5cm
-    \normalsize{São Paulo, Junho de 2017}
+    \normalsize{São Paulo, \today}
 \end{center}
 
 % ---------------------------------------------------------------------------- %
@@ -236,17 +236,17 @@ framexrightmargin=10pt
 \thispagestyle{empty}
     \begin{center}
         \vspace*{2.3 cm}
-        \textbf{\Large{Título do trabalho a ser apresentado à \\
-        CPG para a dissertação/tese}}\\
+        \textbf{\Large{Parallel and Distributed Autotuning\\
+                       for High-Performance Computing}}\\
         \vspace*{2 cm}
     \end{center}
 
     \vskip 2cm
 
     \begin{flushright}
-    Esta é a versão original da qualificação elaborada pelo\\
-    candidato Pedro Bruel, tal como \\
-    submetida à Comissão Julgadora.
+    This is the original version\\
+    submitted for evaluation\\
+    by Pedro Bruel
     \end{flushright}
 
 \pagebreak
@@ -314,33 +314,33 @@ framexrightmargin=10pt
 
 % ---------------------------------------------------------------------------- %
 % Resumo
-\chapter*{Resumo}
-
-\noindent BRUEL, P. \textbf{Título do trabalho em português}.
-2017. xxx f.
-Qualificação (Doutorado) - Instituto de Matemática e Estatística,
-Universidade de São Paulo, São Paulo, 2010.
-\\
-
-Elemento obrigatório, constituído de uma sequência de frases concisas e
-objetivas, em forma de texto.  Deve apresentar os objetivos, métodos empregados,
-resultados e conclusões.  O resumo deve ser redigido em parágrafo único, conter
-no máximo 500 palavras e ser seguido dos termos representativos do conteúdo do
-trabalho (palavras-chave).
-\\
-
-\noindent \textbf{Palavras-chave:} palavra-chave1, palavra-chave2, palavra-chave3.
-
-\vspace*{1cm}%
-\thickhrulefill
+%\chapter*{Resumo}
+%
+%\noindent BRUEL, P. \textbf{Título do trabalho em português}.
+%2017. xxx f.
+%Qualificação (Doutorado) - Instituto de Matemática e Estatística,
+%Universidade de São Paulo, São Paulo, 2010.
+%\\
+%
+%Elemento obrigatório, constituído de uma sequência de frases concisas e
+%objetivas, em forma de texto.  Deve apresentar os objetivos, métodos empregados,
+%resultados e conclusões.  O resumo deve ser redigido em parágrafo único, conter
+%no máximo 500 palavras e ser seguido dos termos representativos do conteúdo do
+%trabalho (palavras-chave).
+%\\
+%
+%\noindent \textbf{Palavras-chave:} palavra-chave1, palavra-chave2, palavra-chave3.
+%
+%\vspace*{1cm}%
+%\thickhrulefill
 
 % ---------------------------------------------------------------------------- %
 % Abstract
 \chapter*{Abstract}
-\noindent BRUEL, P. \textbf{Título do trabalho em inglês}.
+\noindent BRUEL, P. \textbf{Parallel and Distributed Autotuning for High-Performance Computing}.
 2017. xxx f.
-Qualificação (Doutorado) - Instituto de Matemática e Estatística,
-Universidade de São Paulo, São Paulo, 2010.
+Qualifying Examination (PhD) - Institute of Mathematics and Statistics,
+University of São Paulo, São Paulo, 2017.
 \\
 
 
@@ -367,7 +367,7 @@ língua portuguesa. De acordo com o Regimento da Pós- Graduação da USP (Artig
 \begin{NoHyper}
 \listofsymbolentry
 \end{NoHyper}
-\addcontentsline{toc}{chapter}{Lista de Símbolos}
+\addcontentsline{toc}{chapter}{List of Symbols}
 \newpage
 
 % ---------------------------------------------------------------------------- %
@@ -381,7 +381,7 @@ língua portuguesa. De acordo com o Regimento da Pós- Graduação da USP (Artig
 \begin{NoHyper}
 \listofabbreviation
 \end{NoHyper}
-\addcontentsline{toc}{chapter}{Lista de Abreviaturas}
+\addcontentsline{toc}{chapter}{List of Abbreviations}
 \newpage
 
 \listoffigures
@@ -398,12 +398,12 @@ língua portuguesa. De acordo com o Regimento da Pós- Graduação da USP (Artig
 \singlespacing              % espaçamento simples
 %\onehalfspacing            % espaçamento um e meio
 
-\include{chapters/introducao}
+\include{chapters/introduction}
 \include{chapters/autonomous}
 \include{chapters/autotuning}
-\include{chapters/resultados}
+\include{chapters/results}
 \include{chapters/proposal}
-\include{chapters/plano}
+\include{chapters/summary}
 
 % cabeçalho para os apêndices
 %\renewcommand{\chaptermark}[1]{\markboth{\MakeUppercase{\appendixname\ \thechapter}} {\MakeUppercase{#1}} }

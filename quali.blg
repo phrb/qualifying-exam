@@ -1,17 +1,17 @@
 This is BibTeX, Version 0.99d (TeX Live 2016/Arch Linux)
 Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: quali.aux
-A level-1 auxiliary file: chapters/introducao.aux
+A level-1 auxiliary file: chapters/introduction.aux
 A level-1 auxiliary file: chapters/autonomous.aux
 A level-1 auxiliary file: chapters/autotuning.aux
-A level-1 auxiliary file: chapters/resultados.aux
+A level-1 auxiliary file: chapters/results.aux
 A level-1 auxiliary file: chapters/proposal.aux
-A level-1 auxiliary file: chapters/plano.aux
+A level-1 auxiliary file: chapters/summary.aux
 The style file: bib/plainnat-ime.bst
 Database file #1: bib/references.bib
 You've used 1 entry,
             2750 wiz_defined-function locations,
-            612 strings with 5380 characters,
+            612 strings with 5381 characters,
 and the built_in function-call counts, 504 in all, are:
 = -- 36
 > -- 39
