@@ -26,6 +26,7 @@
 \usepackage{textcomp}
 \usepackage[explicit]{titlesec} % cabeçalhos dos títulos: menores e compactos
 \usepackage{tocloft}
+\usepackage{epigraph}
 \usepackage[fixlanguage]{babelbib}
 \usepackage[font=small,format=plain,labelfont=bf,up,textfont=it,up]{caption}
 \usepackage[usenames,svgnames,dvipsnames]{xcolor}
@@ -33,8 +34,11 @@
 %\usepackage[pdftex,plainpages=false,pdfpagelabels,pagebackref,colorlinks=true,citecolor=black,linkcolor=black,urlcolor=black,filecolor=black,bookmarksopen=true]{hyperref} % links em preto
 \usepackage[pdftex,plainpages=false,pdfpagelabels,pagebackref,colorlinks=true,citecolor=DarkGreen,linkcolor=NavyBlue,urlcolor=DarkRed,filecolor=green,bookmarksopen=true]{hyperref} % links coloridos
 \usepackage[all]{hypcap}                    % soluciona o problema com o hyperref e capitulos
-\usepackage[round,sort,nonamebreak]{natbib} % citação bibliográfica textual(plainnat-ime.bst)
+\usepackage[round,sort,nonamebreak,numbers]{natbib} % citação bibliográfica textual(plainnat-ime.bst)
 %\fontsize{60}{62}\usefont{OT1}{cmr}{m}{n}{\selectfont}
+\setlength{\epigraphrule}{0pt}
+\setlength{\epigraphwidth}{8cm}
+\renewcommand{\textflush}{flushepinormal}
 
 % ---------------------------------------------------------------------------- %
 % Cabeçalhos similares ao TAOCP de Donald E. Knuth
@@ -103,7 +107,7 @@ framexrightmargin=10pt
         \interlinepenalty\@M
         %\hrule
         %\vspace*{10\p@}%
-        \LARGE \bfseries #1\par\nobreak
+        \normalfont \LARGE \bfseries #1\par\nobreak
         \par
         \vspace*{5\p@}%
         %\hrule
@@ -115,7 +119,6 @@ framexrightmargin=10pt
   %\vspace*{5\p@}%
   {\parindent \z@ \centering \reset@font
         \thickhrulefill
-        \itshape
         \par\nobreak
         \vspace*{5\p@}%
         \interlinepenalty\@M
@@ -171,6 +174,8 @@ framexrightmargin=10pt
 {\protect\makebox[2cm]{#1} #2}\par}
 
 \cftpagenumbersoff{symbolentry}
+
+\setcitestyle{square}
 
 % ---------------------------------------------------------------------------- %
 % Corpo do texto
@@ -415,7 +420,8 @@ língua portuguesa. De acordo com o Regimento da Pós- Graduação da USP (Artig
 % ---------------------------------------------------------------------------- %
 % Bibliografia
 \backmatter \singlespacing   % espaçamento simples
-\bibliographystyle{bib/plainnat-ime} % citação bibliográfica textual
+%\bibliographystyle{bib/plainnat-ime} % citação bibliográfica textual
+\bibliographystyle{plainnat} % citação bibliográfica textual
 \bibliography{bib/references}  % associado ao arquivo: 'bibliografia.bib'
 
 % ---------------------------------------------------------------------------- %
