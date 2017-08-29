@@ -1,26 +1,68 @@
 \chapter{Introduction}
 \label{chap:introduction}
 
-New architectures, variety of computational devices, hard to optimize.
-Inflection points, exponential growth, technology change.
-Look at code optimization from search perspective.
-Old code, new code, can be optimized with search.
+The search for more computational power leads to a series of challenges.
+Quantum tunneling effects and the speed of light influence the size of
+transistors and the length of circuits, and compel the development of
+multi-core and heterogeneous computer architectures.  Battery life and a
+responsible use of natural resources influence circuit frequency and power
+consumption, and compel the development of dynamic frequency scaling and
+cooling solutions.  Comparably, the selection and configuration of the
+algorithms and computer architectures influence the performance they achieve,
+and compel the development of automated selection and configuration solutions.
 
-Different levels of a program's generation and usage can be optimized.
-Some levels take longer to complete, expensive to measure.
-Some architectures take longer to compile, expensive to measure.
-Some problems take longer to solve, expensive to measure.
-How to autotune complex systems such as HACC?
-How to autotune programs for a supercomputer like the Titan?
-How to autotune FPGA compilation?
+The use of heterogeneous programming models and computer architectures in High
+Performance Computing has increased despite the difficulty of optimizing and
+configuring legacy code, and of developing new solutions for heterogeneous
+computing. Due to the great diversity of programming models and architectures,
+there is no single optimization strategy that fits all problems and
+architectures.
 
-Current approaches require multiple evaluations.
-Current approaches have no support for parallel and distributed computing.
-Current approaches do not target multiple levels of stack.
+An optimization solution tailored for a specific problem requires time and
+expert knowledge. Using general optimizations is faster and cheaper, often at
+the cost of application-specific performance improvements. A possible solution
+to this trade-off is the automation of the program optimization process.
 
-New approach must leverage distributed and parallel computing power.
-New approach must target multiple levels of compile stack.
-New approach must take care of expensive to measure cases.
+The automated selection of algorithms and configuration of programs, referred
+to as \textit{autotuning} from now on, casts the program optimization problem
+as a search problem. The possible configurations and optimizations of a program
+are used to compose a \textit{search space}, and searching is done by
+evaluating the impact of each configuration on the initial program.  Using the
+increasingly available computing power to measure different versions of a
+program, an \textit{autotuner} searches for good selections, configurations,
+and optimizations. The measurements must quantify a meaningful metric for the
+programmer, such as execution time and memory or power consumption.
+
+From the implementation in a high-level programming language to the instruction
+selection in code generation, it is possible to expose optimization and
+configuration opportunities in various stages of program development and
+execution.  The time to measure the results of an optimization choice depends
+on the selected stage and on the metric to be optimized.
+
+% TODO Heterogeneous architectures, describe variety.
+% NUMA, memory centric...
+%
+% Different levels of a program's generation and usage can be optimized.
+% Some levels take longer to complete, expensive to measure.
+% Some architectures take longer to compile, expensive to measure.
+% Some problems take longer to solve, expensive to measure.
+% Show some example: (Genetic Algorithm, Sorting, Compiler Flag, LLVM Pass)?
+%
+% Example: Sorting in GPUs, CPUs, Distributed, ...
+%
+% How to autotune complex systems such as HACC?
+% How to autotune programs for a supercomputer like the Titan?
+% How to autotune FPGA compilation?
+%
+% Current autotuning approaches:
+% Current approaches require multiple evaluations.
+% Current approaches have no support for parallel and distributed computing.
+% Current approaches do not target multiple levels of stack.
+%
+% A new approach:
+% New approach must leverage distributed and parallel computing power.
+% New approach must target multiple levels of compile stack.
+% New approach must take care of expensive to measure cases.
 
 A: \citet{bilmes1997optimizing}
 
@@ -29,10 +71,10 @@ A: \citet{bilmes1997optimizing}
 
 \section{Efforts for a Reproducible and Open Research}
 
-We believe that openness and reproducibility are fundamental to the quality of
-Computer Science research. We made efforts to ensure that our research is
-reproducible and open, and we believe that these efforts help our conclusions.
-In this section we describe the efforts we made.
+We believe openness and reproducibility are fundamental to the quality of
+Computer Science research. We made efforts to ensure our research is
+reproducible and open, and we believe these efforts help our conclusions.  In
+this section we describe the efforts we made.
 
 To ensure the openness of our research we uploaded the software developed
 during and for research to public hosting services. We used version control
@@ -42,18 +84,19 @@ practice in Computer Science. The research we performed is free to be used and
 modified by future researchers.
 
 To ensure the reproducibility of our research we included hardware and software
-specifications in our reports and papers, and uploaded the code to generate the
+specifications in our reports and papers. We uploaded the code to generate the
 data, text, presentations and data visualizations to public hosting services.
 This code is also available under free-software licenses. Researchers are able
-to reproduce our results if they have access to the architectures and software
+to reproduce our results if they have access to the architecture and software
 we specify.
 
 Unfortunately, not all of our research could be made open. The hardware
 implementations for the CPUs, GPUs, FPGAs and most electronic components used
 to produce our results are not made available by their manufacturers. Neither
 is the software used to generate FPGA hardware from its Verilog specification.
-To ensure reproducibility in these cases we disclosed the hardware vendor-specified
-names and characteristics, and the versions of closed software we used.
+To ensure reproducibility in these cases we disclosed the hardware
+vendor-specified names and characteristics, and the versions of closed software
+we used.
 
 With these efforts for a reproducible and open research we believe we have
 provided a better foundation for our conclusions and expected contributions.
