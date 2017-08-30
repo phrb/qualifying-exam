@@ -8,7 +8,7 @@ MAKEINDEX = makeindex
 pdf: $(BASE_NAME).pdf
 ps: $(BASE_NAME).ps
 
-$(BASE_NAME).pdf: $(BASE_NAME).tex chapters/*.tex images/*
+$(BASE_NAME).pdf: $(BASE_NAME).tex chapters/*.tex images/* bib/*
 	$(PDFLATEX) $<
 	$(BIBTEX) $(BASE_NAME)
 	$(MAKEINDEX) $(BASE_NAME)

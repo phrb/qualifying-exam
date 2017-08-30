@@ -6,20 +6,20 @@ something you were after.}}{--- J.R.R. Tolkien, \textit{The Hobbit}}
 
 Rice's conceptual framework~\cite{rice1976algorithm} formed the foundation
 of autotuners in various problem domains.  In 1997, the PHiPAC
-system~\cite{bilmes1997phipac} used code generators and search scripts to
+system~\cite{bilmes1997optimizing} used code generators and search scripts to
 automatically generate high performance code
 for matrix multiplication. Since then, systems tackled different domains with a
-diversity of strategies. Whaley \emph{et al.}~\cite{whaley1998atlas} introduced
-the ATLAS project, that optimizes dense matrix multiplication routines. The
-OSKI~\cite{vuduc2005oski} library provides automatically tuned kernels for
-sparse matrices. The FFTW~\cite{frigo1998fftw} library provides tuned C
-subroutines for computing the Discrete Fourier Transform.
-Periscope~\cite{Gerndt:2010:Periscope} is a distributed online autotuner
-for parallel systems and single-node performance.
-In an effort to provide a common representation of multiple parallel programming models,
-the INSIEME compiler project~\cite{jordan2012multi} implements abstractions for
-OpenMP, MPI and OpenCL, and generates optimized parallel code for heterogeneous
-multi-core architectures.
+diversity of strategies. Whaley \emph{et al.}~\cite{dongarra1998automatically}
+introduced the ATLAS project, that optimizes dense matrix multiplication
+routines. The OSKI~\cite{vuduc2005oski} library provides automatically tuned
+kernels for sparse matrices. The FFTW~\cite{frigo1998fftw} library provides
+tuned C subroutines for computing the Discrete Fourier Transform.
+Periscope~\cite{gerndt2010automatic} is a distributed online autotuner for
+parallel systems and single-node performance.  In an effort to provide a common
+representation of multiple parallel programming models, the INSIEME compiler
+project~\cite{jordan2012multi} implements abstractions for OpenMP, MPI and
+OpenCL, and generates optimized parallel code for heterogeneous multi-core
+architectures.
 
 Some systems provide generic tools that enable the implementation of
 autotuners in various domains. PetaBricks~\cite{ansel2009petabricks} is a
