@@ -131,6 +131,86 @@ Assignment Problem solvers.  Sedaghati \emph{et
 al.}~\cite{sedaghati2015automatic} build a decision model for the selection of
 sparse matrix representations in GPUs.
 
+\subsection{Autotuner \& Search Space}
+\label{sec:tunersearch}
+
+Our implementation uses the OpenTuner framework's native parameter types to
+represent CUDA compilation options. Flags and multi-valued parameters are
+represented as single \emph{EnumParameter}s, and parameters that accept
+numerical values are represented as \emph{IntegerParameter}s.  The same
+encoding was used in Jansel \emph{et al.}~\cite{ansel2014opentuner} in the
+implementation of an autotuner for GCC compilation parameters.
+
+The autotuner we implemented used the \textit{multi-armed bandit with sliding
+window, area under the curve credit assignment} meta-technique, simply named
+\textit{AUC Bandit}.  AUC Bandit is OpenTuner's core
+meta-technique~\cite{ansel2014opentuner}, and its ensemble of search techniques
+is composed by implementations of the Nelder-Mead algorithm and three
+variations of genetic algorithms.  There is no guarantee that any tuning run
+will find the optimal solution, but the variance of the results found by
+different tuning runs decreases as tuning time progresses, as is shown in the
+results from the original OpenTuner paper~\cite{ansel2014opentuner}.
+
+The search in the space of CUDA options potentially generates invalid parameter
+combinations due to incompatible flags or architecture restrictions.  To
+prevent these invalid configurations from misguiding the search techniques we
+first modified all programs in the benchmark so that they verify the
+correctness of their output using previously computed correct outputs. Then we
+made the autotuner check for errors during compilation and execution whenever
+testing a new configuration and assign a penalty value when finding errors.
+Errors could be used to acquire knowledge about the interactions and
+incompatibilities between parameters, which would enable the autotuner to prune
+the search space and find better solutions faster.  The final verification step
+used to validate an autotuned result was to manually check the output of the
+CUDA toolkit's \texttt{nvprof} profiler, certifying that the CUDA kernels were
+launched and executed properly.
+
+The code for our autotuner and all the experiments and results is
+available\footnote{Hosted at GitHub: \texttt{\scriptsize
+https://github.com/phrb/gpu-autotuning} [Accessed on 10 February 2015]} under
+the GNU General Public License.
+
+\newcommand{\specialcell}[1]{\begin{minipage}[m]{0.52\columnwidth}\centering#1\end{minipage}}
+
+\begin{table}[htpb]
+    \centering
+    \footnotesize
+        \begin{tabular}{cc}
+        \toprule
+        \textbf{Flag}&\textbf{Description} \\\midrule
+        \texttt{no-align-double} & \specialcell{Specifies that \texttt{malign-double} should not be passed as a compiler argument on 32-bit platforms. \textbf{Step}: NVCC} \\ \midrule
+        \texttt{use\_fast\_math} & \specialcell{Uses the fast math library, implies \texttt{ftz=true}, \texttt{prec-div=false}, \texttt{prec-sqrt=false} and \texttt{fmad=true}. \textbf{Step}: NVCC} \\\midrule
+        \texttt{gpu-architecture} & \specialcell{Specifies the NVIDIA virtual GPU architecture for which the CUDA input files must be compiled. \textbf{Step}: NVCC \textbf{Values}: \texttt{sm\_20}, \texttt{sm\_21}, \texttt{sm\_30}, \texttt{sm\_32}, \texttt{sm\_35}, \texttt{sm\_50}, \texttt{sm\_52}} \\\midrule
+        \texttt{relocatable-device-code} & \specialcell{Enables the generation of relocatable device code. If disabled, executable device code is generated. Relocatable device code must be linked before it can be executed. \textbf{Step}: NVCC} \\\midrule
+        \texttt{ftz} & \specialcell{Controls single-precision denormals support. \texttt{ftz=true} flushes denormal values to zero and \texttt{ftz=false} preserves denormal values. \textbf{Step}: NVCC} \\\midrule
+        \texttt{prec-div} & \specialcell{Controls single-precision floating-point division and reciprocals. \texttt{prec-div=true} enables the IEEE round-to-nearest mode and \texttt{prec-div=false} enables the fast approximation mode. \textbf{Step}: NVCC} \\\midrule
+        \texttt{prec-sqrt} & \specialcell{Controls single-precision floating-point squre root. \texttt{prec-sqrt=true} enables the IEEE round-to-nearest mode and \texttt{prec-sqrt=false} enables the fast approximation mode. \textbf{Step}: NVCC} \\\midrule
+        \texttt{def-load-cache} & \specialcell{Default cache modifier on global/generic load. \textbf{Step}: PTX \textbf{Values}: \texttt{ca}, \texttt{cg}, \texttt{cv}, \texttt{cs}} \\\midrule
+        \texttt{opt-level} & \specialcell{Specifies high-level optimizations. \textbf{Step}: PTX \textbf{Values}: \texttt{0 - 3}} \\\midrule
+        \texttt{fmad} & \specialcell{Enables the contraction of floating-point multiplies and adds/subtracts into floating-point multiply-add operations (FMAD, FFMA, or DFMA). \textbf{Step}: PTX} \\\midrule
+        \texttt{allow-expensive-optimizations} & \specialcell{Enables the compiler to perform expensive optimizations using maximum available resources (memory and compile-time). If unspecified, default behavior is to enable this feature for optimization level $\geqslant$O2. \textbf{Step}: PTX} \\\midrule
+        \texttt{maxrregcount} & \specialcell{Specifies the maximum number of registers that GPU functions can use. \textbf{Step}: PTX \textbf{Values}: \texttt{16 - 64}} \\\midrule
+        \texttt{preserve-relocs} & \specialcell{Makes the \texttt{PTX} assembler generate relocatable references for variables and preserve relocations generated for them in the linked executable. \textbf{Step}: NVLINK} \\\midrule
+        \end{tabular}
+    \caption{Description of flags in the search space}
+    \label{tab:flags}
+\end{table}
+
+Table~\ref{tab:flags} details the subset of the CUDA configuration parameters
+used in the experiments~\footnote{Adapted from:
+http://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc [Accessed on 10 February
+2015]}.  The parameters target different compilation steps: the \emph{PTX}
+optimizing assembler; the \emph{NVLINK} linker; and the \emph{NVCC} compiler.
+We compared the performance of programs generated by tuned parameters with the
+standard compiler optimizations, namely \texttt{--opt-level=0,1,2,3}.
+Different \texttt{--opt-level}s could also be selected during tuning.  We did
+not use compiler options that target the host linker or the library manager
+since they do not affect performance.  The size of the search space defined by
+all possible combinations of the flags in Table~\ref{tab:flags} is in the order
+of $10^{6}$ making hand-optimization or exhaustive searches very time
+consuming.
+
+
 \subsection{Experiments}
 
 This section presents the GPU testbed, the algorithm benchmark, the
@@ -246,88 +326,6 @@ benchmark.
     \caption{Rodinia applications used in the experiments}
     \label{tab:Rodinia}
 \end{table}
-
-\subsection{The Autotuner}
-\label{sec:tuner}
-
-Our implementation uses the OpenTuner framework's native parameter types to
-represent CUDA compilation options. Flags and multi-valued parameters are
-represented as single \emph{EnumParameter}s, and parameters that accept
-numerical values are represented as \emph{IntegerParameter}s.  The same
-encoding was used in Jansel \emph{et al.}~\cite{ansel2014opentuner} in the
-implementation of an autotuner for GCC compilation parameters.
-
-The autotuner we implemented used the \textit{multi-armed bandit with sliding
-window, area under the curve credit assignment} meta-technique, simply named
-\textit{AUC Bandit}.  AUC Bandit is OpenTuner's core
-meta-technique~\cite{ansel2014opentuner}, and its ensemble of search techniques
-is composed by implementations of the Nelder-Mead algorithm and three
-variations of genetic algorithms.  There is no guarantee that any tuning run
-will find the optimal solution, but the variance of the results found by
-different tuning runs decreases as tuning time progresses, as is shown in the
-results from the original OpenTuner paper~\cite{ansel2014opentuner}.
-
-The search in the space of CUDA options potentially generates invalid parameter
-combinations due to incompatible flags or architecture restrictions.  To
-prevent these invalid configurations from misguiding the search techniques we
-first modified all programs in the benchmark so that they verify the
-correctness of their output using previously computed correct outputs. Then we
-made the autotuner check for errors during compilation and execution whenever
-testing a new configuration and assign a penalty value when finding errors.
-Errors could be used to acquire knowledge about the interactions and
-incompatibilities between parameters, which would enable the autotuner to prune
-the search space and find better solutions faster.  The final verification step
-used to validate an autotuned result was to manually check the output of the
-CUDA toolkit's \texttt{nvprof} profiler, certifying that the CUDA kernels were
-launched and executed properly.
-
-The code for our autotuner and all the experiments and results is
-available\footnote{Hosted at GitHub: \texttt{\scriptsize
-https://github.com/phrb/gpu-autotuning} [Accessed on 10 February 2015]} under
-the GNU General Public License.
-
-\subsection{The Search Space}
-\label{sec:parameters}
-
-\newcommand{\specialcell}[1]{\begin{minipage}[m]{0.52\columnwidth}\centering#1\end{minipage}}
-
-\begin{table}[htpb]
-    \centering
-    \footnotesize
-        \begin{tabular}{cc}
-        \toprule
-        \textbf{Flag}&\textbf{Description} \\\midrule
-        \texttt{no-align-double} & \specialcell{Specifies that \texttt{malign-double} should not be passed as a compiler argument on 32-bit platforms. \textbf{Step}: NVCC} \\ \midrule
-        \texttt{use\_fast\_math} & \specialcell{Uses the fast math library, implies \texttt{ftz=true}, \texttt{prec-div=false}, \texttt{prec-sqrt=false} and \texttt{fmad=true}. \textbf{Step}: NVCC} \\\midrule
-        \texttt{gpu-architecture} & \specialcell{Specifies the NVIDIA virtual GPU architecture for which the CUDA input files must be compiled. \textbf{Step}: NVCC \textbf{Values}: \texttt{sm\_20}, \texttt{sm\_21}, \texttt{sm\_30}, \texttt{sm\_32}, \texttt{sm\_35}, \texttt{sm\_50}, \texttt{sm\_52}} \\\midrule
-        \texttt{relocatable-device-code} & \specialcell{Enables the generation of relocatable device code. If disabled, executable device code is generated. Relocatable device code must be linked before it can be executed. \textbf{Step}: NVCC} \\\midrule
-        \texttt{ftz} & \specialcell{Controls single-precision denormals support. \texttt{ftz=true} flushes denormal values to zero and \texttt{ftz=false} preserves denormal values. \textbf{Step}: NVCC} \\\midrule
-        \texttt{prec-div} & \specialcell{Controls single-precision floating-point division and reciprocals. \texttt{prec-div=true} enables the IEEE round-to-nearest mode and \texttt{prec-div=false} enables the fast approximation mode. \textbf{Step}: NVCC} \\\midrule
-        \texttt{prec-sqrt} & \specialcell{Controls single-precision floating-point squre root. \texttt{prec-sqrt=true} enables the IEEE round-to-nearest mode and \texttt{prec-sqrt=false} enables the fast approximation mode. \textbf{Step}: NVCC} \\\midrule
-        \texttt{def-load-cache} & \specialcell{Default cache modifier on global/generic load. \textbf{Step}: PTX \textbf{Values}: \texttt{ca}, \texttt{cg}, \texttt{cv}, \texttt{cs}} \\\midrule
-        \texttt{opt-level} & \specialcell{Specifies high-level optimizations. \textbf{Step}: PTX \textbf{Values}: \texttt{0 - 3}} \\\midrule
-        \texttt{fmad} & \specialcell{Enables the contraction of floating-point multiplies and adds/subtracts into floating-point multiply-add operations (FMAD, FFMA, or DFMA). \textbf{Step}: PTX} \\\midrule
-        \texttt{allow-expensive-optimizations} & \specialcell{Enables the compiler to perform expensive optimizations using maximum available resources (memory and compile-time). If unspecified, default behavior is to enable this feature for optimization level $\geqslant$O2. \textbf{Step}: PTX} \\\midrule
-        \texttt{maxrregcount} & \specialcell{Specifies the maximum number of registers that GPU functions can use. \textbf{Step}: PTX \textbf{Values}: \texttt{16 - 64}} \\\midrule
-        \texttt{preserve-relocs} & \specialcell{Makes the \texttt{PTX} assembler generate relocatable references for variables and preserve relocations generated for them in the linked executable. \textbf{Step}: NVLINK} \\\midrule
-        \end{tabular}
-    \caption{Description of flags in the search space}
-    \label{tab:flags}
-\end{table}
-
-Table~\ref{tab:flags} details the subset of the CUDA configuration parameters
-used in the experiments~\footnote{Adapted from:
-http://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc [Accessed on 10 February
-2015]}.  The parameters target different compilation steps: the \emph{PTX}
-optimizing assembler; the \emph{NVLINK} linker; and the \emph{NVCC} compiler.
-We compared the performance of programs generated by tuned parameters with the
-standard compiler optimizations, namely \texttt{--opt-level=0,1,2,3}.
-Different \texttt{--opt-level}s could also be selected during tuning.  We did
-not use compiler options that target the host linker or the library manager
-since they do not affect performance.  The size of the search space defined by
-all possible combinations of the flags in Table~\ref{tab:flags} is in the order
-of $10^{6}$ making hand-optimization or exhaustive searches very time
-consuming.
 
 \subsection{Results}
 \label{sec:GPUresults}
@@ -547,6 +545,10 @@ the autotuning of compiler parameters in the general case.
 \subsection{Small Measurement Time}
 \label{subsec:smalltime}
 
+\subsection{A Tool for Compiler Autotuning}
+
+% Describe our recent tool and its impact.
+
 \subsection{Summary and Future Work}
 \label{subsec:GPUconcl}
 
@@ -559,7 +561,7 @@ We achieved over 2x speedup for Gaussian Elimination (GAU) and almost 2x
 speedup for Heart Wall (HWL),  and over 4x speedup for a matrix multiplication
 algorithm (MMS).
 
-This paper showed that it is possible to improve the performance of GPU
+This study showed that it is possible to improve the performance of GPU
 applications applying empirical and automatic tuning techniques. Our results
 and clustering attempts emphasize the importance of automatic optimization
 techniques by showing that different compilation options have to be selected in
@@ -579,4 +581,3 @@ To the best of our knowledge, this is the first work that applied autotuning
 techniques to CUDA compiler parameters for GPU applications using the OpenTuner
 framework, comparing the speedup achieved in different GPU architectures for
 heterogeneous applications.
-

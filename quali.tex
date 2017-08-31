@@ -26,12 +26,15 @@
 \usepackage{booktabs}
 \usepackage{textcomp}
 \usepackage[explicit]{titlesec} % cabeçalhos dos títulos: menores e compactos
+\usepackage[bold,full]{complexity}
 \usepackage{tocloft}
 \usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{relsize}
 \usepackage{epigraph}
 \usepackage[fixlanguage]{babelbib}
 \usepackage[font=small,format=plain,labelfont=bf,up,textfont=it,up]{caption}
-\usepackage[usenames,svgnames,dvipsnames]{xcolor}
+\usepackage[usenames,svgnames,dvipsnames,table,xcdraw]{xcolor}
 \usepackage{wrapfig}
 \usepackage[a4paper,top=2.54cm,bottom=2.0cm,left=2.0cm,right=2.54cm]{geometry} % margens
 %\usepackage[pdftex,plainpages=false,pdfpagelabels,pagebackref,colorlinks=true,citecolor=black,linkcolor=black,urlcolor=black,filecolor=black,bookmarksopen=true]{hyperref} % links em preto
@@ -406,12 +409,16 @@ língua portuguesa. De acordo com o Regimento da Pós- Graduação da USP (Artig
 %\singlespacing              % espaçamento simples
 \onehalfspacing            % espaçamento um e meio
 
-\include{chapters/introduction}
-\include{chapters/autonomous}
-\include{chapters/autotuning}
-\include{chapters/results}
-\include{chapters/proposal}
-\include{chapters/summary}
+\input{chapters/introduction}
+\input{chapters/autonomous}
+\input{chapters/autotuning}
+\input{chapters/results}
+\input{chapters/gpu_compiler_parameters}
+\input{chapters/distributed_opentuner}
+\input{chapters/hls_fpga}
+\input{chapters/configuring_dpe}
+\input{chapters/proposal}
+\input{chapters/summary}
 
 % cabeçalho para os apêndices
 %\renewcommand{\chaptermark}[1]{\markboth{\MakeUppercase{\appendixname\ \thechapter}} {\MakeUppercase{#1}} }
