@@ -1,8 +1,36 @@
 \section{Configuring Hardware and Software for the Dot Product Engine}
 \label{sec:configDPE}
 
-\subsection{Introduction}
-\label{subsec:DPEintro}
+Advances in computing are often represented by fixed, application specific
+hardware. For example, one of the first general purpose computers, The
+Electronic Numerical Integrator and Computer (ENIAC), required re-wiring of a
+plug board to program it for each application \cite{goldstine1946electronic}.
+Likewise, Systolic, Wavefront~\cite{kung1984supercomputing}, and
+Dataflow~\cite{iannucci1988toward} architectures each needed to be reconfigured
+for a specific computation, such as matrix multiplication or convolution.  Even
+Field Programmable Gate Arrays, though reconfigurable, need sophisticated
+operating system (OS) support to act as anything more than a fixed system
+during operation~\cite{so2006improving}.  Throughout the evolution of these
+computing solutions, OS support has been very scarce, relegating these devices
+to act as early accelerators and not as general purpose computers.  Even
+sophisticated co-processing devices, such as Graphics Processing Units (GPU),
+have highly specialized instruction sets that render their use as general
+purpose computing resources difficult.
+
+Conversely, OS designers have not easily adapted to the changes in processing
+paradigms and increasing importance of power,
+largely building systems that rely on a task-based workload model. Although
+there have been many notable attempts at building OSes for accelerators, none
+of these have been completely successful~\cite{laplante2016rethinking}.
+
+In this study we explore the OS functionality applied to generalizing a
+memristor-based accelerator, using a Dot Product Engine (DPE) as an example
+that represents an analog form of computer with digital components embedded
+into the architecture.  We explore generalizing this accelerator by making it
+more reconfigurable and partitionable, as well as more secure.  We also
+identify some of the unique characteristics of this kind of system, such as
+different precision settings of DPE and trustworthiness of the deployed
+configuration into DPE.
 
 \subsection{Results}
 \label{subsec:DPEres}
