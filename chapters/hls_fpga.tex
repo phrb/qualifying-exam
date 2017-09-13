@@ -117,7 +117,7 @@ LegUp~\cite{canis2015legup} HLS parameters, according to our cost function, for
 
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=\columnwidth]{fpga-stack}
+    \includegraphics[width=0.8\textwidth]{fpga-stack}
     \caption{High-Level Synthesis compilation process. The autotuner search space at the HLS stage is highlighted in blue}
     \label{fig:fpga-stack}
 \end{figure}
@@ -134,7 +134,7 @@ detailed description.
 
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=0.9\columnwidth]{fpga_docker_tuner}
+    \includegraphics[width=0.6\columnwidth]{fpga_docker_tuner}
     \caption{Autotuner Setup}
     \label{fig:autotuner}
 \end{figure}
@@ -175,19 +175,19 @@ documentation~\footnote{\url{http://legup.eecg.utoronto.ca/docs/4.0} [Accessed
 in 18/07/2017]}.
 
 \begin{table}[htpb]
-\caption{Subset of All Autotuned LegUP HLS Parameters}
-\label{tab:params}
 \centering
 \begin{tabular}{@{}p{0.10\columnwidth}p{0.84\columnwidth}@{}}
 \toprule
 Type & \multicolumn{1}{c}{Parameters} \\ \midrule
-\parbox[t]{0.10\columnwidth}{\tiny{Operation \\ Latency}} & \tiny{\texttt{\textbf{altfp\_}[divide, truncate, fptosi, add, subtract, multiply, extend, sitofp], \textbf{unsigned\_}[multiply, divide, add, modulus], \textbf{signed\_}[modulus, divide, multiply, add, \textbf{comp\_}[o, u]], [local\_mem, mem]\textbf{\_dual\_port}, \textbf{reg}}} \\
+\parbox[t]{0.10\columnwidth}{\scriptsize{Operation \\ Latency}} & \scriptsize{\texttt{\textbf{altfp\_}[divide, truncate, fptosi, add, subtract, multiply, extend, sitofp], \textbf{unsigned\_}[multiply, divide, add, modulus], \textbf{signed\_}[modulus, divide, multiply, add, \textbf{comp\_}[o, u]], [local\_mem, mem]\textbf{\_dual\_port}, \textbf{reg}}} \\
 %\addlinespace{}
-\parbox[t]{0.10\columnwidth}{\tiny{Resource Constraint}} & \tiny{\texttt{\textbf{signed\_}[divide, multiply, modulus, add], \textbf{altfp\_}[multiply, add, subtract, divide], \textbf{unsigned\_}[modulus, multiply, add, divide], [shared\_mem, mem]\textbf{\_dual\_port}}} \\
+\parbox[t]{0.10\columnwidth}{\scriptsize{Resource Constraint}} & \scriptsize{\texttt{\textbf{signed\_}[divide, multiply, modulus, add], \textbf{altfp\_}[multiply, add, subtract, divide], \textbf{unsigned\_}[modulus, multiply, add, divide], [shared\_mem, mem]\textbf{\_dual\_port}}} \\
 %\addlinespace{}
-\parbox[t]{0.10\columnwidth}{\tiny{Boolean~or Multi-value}} & \tiny{\texttt{\textbf{pattern\_share\_}[add, shift, sub, bitops], \textbf{sdc\_}[multipump, no\_chaining, priority], \textbf{pipeline\_}[resource\_sharing, all], \textbf{ps\_}[min\_size, min\_width, max\_size, bit\_diff\_threshold], \textbf{mb\_}[minimize\_hw, max\_back\_passes], \textbf{no\_roms}, \textbf{multiplier\_no\_chain}, \textbf{dont\_chain\_get\_elem\_ptr}, \textbf{clock\_period}, \textbf{no\_loop\_pipelining}, \textbf{incremental\_sdc}, \textbf{disable\_reg\_sharing}, \textbf{set\_combine\_basicblock}, \textbf{enable\_pattern\_sharing}, \textbf{multipumping}, \textbf{dual\_port\_binding}, \textbf{modulo\_scheduler}, \textbf{explicit\_lpm\_mults}}} \\ \bottomrule
+\parbox[t]{0.10\columnwidth}{\scriptsize{Boolean~or Multi-value}} & \scriptsize{\texttt{\textbf{pattern\_share\_}[add, shift, sub, bitops], \textbf{sdc\_}[multipump, no\_chaining, priority], \textbf{pipeline\_}[resource\_sharing, all], \textbf{ps\_}[min\_size, min\_width, max\_size, bit\_diff\_threshold], \textbf{mb\_}[minimize\_hw, max\_back\_passes], \textbf{no\_roms}, \textbf{multiplier\_no\_chain}, \textbf{dont\_chain\_get\_elem\_ptr}, \textbf{clock\_period}, \textbf{no\_loop\_pipelining}, \textbf{incremental\_sdc}, \textbf{disable\_reg\_sharing}, \textbf{set\_combine\_basicblock}, \textbf{enable\_pattern\_sharing}, \textbf{multipumping}, \textbf{dual\_port\_binding}, \textbf{modulo\_scheduler}, \textbf{explicit\_lpm\_mults}}} \\ \bottomrule
 %%\addlinespace{}
 \end{tabular}
+\caption{Subset of All Autotuned LegUP HLS Parameters}
+\label{tab:params}
 \end{table}
 
 \subsubsection{Autotuning Metrics}
@@ -249,8 +249,6 @@ that do not appear on Table \ref{tab:scenarios} are always $1$. The weights are
 integers and powers of~$2$.
 
 \begin{table}[htpb]
-    \caption{Weights for Optimization Scenarios \\ (\textit{High} $= 8$, \textit{Medium} $= 4$, \textit{Low} $= 2$)}
-    \label{tab:scenarios}
     \centering
     \begin{tabular}{@{}lcccc@{}}
         \toprule
@@ -262,6 +260,8 @@ integers and powers of~$2$.
         \textit{FMax} & \cellcolor[HTML]{DD9583} Low & \cellcolor[HTML]{9B94B6} High & \cellcolor[HTML]{9B94B6} High & \cellcolor[HTML]{E3DBB3} Medium \\
         \textit{Cycles} & \cellcolor[HTML]{DD9583} Low & \cellcolor[HTML]{9B94B6} High & \cellcolor[HTML]{DD9583} Low & \cellcolor[HTML]{E3DBB3} Medium \\ \bottomrule
     \end{tabular}
+    \caption{Weights for Optimization Scenarios \\ (\textit{High} $= 8$, \textit{Medium} $= 4$, \textit{Low} $= 2$)}
+    \label{tab:scenarios}
     %\addlinespace
 \end{table}
 
@@ -278,10 +278,8 @@ the C language and contain inputs and previously computed outputs, allowing for
 correctness checks to be performed for all applications.
 
 \begin{table}[htpb]
-\caption{Autotuned CHStone Applications}
-\label{tab:chstone}
 \centering
-\begin{tabular}{@{}p{0.13\columnwidth}p{0.75\columnwidth}@{}}
+\begin{tabular}{@{}p{0.13\columnwidth}p{0.63\columnwidth}@{}}
 \toprule
  Application & Short Description \\ \midrule
  blowfish & Symmetric-key block cypher \\
@@ -297,6 +295,8 @@ correctness checks to be performed for all applications.
  dfadd & Double-precision floating-point addition \\ \bottomrule
 %% \addlinespace{}
 \end{tabular}
+\caption{Autotuned CHStone Applications}
+\label{tab:chstone}
 \end{table}
 
 Table \ref{tab:chstone} provides short descriptions of the $11$ CHStone
@@ -343,7 +343,7 @@ starting point.
 
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=0.9\columnwidth]{heatmap_comp_stratixV}
+    \includegraphics[width=0.5\columnwidth]{heatmap_comp_stratixV}
     \caption{Comparison of the absolute values for Random and Default starting points in the Balanced scenario}
     \label{fig:comp}
 \end{figure}
@@ -396,7 +396,7 @@ improvements at all in most applications.
 
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=0.9\columnwidth]{heatmap_default_stratixV}
+    \includegraphics[width=0.5\columnwidth]{heatmap_default_stratixV}
     \caption{Relative improvement for all metrics in the \textit{Balanced} scenario}
     \label{fig:balanced}
 \end{figure}
@@ -417,7 +417,7 @@ and \textit{BRAM} in \textit{dfdiv} and smaller values overall for
 
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=0.9\columnwidth]{heatmap_default_stratixV_area}
+    \includegraphics[width=0.5\columnwidth]{heatmap_default_stratixV_area}
     \caption{Relative improvement for all metrics in the \textit{Area} scenario}
     \label{fig:area}
 \end{figure}
@@ -434,7 +434,7 @@ $41\%$, $30\%$, $44\%$ and $37\%$ greater \textit{FMax} in \textit{dfdiv},
 
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=0.9\columnwidth]{heatmap_default_stratixV_perf}
+    \includegraphics[width=0.5\columnwidth]{heatmap_default_stratixV_perf}
     \caption{Relative improvement for all metrics in the \textit{Performance} scenario}
     \label{fig:perf}
 \end{figure}
@@ -454,7 +454,7 @@ improvements in relation to the \textit{Balanced} scenario, the
 
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=0.9\columnwidth]{heatmap_default_stratixV_perflat}
+    \includegraphics[width=0.5\columnwidth]{heatmap_default_stratixV_perflat}
     \caption{Relative improvement for all metrics in the \textit{Performance \& Latency} scenario}
     \label{fig:perflat}
 \end{figure}
@@ -469,7 +469,7 @@ shows the average decreases for each scenario.
 
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=0.9\columnwidth]{heatmap_wns_comparison}
+    \includegraphics[width=0.5\columnwidth]{heatmap_wns_comparison}
     \caption{Relative improvement for \textbf{WNS} in all scenarios}
     \label{fig:wns-comp}
 \end{figure}

@@ -82,7 +82,6 @@ accesses to different memory levels is essential to achieve good performance.
 %\label{tab:memories} % is used to refer this table in the text
 %\end{table}
 
-
 \subsubsection{Compute Unified Device Architecture (CUDA)}
 
 The CUDA programming model and platform enables the use of NVIDIA GPUs for
@@ -165,51 +164,48 @@ used to validate an autotuned result was to manually check the output of the
 CUDA toolkit's \texttt{nvprof} profiler, certifying that the CUDA kernels were
 launched and executed properly.
 
-The code for our autotuner and all the experiments and results is
-available\footnote{Hosted at GitHub: \texttt{\scriptsize
-https://github.com/phrb/gpu-autotuning} [Accessed on 10 February 2015]} under
-the GNU General Public License.
-
-\newcommand{\specialcell}[1]{\begin{minipage}[m]{0.52\columnwidth}\centering#1\end{minipage}}
-
 \begin{table}[htpb]
     \centering
-    \footnotesize
-        \begin{tabular}{cc}
+    \tiny
+        \begin{tabular}{lp{0.6\textwidth}}
         \toprule
         \textbf{Flag}&\textbf{Description} \\\midrule
-        \texttt{no-align-double} & \specialcell{Specifies that \texttt{malign-double} should not be passed as a compiler argument on 32-bit platforms. \textbf{Step}: NVCC} \\ \midrule
-        \texttt{use\_fast\_math} & \specialcell{Uses the fast math library, implies \texttt{ftz=true}, \texttt{prec-div=false}, \texttt{prec-sqrt=false} and \texttt{fmad=true}. \textbf{Step}: NVCC} \\\midrule
-        \texttt{gpu-architecture} & \specialcell{Specifies the NVIDIA virtual GPU architecture for which the CUDA input files must be compiled. \textbf{Step}: NVCC \textbf{Values}: \texttt{sm\_20}, \texttt{sm\_21}, \texttt{sm\_30}, \texttt{sm\_32}, \texttt{sm\_35}, \texttt{sm\_50}, \texttt{sm\_52}} \\\midrule
-        \texttt{relocatable-device-code} & \specialcell{Enables the generation of relocatable device code. If disabled, executable device code is generated. Relocatable device code must be linked before it can be executed. \textbf{Step}: NVCC} \\\midrule
-        \texttt{ftz} & \specialcell{Controls single-precision denormals support. \texttt{ftz=true} flushes denormal values to zero and \texttt{ftz=false} preserves denormal values. \textbf{Step}: NVCC} \\\midrule
-        \texttt{prec-div} & \specialcell{Controls single-precision floating-point division and reciprocals. \texttt{prec-div=true} enables the IEEE round-to-nearest mode and \texttt{prec-div=false} enables the fast approximation mode. \textbf{Step}: NVCC} \\\midrule
-        \texttt{prec-sqrt} & \specialcell{Controls single-precision floating-point squre root. \texttt{prec-sqrt=true} enables the IEEE round-to-nearest mode and \texttt{prec-sqrt=false} enables the fast approximation mode. \textbf{Step}: NVCC} \\\midrule
-        \texttt{def-load-cache} & \specialcell{Default cache modifier on global/generic load. \textbf{Step}: PTX \textbf{Values}: \texttt{ca}, \texttt{cg}, \texttt{cv}, \texttt{cs}} \\\midrule
-        \texttt{opt-level} & \specialcell{Specifies high-level optimizations. \textbf{Step}: PTX \textbf{Values}: \texttt{0 - 3}} \\\midrule
-        \texttt{fmad} & \specialcell{Enables the contraction of floating-point multiplies and adds/subtracts into floating-point multiply-add operations (FMAD, FFMA, or DFMA). \textbf{Step}: PTX} \\\midrule
-        \texttt{allow-expensive-optimizations} & \specialcell{Enables the compiler to perform expensive optimizations using maximum available resources (memory and compile-time). If unspecified, default behavior is to enable this feature for optimization level $\geqslant$O2. \textbf{Step}: PTX} \\\midrule
-        \texttt{maxrregcount} & \specialcell{Specifies the maximum number of registers that GPU functions can use. \textbf{Step}: PTX \textbf{Values}: \texttt{16 - 64}} \\\midrule
-        \texttt{preserve-relocs} & \specialcell{Makes the \texttt{PTX} assembler generate relocatable references for variables and preserve relocations generated for them in the linked executable. \textbf{Step}: NVLINK} \\\midrule
+        \texttt{no-align-double} & Specifies that \texttt{malign-double} should not be passed as a compiler argument on 32-bit platforms. \textbf{Step}: NVCC \\ \midrule
+        \texttt{use\_fast\_math} & Uses the fast math library, implies \texttt{ftz=true}, \texttt{prec-div=false}, \texttt{prec-sqrt=false} and \texttt{fmad=true}. \textbf{Step}: NVCC \\\midrule
+        \texttt{gpu-architecture} & Specifies the NVIDIA virtual GPU architecture for which the CUDA input files must be compiled. \textbf{Step}: NVCC \textbf{Values}: \texttt{sm\_20}, \texttt{sm\_21}, \texttt{sm\_30}, \texttt{sm\_32}, \texttt{sm\_35}, \texttt{sm\_50}, \texttt{sm\_52} \\\midrule
+        \texttt{relocatable-device-code} & Enables the generation of relocatable device code. If disabled, executable device code is generated. Relocatable device code must be linked before it can be executed. \textbf{Step}: NVCC \\\midrule
+        \texttt{ftz} & Controls single-precision denormals support. \texttt{ftz=true} flushes denormal values to zero and \texttt{ftz=false} preserves denormal values. \textbf{Step}: NVCC \\\midrule
+        \texttt{prec-div} & Controls single-precision floating-point division and reciprocals. \texttt{prec-div=true} enables the IEEE round-to-nearest mode and \texttt{prec-div=false} enables the fast approximation mode. \textbf{Step}: NVCC \\\midrule
+        \texttt{prec-sqrt} & Controls single-precision floating-point squre root. \texttt{prec-sqrt=true} enables the IEEE round-to-nearest mode and \texttt{prec-sqrt=false} enables the fast approximation mode. \textbf{Step}: NVCC \\\midrule
+        \texttt{def-load-cache} & Default cache modifier on global/generic load. \textbf{Step}: PTX \textbf{Values}: \texttt{ca}, \texttt{cg}, \texttt{cv}, \texttt{cs} \\\midrule
+        \texttt{opt-level} & Specifies high-level optimizations. \textbf{Step}: PTX \textbf{Values}: \texttt{0 - 3} \\\midrule
+        \texttt{fmad} & Enables the contraction of floating-point multiplies and adds/subtracts into floating-point multiply-add operations (FMAD, FFMA, or DFMA). \textbf{Step}: PTX \\\midrule
+        \texttt{allow-expensive-optimizations} & Enables the compiler to perform expensive optimizations using maximum available resources (memory and compile-time). If unspecified, default behavior is to enable this feature for optimization level $\geqslant$O2. \textbf{Step}: PTX \\\midrule
+        \texttt{maxrregcount} & Specifies the maximum number of registers that GPU functions can use. \textbf{Step}: PTX \textbf{Values}: \texttt{16 - 64} \\\midrule
+        \texttt{preserve-relocs} & Makes the \texttt{PTX} assembler generate relocatable references for variables and preserve relocations generated for them in the linked executable. \textbf{Step}: NVLINK \\\midrule
         \end{tabular}
     \caption{Description of flags in the search space}
     \label{tab:flags}
 \end{table}
 
+The code for our autotuner and all the experiments and results is
+available\footnote{Hosted at GitHub:
+\url{https://github.com/phrb/gpu-autotuning} [Accessed on 10 February 2015]}
+under the GNU General Public License.
+
 Table~\ref{tab:flags} details the subset of the CUDA configuration parameters
 used in the experiments~\footnote{Adapted from:
-http://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc [Accessed on 10 February
-2015]}.  The parameters target different compilation steps: the \emph{PTX}
-optimizing assembler; the \emph{NVLINK} linker; and the \emph{NVCC} compiler.
-We compared the performance of programs generated by tuned parameters with the
-standard compiler optimizations, namely \texttt{--opt-level=0,1,2,3}.
-Different \texttt{--opt-level}s could also be selected during tuning.  We did
-not use compiler options that target the host linker or the library manager
-since they do not affect performance.  The size of the search space defined by
-all possible combinations of the flags in Table~\ref{tab:flags} is in the order
-of $10^{6}$ making hand-optimization or exhaustive searches very time
-consuming.
-
+\url{http://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc} [Accessed on 10
+February 2015]}.  The parameters target different compilation steps: the
+\emph{PTX} optimizing assembler; the \emph{NVLINK} linker; and the \emph{NVCC}
+compiler.  We compared the performance of programs generated by tuned
+parameters with the standard compiler optimizations, namely
+\texttt{--opt-level=0,1,2,3}.  Different \texttt{--opt-level}s could also be
+selected during tuning.  We did not use compiler options that target the host
+linker or the library manager since they do not affect performance.  The size
+of the search space defined by all possible combinations of the flags in
+Table~\ref{tab:flags} is in the order of $10^{6}$ making hand-optimization or
+exhaustive searches very time consuming.
 
 \subsection{Experiments}
 
@@ -290,9 +286,9 @@ Problem used arrays with $N = 1073741824$.
 
 \paragraph{Sorting Algorithms} The benchmark contains two sorting algorithms,
 quicksort (QKS, with $N = 65536$) and bitonicsort (BTN, with $N =
-4194304$)~\footnote{Obtained from: \texttt{\scriptsize
-http://digitalcommons.providence.edu/student\_scholarship/7/} [Accessed on 10
-February 2015]}.  Both algorithms sort random numbers sampled from a uniform
+4194304$)~\footnote{Obtained from:
+\url{http://digitalcommons.providence.edu/student\_scholarship/7/} [Accessed on
+10 February 2015]}.  Both algorithms sort random numbers sampled from a uniform
 distribution.
 
 \paragraph{Rodinia Benchmark Suite} Rodinia's~\cite{che2009rodinia}
@@ -413,15 +409,15 @@ other problems.
         \caption{Summary of the speedups achieved versus \emph{-O2} in the other independent applications}
         \label{fig:summary}
     \end{minipage}%
-    \hfill
-    \begin{minipage}{\textwidth}
+
+    \begin{minipage}{.48\textwidth}
         \centering
         \includegraphics[scale=.15]{./images/RodiniaSummary.eps}
         \caption{Summary of the biggest speedups achieved versus \emph{-O2} in the Rodinia applications}
         \label{fig:rodiniasummary}
     \end{minipage}%
-
-    \begin{minipage}{\textwidth}
+    \hfill
+    \begin{minipage}{.48\textwidth}
         \centering
         \includegraphics[scale=.15]{./images/RodiniaSummary_small.eps}
         \caption{Summary of the smaller speedups achieved versus \emph{-O2} in the Rodinia applications}
@@ -457,6 +453,23 @@ leftmost point in each graph represents the performance of a configuration
 chosen at random by the autotuner. Each subsequent point represents the
 performance of the best configuration found so far.
 
+Note that the autotuner is able to quickly improve upon the initial random
+configuration, but the rate of improvement decays over tuning time. The
+duration of all tuning runs was two hours, or 7200 seconds.  The rightmost
+point in each graph represents the performance of the last improving
+configuration found by the autotuner. After the tuning time of this
+configuration, the autotuner did not find any improving configuration until the
+end of its tuning run.
+
+The autotuner used the mean of 10 performance measurements of a given
+configuration as the fitness value, reducing fluctuations and improving the
+measurement's accuracy. This is reflected in the proximity of the measurements
+reported by the autotuner during tuning, shown in figures~\ref{fig:K40hwBest},
+\ref{fig:980gauBest}, \ref{fig:K40ptfBest} and \ref{fig:K40myoBest} and the
+mean values of 10 measurements of the final solution, shown in the
+corresponding figures~\ref{fig:K40hwl}, \ref{fig:980gau}, \ref{fig:K40ptf} and
+\ref{fig:K40myo}.
+
 \begin{figure}[htpb]
     \centering
     \begin{minipage}{.48\textwidth}
@@ -474,34 +487,19 @@ performance of the best configuration found so far.
     \end{minipage}%
 
     \begin{minipage}{.48\textwidth}
+        \centering
         \includegraphics[scale=.22]{./images/Pathfinder-0-Tesla-K40-Best.eps}
         \caption{Best solutions found by the autotuner over time for the Path Finder problem (PTF) in the Tesla K40}
         \label{fig:K40ptfBest}
     \end{minipage}%
     \hfill
     \begin{minipage}{.48\textwidth}
+        \centering
         \includegraphics[scale=.22]{./images/myocyte-0-Tesla-K40-Best.eps}
         \caption{Best solutions found by the autotuner over time for the Myocyte problem (MYO) in the Tesla K40}
         \label{fig:K40myoBest}
     \end{minipage}
 \end{figure}
-
-Note that the autotuner is able to quickly improve upon the initial random
-configuration, but the rate of improvement decays over tuning time. The
-duration of all tuning runs was two hours, or 7200 seconds.  The rightmost
-point in each graph represents the performance of the last improving
-configuration found by the autotuner. After the tuning time of this
-configuration, the autotuner did not find any improving configuration until the
-end of its tuning run.
-
-The autotuner used the mean of 10 performance measurements of a given
-configuration as the fitness value, reducing fluctuations and improving the
-measurement's accuracy. This is reflected in the proximity of the measurements
-reported by the autotuner during tuning, shown in figures~\ref{fig:K40hwBest},
-\ref{fig:980gauBest}, \ref{fig:K40ptfBest} and \ref{fig:K40myoBest} and the
-mean values of 10 measurements of the final solution, shown in the
-corresponding figures~\ref{fig:K40hwl}, \ref{fig:980gau}, \ref{fig:K40ptf} and
-\ref{fig:K40myo}.
 
 \subsubsection{Parameter Selection}
 
