@@ -44,7 +44,7 @@ reused.  The DPE accelerates this operation by programming the constant operand
 into a memristor crossbar and performing the computation in-situ with a
 streaming input.
 
-\section{Dot Product Engine}
+\subsection{Dot Product Engine}
 \label{sec:DPE}
 
 The Dot Product Engine (DPE)~\cite{hu2016dot} is a hardware accelerator for
@@ -121,7 +121,7 @@ The next sections outline how some of the unique trade-offs that are present in
 non-traditional, non-digital accelerators and must be managed by OS support
 layers.
 
-\section{Hardware and Software Autotuning}\label{sec:autotuning}
+\subsection{Hardware and Software Autotuning}\label{sec:autotuning}
 
 The configuration of the hardware and software described in this study defines
 a large and complex design space and presents an optimization challenge. We
@@ -212,3 +212,6 @@ use this autotuning approach to optimize the DPE parameters listed in Table
 
 \subsection{Summary and Future Work}
 \label{subsec:DPEconcl}
+\todo[inline,author=Pedro,color=cyan]{Discuss that the simulator may produce
+results very fast. Aayush mentioned that it takes around 2 seconds to simulate
+the architecture with pre-generated assembly. It is still unclear for this case.}

@@ -1,2 +1,45 @@
 \chapter{Case Studies}
 \label{chap:usecases}
+
+In this chapter we discuss our work with autotuning in different
+High-Performance Computing domains. We present each study not chronologically,
+but in an order that leads to the next research steps, which are presented in
+Chapter \ref{chap:julia}. Each section of this chapter presents an autotuning
+study in a different domain, with its own related work, search space and
+autotuner implementation.
+
+Section \ref{sec:paramSelGPU} presents our work using the OpenTuner framework
+to select compiler flags for CUDA applications. Each application took seconds
+to compile and run, and we were able to measure thousands of configurations per
+tuning hour. We published an initial version~\cite{bruel2015autotuningGPU} of
+this study in the \textit{Simpósio em Sistemas Computacionais de Alto
+Desempenho} (WSCAD), and an extended version~\cite{bruel2017autotuning} in the
+\textit{Concurrency and Computation: Practice and Experience} (CCPE) journal.
+
+Section \ref{sec:FPGA} presents our work with the OpenTuner framework for
+selecting configuration parameters for a tool that generates FPGA hardware from
+high-level C code. The compilation and measurement for applications in this
+study took minutes to complete, and we were able to measure an order of
+magnitude less configurations in comparison to the study with GPU compiler
+parameters. We submitted/published this work~\cite{} to/in the
+\textit{International Conference on Reconfigurable Computing and FPGAs}
+(ReConFig).
+\todo[inline,author=Pedro,color=cyan]{ReConFig acceptance notification pending}
+
+Section \ref{sec:configDPE} presents our work with autotuning hardware and
+software parameters for the \textit{Dot Product Engine}, an experimental analog
+computer architecture. We published an initial version~\cite{} of this work in
+the \textit{International Conference on Rebooting Computing} (ICRC), and we
+plan to submit further developments to the \textit{International Symposium on
+Computer Architecture} (ISCA).  \todo[inline,author=Pedro,color=cyan]{This
+section still needs more data}
+
+Section \ref{sec:autotuningCloud} presents our work with developing an
+extension to the OpenTuner framework that enables it to perform measurements in
+public distributed computing environments such as the \textit{Google Compute
+Engine}. The extension follows the client-server model, and communication is
+done using a protocol that we also developed. We submitted this
+study~\cite{bruel2016new} to the \textit{Brazilian Symposium on Computer
+Networks and Distributed Systems} (SBRC), but it was not accepted.
+\todo[inline,author=Pedro,color=cyan]{Improve this paragraph, describing future
+possibilities for this work, or connecting it to our new Julia system.}
