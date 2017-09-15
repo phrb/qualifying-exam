@@ -157,32 +157,32 @@ framexrightmargin=10pt
   {\normalsize\bfseries\itshape}{\thesubsubsection}{1em}{#1}
 
 % Setting custom lists
-\newcommand{\listabbreviationname}{\itshape \Large List of Abbreviations}
-
-\newlistof{abbreviation}{abb}{\listabbreviationname}
-
-\newcommand{\abbreviation}[2]{%
-\refstepcounter{abbreviation}
-%\par\noindent\textbf{Example \theexample. #1}
-\addcontentsline{abb}{abbreviation}
-{\protect\makebox[2cm]{#1} #2}\par}
-
-\cftpagenumbersoff{abbreviation}
-
-% Setting custom lists
-\newcommand{\listsymbolentryname}{\itshape \Large List of Symbols}
-
-\newlistof{symbolentry}{synt}{\listsymbolentryname}
-
-\newcommand{\symbolentry}[2]{%
-\refstepcounter{symbolentry}
-%\par\noindent\textbf{Example \theexample. #1}
-\addcontentsline{synt}{symbolentry}
-{\protect\makebox[2cm]{#1} #2}\par}
-
-\cftpagenumbersoff{symbolentry}
-
-\setcitestyle{square}
+%\newcommand{\listabbreviationname}{\itshape \Large List of Abbreviations}
+%
+%\newlistof{abbreviation}{abb}{\listabbreviationname}
+%
+%\newcommand{\abbreviation}[2]{%
+%\refstepcounter{abbreviation}
+%%\par\noindent\textbf{Example \theexample. #1}
+%\addcontentsline{abb}{abbreviation}
+%{\protect\makebox[2cm]{#1} #2}\par}
+%
+%\cftpagenumbersoff{abbreviation}
+%
+%% Setting custom lists
+%\newcommand{\listsymbolentryname}{\itshape \Large List of Symbols}
+%
+%\newlistof{symbolentry}{synt}{\listsymbolentryname}
+%
+%\newcommand{\symbolentry}[2]{%
+%\refstepcounter{symbolentry}
+%%\par\noindent\textbf{Example \theexample. #1}
+%\addcontentsline{synt}{symbolentry}
+%{\protect\makebox[2cm]{#1} #2}\par}
+%
+%\cftpagenumbersoff{symbolentry}
+%
+%\setcitestyle{square}
 
 % ---------------------------------------------------------------------------- %
 % Corpo do texto
@@ -372,29 +372,29 @@ língua portuguesa. De acordo com o Regimento da Pós- Graduação da USP (Artig
 \tableofcontents    % imprime o sumário
 
 % ---------------------------------------------------------------------------- %
-\newpage
-\symbolentry{$\omega$}{Frequência angular}
-\symbolentry{$\psi$}{Função de análise \emph{wavelet}}
-\symbolentry{$\Psi$}{Transformada de Fourier de $\psi$}
-\begin{NoHyper}
-\listofsymbolentry
-\end{NoHyper}
-\addcontentsline{toc}{chapter}{List of Symbols}
-\newpage
-
-% ---------------------------------------------------------------------------- %
-
-% Listas de figuras e tabelas criadas automaticamente
-\newpage
-\abbreviation{CFT}{Transformada contínua de Fourier (\emph{Continuous Fourier Transform})}
-\abbreviation{DFT}{Transformada discreta de Fourier (\emph{Discrete Fourier Transform})}
-\abbreviation{EIIP}{Potencial de interação elétron-íon (\emph{Electron-Ion Interaction Potentials})}
-\abbreviation{STFT}{Tranformada de Fourier de tempo reduzido (\emph{Short-Time Fourier Transform})}
-\begin{NoHyper}
-\listofabbreviation
-\end{NoHyper}
-\addcontentsline{toc}{chapter}{List of Abbreviations}
-\newpage
+%\newpage
+%\symbolentry{$\omega$}{Frequência angular}
+%\symbolentry{$\psi$}{Função de análise \emph{wavelet}}
+%\symbolentry{$\Psi$}{Transformada de Fourier de $\psi$}
+%\begin{NoHyper}
+%\listofsymbolentry
+%\end{NoHyper}
+%\addcontentsline{toc}{chapter}{List of Symbols}
+%\newpage
+%
+%% ---------------------------------------------------------------------------- %
+%
+%% Listas de figuras e tabelas criadas automaticamente
+%\newpage
+%\abbreviation{CFT}{Transformada contínua de Fourier (\emph{Continuous Fourier Transform})}
+%\abbreviation{DFT}{Transformada discreta de Fourier (\emph{Discrete Fourier Transform})}
+%\abbreviation{EIIP}{Potencial de interação elétron-íon (\emph{Electron-Ion Interaction Potentials})}
+%\abbreviation{STFT}{Tranformada de Fourier de tempo reduzido (\emph{Short-Time Fourier Transform})}
+%\begin{NoHyper}
+%\listofabbreviation
+%\end{NoHyper}
+%\addcontentsline{toc}{chapter}{List of Abbreviations}
+%\newpage
 
 \listoffigures
 

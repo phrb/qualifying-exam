@@ -39,35 +39,45 @@ configuration opportunities in various stages of program development and
 execution.  The time to measure the results of an optimization choice depends
 on the selected stage and on the metric to be optimized.
 
-% TODO Heterogeneous architectures, describe variety.
-% NUMA, memory centric...
-%
-% Different levels of a program's generation and usage can be optimized.
-% Some levels take longer to complete, expensive to measure.
-% Some architectures take longer to compile, expensive to measure.
-% Some problems take longer to solve, expensive to measure.
-% Show some example: (Genetic Algorithm, Sorting, Compiler Flag, LLVM Pass)?
-%
-% Example: Sorting in GPUs, CPUs, Distributed, ...
-%
-% How to autotune complex systems such as HACC?
-% How to autotune programs for a supercomputer like the Titan?
-% How to autotune FPGA compilation?
-%
-% Current autotuning approaches:
-% Current approaches require multiple evaluations.
-% Current approaches have no support for parallel and distributed computing.
-% Current approaches do not target multiple levels of stack.
-%
-% A new approach:
-% New approach must leverage distributed and parallel computing power.
-% New approach must target multiple levels of compile stack.
-% New approach must take care of expensive to measure cases.
+\todo[inline,author=Pedro,color=cyan]{Describe variety of heterogeneous
+architectures: NUMA, memory centric, ...}
 
-A: \citet{bilmes1997optimizing}
+\todo[inline,author=Pedro,color=cyan]{Show some example: (Genetic Algorithm,
+Sorting, Compiler Flag, LLVM Pass)?}
+
+Different steps of a program's development and deployment can be optimized.
+Some steps can be more expensive to measure and therefore optimize.  For
+example, access to certain architectures might be costly and limited, or it may
+take a long time to solve certain problem instances.
+\todo[inline,author=Pedro,color=cyan]{Examples: GPU \& CPU compilation,
+FPGA hardware generation, compilation for supercomputers, ...}
+
+\todo[inline,author=Pedro,color=cyan]{How to autotune:
+ Complex systems, such as HACC?;
+ Programs for a supercomputer, like the Titan?;
+ FPGA compilation?;
+ Hardware and software co-design?}
+
+\todo[inline,author=Pedro,color=cyan]{Current autotuning approaches:
+ Require multiple expensive evaluations;
+ Do not leverage parallel and distributed computing;
+ Not flexible to target multiple development and execution steps}
 
 \section{Objectives and Expected Contributions}
 \label{sec:contributions}
+
+\todo[inline,author=Pedro,color=cyan]{A new approach must:
+ Leverage distributed and parallel computing power;
+ Target different steps of development and execution;
+ Handle expensive to measure cases efficiently}
+
+\todo[inline,author=Pedro,color=cyan]{Our expected contribution
+is advancing the state-of-the-art of autotuning tools,
+leveraging distributed and parallel computing to perform
+autotuning in a variety of HPC domains}
+
+\todo[inline,author=Pedro,color=cyan]{Briefly describe the
+Julia system}
 
 \section{Efforts for a Reproducible and Open Research}
 
@@ -103,3 +113,6 @@ provided a better foundation for our conclusions and expected contributions.
 
 \section{Text Structure}
 \label{sec:org}
+
+\todo[inline,author=Pedro,color=cyan]{Describe each chapter (and
+the papers attached to end of the document?)}
