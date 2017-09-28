@@ -9,26 +9,61 @@ and Python that enable the use of GPUs in different parallel computing domains.
 The Compute Unified Device Architecture (CUDA) is a GPGPU platform introduced
 by the NVIDIA corporation.
 
-We implemented an autotuner for the CUDA compiler using the use
-the OpenTuner framework~\cite{ansel2014opentuner} and used it to search for the
+The objective of this case study was to measure the performance improvements
+that a general-purpose autotuning strategy would achieve for CUDA compiler
+parameters. We implemented an autotuner for the CUDA compiler using the use the
+OpenTuner framework~\cite{ansel2014opentuner} and used it to search for the
 compilation parameters that optimize the performance of 17 heterogeneous GPU
 applications, 12 of which are from the Rodinia Benchmark
 Suite~\cite{che2009rodinia}.  We used 3 different NVIDIA GPUs in the
 experiments, the Tesla K40, the GTX 980 and the GTX 750.
 
-Our main contribution is to show that it is possible to optimize code written
-for GPUs by automatically tuning just the parameters of the CUDA compiler. We
-propose a thorough methodology for analysing result correctness and checking
-for invalid flag combinations and compilation errors.  The optimization
-achieved by autotuning often beat the compiler high-level optimization options,
-such as \texttt{-O1}, \texttt{-O2} and \texttt{-O3}.  The autotuner found
-compilation options that achieved over 2x speedup for the \textit{Gaussian
-Elimination} problem from the Rodinia Benchmark Suite, almost 2x speedup for
-\emph{Heart Wall} problem, also from Rodinia, and over 4x speedup for one of
-the matrix multiplication optimizations in our benchmark, in comparison with
-the high-level compiler optimizations.  We also show that the compilation
-parameters that optimize an algorithm for a given GPU architecture will not
-always achieve the same performance in different hardware.
+The optimization achieved by autotuning often beat the compiler high-level
+optimization options, such as \texttt{-O1}, \texttt{-O2} and \texttt{-O3}.  The
+autotuner found compilation options that achieved over 2x speedup for the
+\textit{Gaussian Elimination} problem from the Rodinia Benchmark Suite, almost
+2x speedup for \emph{Heart Wall} problem, also from Rodinia, and over 4x
+speedup for one of the matrix multiplication optimizations in our benchmark, in
+comparison with the high-level compiler optimizations.  We also show that the
+compilation parameters that optimize an algorithm for a given GPU architecture
+will not always achieve the same performance in different hardware.
+
+\subsection{Small Measurement Time}
+\label{subsec:smalltime}
+
+In the larger context of this qualifying work the most important characteristic
+of this autotuning experiment is the short time it takes to compile and run
+each application in the benchmark. Most applications, especially the ones with
+smaller input sizes, had a \textit{small measurement time}.
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=.65\textwidth]{./images/overview_gpus}
+    \caption{Autotuner Representation}
+    \label{fig:overview-gpus}
+\end{figure}
+
+Figure~\ref{fig:overview-gpus} shows a representation of the autotuner
+implemented in this study. The autotuner, in light blue, receives as input a
+Rodinia application, a target GPU, input data for the application in the order
+of Gigabytes and a search space composed of NVCC flags. The autotuner outputs
+a flag selection subject to its input application and GPU.
+
+Since in this study it was fast to compile and measure a program's performance,
+an autotuner iteration is shown in Figure~\ref{fig:overview-gpus} to last in
+the order of seconds. We could therefore test thousands of flag combinations
+per hour in a sequential autotuner, exploring enough of the search space to
+achieve the speedups reported.
+
+The tool we used to implement our autotuner was not able to run measurements in
+distributed environments. Therefore our autotuner could not deploy measurements
+of different configurations on identical GPUs on the same network. An autotuner
+with such capability would enable the exploration of more configurations in the
+same time.
+
+\subsection{A Tool for Compiler Autotuning}
+\todo[inline,author=Pedro,color=cyan]{Describe our new NVCC autotuner presented
+at the NVIDIA workshop. This could be left to the last chapter.}
 
 \subsection{Background}
 
@@ -45,42 +80,12 @@ and cache memory sizes, processor clock frequency, memory bandwidth, unified
 memory spaces and dynamic kernel launches.  Those differences are summarized in
 the Compute Capability (C.C.) of an NVIDIA GPU.
 
-%\begin{figure}[htpb]
-% \centering
-% \includegraphics[scale=.62]{./images/GPUthreads.eps}
-% \caption{Memory hierarchy of threads in a kernel executed in Kepler architecture}
-% \label{fig:GPUthreads}
-%\end{figure}
-
 The hierarchical memory of an NVIDIA GPU contains global and shared portions.
 Global memory is big, off-chip, has a high latency and can be accessed by all
 threads of the kernel.  Shared memory is small, on-chip, has a low-latency and
 can be accessed only by threads in a same SM.  Each SM has its own shared L1
 cache, and new architectures have coherent global L2 caches.  Optimizing thread
 accesses to different memory levels is essential to achieve good performance.
-%Figure \ref{fig:GPUthreads} shows the memory access hierarchy in a Kepler
-%architecture.
-
-%\begin{table}[htpb]
-%\centering
-%\small
-%\begin{tabular}{| l | c | c | c  |  c | c |}
-%\hline \hline%inserts double horizontal lines
-% \textbf{Type} & \textit{\textbf{On Chip}}&\textbf{
-%Cacheable}&\textbf{Instructions}&\textbf{Visibility}\\ \hline
-%Registers&Yes&No&Load/Store&\textit{Thread}\\ \hline
-%Shared&Yes&No&Load/Store&Block\\ \hline
-%Cache L1&Yes&No&Load/Store&Block\\ \hline
-%Constant&No&Yes&Load&\textit{Kernels}\\ \hline
-%Texture&No&Yes&Load/Store&\textit{Kernel}\\ \hline
-%Local&No&Yes&Load/Store&\textit{Thread}\\ \hline
-%Cache L2&No&Yes&Load/Store&\textit{Kernel}\\ \hline
-%Global&No&Yes&Load/Store&\textit{Kernel}\\ \hline
-%\hline
-%\end{tabular}
-%\caption{Memory types in GPUs supported by CUDA}
-%\label{tab:memories} % is used to refer this table in the text
-%\end{table}
 
 \subsubsection{Compute Unified Device Architecture (CUDA)}
 
@@ -133,36 +138,47 @@ sparse matrix representations in GPUs.
 \subsection{Autotuner \& Search Space}
 \label{sec:tunersearch}
 
-Our implementation uses the OpenTuner framework's native parameter types to
-represent CUDA compilation options. Flags and multi-valued parameters are
-represented as single \emph{EnumParameter}s, and parameters that accept
-numerical values are represented as \emph{IntegerParameter}s.  The same
-encoding was used in Jansel \emph{et al.}~\cite{ansel2014opentuner} in the
-implementation of an autotuner for GCC compilation parameters.
+This section discusses our autotuner implementation and the
+search space of NVCC compiler parameters.
+
+\subsubsection{Autotuner}
 
 The autotuner we implemented used the \textit{multi-armed bandit with sliding
 window, area under the curve credit assignment} meta-technique, simply named
 \textit{AUC Bandit}.  AUC Bandit is OpenTuner's core
 meta-technique~\cite{ansel2014opentuner}, and its ensemble of search techniques
 is composed by implementations of the Nelder-Mead algorithm and three
-variations of genetic algorithms.  There is no guarantee that any tuning run
-will find the optimal solution, but the variance of the results found by
-different tuning runs decreases as tuning time progresses, as is shown in the
-results from the original OpenTuner paper~\cite{ansel2014opentuner}.
+variations of genetic algorithms.  Figure~\ref{fig:gpu-stack} shows a
+simplified version of the steps necessary to generate the object code that will
+be measured later.
 
-The search in the space of CUDA options potentially generates invalid parameter
-combinations due to incompatible flags or architecture restrictions.  To
-prevent these invalid configurations from misguiding the search techniques we
-first modified all programs in the benchmark so that they verify the
-correctness of their output using previously computed correct outputs. Then we
-made the autotuner check for errors during compilation and execution whenever
-testing a new configuration and assign a penalty value when finding errors.
-Errors could be used to acquire knowledge about the interactions and
-incompatibilities between parameters, which would enable the autotuner to prune
-the search space and find better solutions faster.  The final verification step
-used to validate an autotuned result was to manually check the output of the
-CUDA toolkit's \texttt{nvprof} profiler, certifying that the CUDA kernels were
-launched and executed properly.
+The code for our autotuner and all the experiments and results is
+available\footnote{Hosted at GitHub:
+\url{https://github.com/phrb/gpu-autotuning} [Accessed on 10 February 2015]}
+under the GNU General Public License.
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=.4\textwidth]{./images/gpu-stack}
+    \caption{Simplified view of NVCC compilation}
+    \label{fig:gpu-stack}
+\end{figure}
+
+\subsubsection{Search Space}
+
+Table~\ref{tab:flags} details the subset of the CUDA configuration parameters
+used in the experiments~\footnote{Adapted from:
+\url{http://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc} [Accessed on 10
+February 2015]}.  The parameters target different compilation steps: the
+\emph{PTX} optimizing assembler; the \emph{NVLINK} linker; and the \emph{NVCC}
+compiler.  We compared the performance of programs generated by tuned
+parameters with the standard compiler optimizations, namely
+\texttt{--opt-level=0,1,2,3}.  Different \texttt{--opt-level}s could also be
+selected during tuning.  We did not use compiler options that target the host
+linker or the library manager since they do not affect performance.  The size
+of the search space defined by all possible combinations of the flags in
+Table~\ref{tab:flags} is in the order of $10^{6}$ making hand-optimization or
+exhaustive searches very time consuming.
 
 \begin{table}[htpb]
     \centering
@@ -188,25 +204,6 @@ launched and executed properly.
     \label{tab:flags}
 \end{table}
 
-The code for our autotuner and all the experiments and results is
-available\footnote{Hosted at GitHub:
-\url{https://github.com/phrb/gpu-autotuning} [Accessed on 10 February 2015]}
-under the GNU General Public License.
-
-Table~\ref{tab:flags} details the subset of the CUDA configuration parameters
-used in the experiments~\footnote{Adapted from:
-\url{http://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc} [Accessed on 10
-February 2015]}.  The parameters target different compilation steps: the
-\emph{PTX} optimizing assembler; the \emph{NVLINK} linker; and the \emph{NVCC}
-compiler.  We compared the performance of programs generated by tuned
-parameters with the standard compiler optimizations, namely
-\texttt{--opt-level=0,1,2,3}.  Different \texttt{--opt-level}s could also be
-selected during tuning.  We did not use compiler options that target the host
-linker or the library manager since they do not affect performance.  The size
-of the search space defined by all possible combinations of the flags in
-Table~\ref{tab:flags} is in the order of $10^{6}$ making hand-optimization or
-exhaustive searches very time consuming.
-
 \subsection{Experiments}
 
 This section presents the GPU testbed, the algorithm benchmark, the
@@ -216,11 +213,7 @@ autotuner implementation and its search space.
 
 To be able to show that different GPUs require different options to improve
 performance, and that it is possible to achieve speedups in different hardware,
-we wanted to tune our benchmark for different NVIDIA microarchitectures.  We
-selected the Tesla K40, the GTX 750 and the GTX 980.  Using the GK110B chip,
-the Tesla K40 is a Kepler microarchitecture GPU, the oldest GPU of the testbed.
-The GTX 750 is the first Maxwell microarchitecture GPU and uses the GM107 chip.
-The GTX 980 is the latest Maxwell GPU and uses the GM204 chip.
+we wanted to tune our benchmark for different NVIDIA microarchitectures.
 Table~\ref{tab:GPUs} summarizes the hardware characteristics of the three GPUs.
 
 \begin{table}[thpb]
@@ -244,66 +237,33 @@ contains 4 optimization strategies for \emph{matrix multiplication} (counted as
 a single application), 1 vector addition problem, 1 solution for the
 \emph{maximum sub-array problem}~\cite{ferreira2014parallel}, 2 \emph{sorting}
 algorithms and 12 applications from the Rodinia Benchmark
-Suite~\cite{che2009rodinia}.  The remainder of this section discusses some
-details of these algorithms, and introduces a three-letter code for each
-application, used in section ~\ref{sec:GPUresults}.
+Suite~\cite{che2009rodinia}.
 
-\paragraph{Matrix Multiplication} We used four different memory access
-optimizations: global memory with non-coalesced accesses (MMU); global memory
-with coalesced accesses (MMG); shared memory with non-coalesced accesses to
-global memory (MSU); and shared memory with coalesced accesses to global memory
-(MMS).  All performance measurements for these optimizations used square
-matrices, with $N = 8192$.  The run-time complexity for a sequential matrix
-multiplication algorithm using two matrices of size $N\times{}N$ is $O(N^3)$.
-In a CUDA application with $N^2$ threads, the run-time complexity is $O(N)$
-
-\paragraph{Vector Addition Algorithm} For two vectors $A$ and $B$, the Vector
-Addition (VAD) $C = A + B$ is obtained by adding the corresponding components.
-In a GPU algorithm each thread performs an addition of a position of the
-vectors $A$ and $B$ and stores the result in the vector $C$.  The number of GPU
-threads used in this problem is equal to the size of the vectors.  All
-performance measurements for this problem used arrays of size $N = 4194304$.
-
-\paragraph{Maximum Sub-Array Problem} Let $X$ be a sequence of $N$ integer
-numbers $(x_1, ... , x_N)$.  The Maximum Sub-Array Problem (MSA) consists of
-finding the contiguous sub-array within $X$ which has the largest sum of
-elements. The solution for this problem is frequently used in computational
-biology for gene identification, analysis of sequences of protein and DNA, and
-identification of hydrophobic regions.  The maximum sub-array problem can be
-solved sequentially in $O(N)$ comparisons, and in $O(N/t)$
-with a parallel solution~\cite{alves2004bsp}, where $t$ is the number of
-threads.
-
-The implementation~\cite{ferreira2014parallel} used in this study creates a
-kernel with 4096 threads, divided in 32 blocks with 128 threads.  The $N$
-elements are divided in intervals of $N/t$, and each block receives a portion
-of the array.  The blocks use the shared memory for storing segments, which are
-read from the global memory using coalesced accesses. Each interval is reduced
-to a set of 5 integer variables, which are stored in vector of size $5 \times
-t$ in global memory. This vector is then transferred to the CPU memory for
-later processing.  All performance measurements for the Maximum Sub-array
-Problem used arrays with $N = 1073741824$.
-
-\paragraph{Sorting Algorithms} The benchmark contains two sorting algorithms,
-quicksort (QKS, with $N = 65536$) and bitonicsort (BTN, with $N =
-4194304$)~\footnote{Obtained from:
-\url{http://digitalcommons.providence.edu/student\_scholarship/7/} [Accessed on
-10 February 2015]}.  Both algorithms sort random numbers sampled from a uniform
-distribution.
-
-\paragraph{Rodinia Benchmark Suite} Rodinia's~\cite{che2009rodinia}
-applications have implementations for multi-core CPUs and GPUs using three
-parallel programming models (OpenMP, CUDA and OpenCL). The benchmark was
-devised for heterogenous parallel computing research and its applications
-represent different high-level domains or behaviours, called the Berkeley
-dwarfs~\cite{asanovic2006landscape, asanovic2009view}.
 Table~\ref{tab:Rodinia} shows the Rodinia applications contained in our
-benchmark.
+benchmark and their correspondent three-letter code.  The other applications in
+the benchmark were CUDA implementations of the following:
+
+\begin{itemize}
+    \item Matrix multiplications using:
+        \begin{itemize}
+             \item Global memory with non-coalesced accesses (MMU)
+             \item Global memory with coalesced accesses (MMG)
+             \item Shared memory with non-coalesced accesses to global memory
+                 (MSU)
+             \item Shared memory with coalesced accesses to global memory (MMS)
+        \end{itemize}
+    \item Simple vector addition algorithm (VAD)
+    \item Solution~\cite{alves2004bsp,ferreira2014parallel} for the Maximum
+        Sub-Array Problem (MSA)
+    \item Quicksort (QKS) and Bitonicsort (BTN)~\footnote{Obtained from:
+        \url{http://digitalcommons.providence.edu/student\_scholarship/7/}
+        [Accessed on 10 February 2015]}
+\end{itemize}
 
 \begin{table}[htpb]
     \centering
     \footnotesize
-        \begin{tabular}{ccc}
+        \begin{tabular}{lll}
             \toprule
             \textbf{Application} & \textbf{Berkeley Dwarf\cite{asanovic2009view}} & \textbf{Domain} \\\midrule
             B+Tree (BPT) & Graph Traversal& Search \\\midrule
@@ -539,27 +499,8 @@ did not contain an equal number of instances. The difficulty of finding
 associations between compiler optimizations, applications and GPUs justifies
 the autotuning of compiler parameters in the general case.
 
-
-\subsection{Small Measurement Time}
-\label{subsec:smalltime}
-\todo[inline,author=Pedro,color=cyan]{Discuss the small measurement times
-for this study, presenting the overview figure for this case.}
-
-\subsection{A Tool for Compiler Autotuning}
-\todo[inline,author=Pedro,color=cyan]{Describe our new NVCC autotuner presented
-at the NVIDIA workshop. This could be left to the last chapter.}
-
-\subsection{Summary and Future Work}
+\subsection{Summary}
 \label{subsec:GPUconcl}
-
-We used the OpenTuner framework to implement an autotuner for the search space
-defined by the parameters of the CUDA compiler. We composed a benchmark of 17
-heterogeneous applications and compared their performance in one Kepler and two
-Maxwell microarchitecture GPUs.  Although the autotuner often beat the
-compiler’s high-level optimizations it still underperformed for some problems.
-We achieved over 2x speedup for Gaussian Elimination (GAU) and almost 2x
-speedup for Heart Wall (HWL),  and over 4x speedup for a matrix multiplication
-algorithm (MMS).
 
 This study showed that it is possible to improve the performance of GPU
 applications applying empirical and automatic tuning techniques. Our results
@@ -568,16 +509,9 @@ techniques by showing that different compilation options have to be selected in
 order to achieve performance improvements in different GPUs and that it is
 difficult to associate compiler optimization parameters, applications and GPUs.
 
-Future work will include application parameters and options for the GCC
-compiler, which also composes the CUDA compilation chain.  We would also like
-to apply the Programming by Optimization~\cite{hoos2012programming} design
-paradigm for GPU and parallel programming. We will continue to apply clustering
-algorithms to future experiments and we will perform more comprehensive
-experiments to explore the search space of CUDA compiler parameters. We hope
-these approaches will enable us to provide valuable guidelines for CUDA
-parameter selection in the future.
+An interesting direction for future studies is including application parameters
+and options for the GCC compiler, which also composes the CUDA compilation
+chain. Section~\ref{} will discuss our efforts on spreading the autotuning
+of CUDA compiler parameters to the NVIDIA CUDA programmer community.
 
-To the best of our knowledge, this is the first work that applied autotuning
-techniques to CUDA compiler parameters for GPU applications using the OpenTuner
-framework, comparing the speedup achieved in different GPU architectures for
-heterogeneous applications.
+\todo[inline,author=Pedro,color=cyan]{Fix this reference}
