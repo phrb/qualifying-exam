@@ -1,30 +1,27 @@
 \section{Selecting Parameters for High-Level Synthesis for FPGAs}
 \label{sec:FPGA}
 
-The slowing of Moore's law and the breakdown of Dennard's scaling made it
-harder for homogeneous processors to deliver the performance and energy
-efficiency needed by current and future applications. This motivated a
-ubiquitous effort to adapt and use heterogeneous architectures such as GPUs and
-FPGAs as hardware accelerators.  GPUs have been widely used for
-High-Performance Computing tasks but their architecture has limited use in
-latency sensitive applications, where FPGAs excel.  FPGAs have been
-traditionally programmed using Hardware Description Languages, such as Verilog
-and VHDL, and were used to emulate ASICs and high-end network switches.
-
-It is a challenge for software engineers to leverage FPGA capabilities.  This
-became increasingly relevant by the adaptation of FPGAs for data
+FPGAs are reprogrammable circuits that enable writing specialized hardware
+specifications for a variety of applications using the same chip.
+High-Performance Computing tasks that require low power and latency
+increasingly switch to FPGAs from GPUs. Hardware specifications are written
+using low-level languages such as Verilog and VHDL, making a challenge for
+software engineers to leverage FPGA capabilities.  This became increasingly
+relevant by the adaptation of FPGAs for data
 centers~\cite{caulfield2016cloud}\footnote{\url{https://cloud.baidu.com/product/fpga.html}
 [Accessed in 28/07/2017], \\ and
 \url{https://aws.amazon.com/ec2/instance-types/f1/} [Accessed in 28/07/2017]},
-a field dominated by software engineers. Essential support for software
-engineers can be provided by High-Level Synthesis (HLS), the process of
-generating hardware descriptions from high-level code.  HLS lowers the
-complexity of hardware design from the point of view of software engineering
-and has become increasingly viable as part of the FPGA design methodology, with
-support from vendor HLS tools~\cite{singh2011implementing, feist2012vivado} for
-C/C++ and OpenCL. The benefits of higher-level abstractions come with the cost
-of decreased application performance, making FPGAs less viable as accelerators.
-Thus, optimizing HLS still requires domain expertise and exhaustive or manual
+a field dominated by software engineers.
+
+Essential support for software engineers can be provided by High-Level
+Synthesis (HLS), the process of generating hardware descriptions from
+high-level code.  HLS lowers the complexity of hardware design from the point
+of view of software engineering and has become increasingly viable as part of
+the FPGA design methodology, with support from vendor HLS
+tools~\cite{singh2011implementing, feist2012vivado} for C/C++ and OpenCL. The
+benefits of higher-level abstractions come with the cost of decreased
+application performance, making FPGAs less viable as accelerators.  Thus,
+optimizing HLS still requires domain expertise and exhaustive or manual
 exploration of design spaces and configurations.
 
 High-Level Synthesis is an \NP{}-Complete problem~\cite{canis2015legup} and a
@@ -39,31 +36,84 @@ receives code in LLVM's intermediate representation as input and produces as
 output a hardware description in Verilog.  LegUp exposes configuration
 parameters of its HLS process, set with a configuration file.
 
-In this study the program to be configured is LegUp and the search space is
-composed of approximately $10^{126}$ possible combinations of HLS parameters.
-Such a large search space is unfeasible to search exhaustively or by hand.
-OpenTuner~\cite{ansel2014opentuner} is an autotuning framework that combines
-search techniques to explore complex search spaces. It determines computational
-resources to each technique based on its previous results.
-
-We present an autotuner for LegUp HLS parameters implemented using the
-OpenTuner framework.  The autotuner targeted 8 hardware metrics obtained from
+This section presents an autotuner for LegUp HLS parameters implemented using
+the OpenTuner framework.  The autotuner targeted 8 hardware metrics obtained
+from
 Quartus~\footnote{\url{https://www.altera.com/products/design-software/fpga-design/quartus-prime/overview.html}
 [Accessed in 18/07/2017]}, for applications of the CHStone HLS benchmark
-suite~\cite{hara2008chstone} in the Intel StratixV FPGA.  One of the obstacles
-we faced was making accurate predictions for hardware metrics from a set of HLS
-parameters. We decided to run our autotuner with the metrics reported by the
-lengthier process of hardware synthesis instead.
+suite~\cite{hara2008chstone} in the Intel StratixV FPGA.  The program to be
+configured here is LegUp and the search space is composed of approximately
+$10^{126}$ possible combinations of HLS parameters.  Such a large search space
+is unfeasible to search exhaustively or by hand.
 
-The main contribution is an open-source-based, flexible and virtualized
-autotuning methodology for High-Level Synthesis for FPGAs. Using this
-methodology software engineers can write code in high-level languages and
-obtain an optimized hardware description that optimizes different objectives by
-assigning relative weights to hardware metrics.  Our autotuner's virtualized
-implementation enables deployment in distributed environments.  We present data
-showing that our autotuner found optimized HLS parameters for CHStone
-applications that decreased the \textit{Weighted Normalized Sum} (\textbf{WNS})
-of hardware metrics by up to $21.5\%$ on average, and $10\%$ on average.
+One of the obstacles we faced was making accurate predictions for hardware
+metrics from a set of HLS parameters. We decided to run our autotuner with the
+metrics reported by the lengthier process of hardware synthesis instead.  Our
+autotuner's virtualized implementation enables deployment in distributed
+environments.  We present data showing that our autotuner found optimized HLS
+parameters for CHStone applications that decreased the \textit{Weighted
+Normalized Sum} (\textbf{WNS}) of hardware metrics by up to $21.5\%$ on
+average, and $10\%$ on average.
+
+\subsection{Large Measurement Time}
+\label{sec:bigtime}
+
+The defining characteristic of this autotuning experiment is the potentially
+large time it takes to synthesize hardware from specifications in hardware
+description languages, which takes from minutes to hours. The process of
+generating those specifications from high-level C code is much faster in
+comparison, taking only seconds. In contrast to the previous section, the
+applications used in this autotuning experiment had a \textit{large measurement
+time}. Section~\ref{sec:FPGAautotuner} describes in more detail the High-Level
+Synthesis process.
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=.65\textwidth]{./images/overview_fpgas_small}
+    \caption{Autotuner representation and time scale of our experiments}
+    \label{fig:overview-fpgas-small}
+\end{figure}
+
+Figure~\ref{fig:overview-fpgas-small} shows a representation of our autotuner
+for this experiment, and illustrates its time scale.  The autotuner,
+represented by the light blue box, receives as input a CHStone application, a
+target FPGA, input data for the application in the order of Kilobytes and a
+search space composed of LegUp's HLS parameters. The autotuner outputs an HLS
+configuration for each application and FPGA.
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=.65\textwidth]{./images/overview_fpgas_big}
+    \caption{Autotuner representation and time scale of more complex FPGA
+    applications}
+    \label{fig:overview-fpgas-big}
+\end{figure}
+
+The applications from CHStone, presented further in Table~\ref{tab:chstone},
+are very simple benchmark applications, and generating hardware for them takes
+time in the order of minutes. Generating hardware for more complex FPGA
+applications can take several hours. Figure~\ref{fig:overview-fpgas-big} shows
+a representation and time scale for an autotuner that targets complex FPGA
+applications. Each iteration now takes several hours, and limits the
+configurations that can be tested per hour.
+
+We worked around this limitation in this experiment by implementing a
+virtualized autotuner using Docker containers, which enabled parallel
+measurements of different configurations. The lack of support in OpenTuner for
+a distributed execution of measurements also limited this experiment, since our
+already virtualized approach could explore more search space in the same time
+if it was deployed in more connected machines.
+
+Applications with large measurement time still present a challenge for our
+current autotuning approach, even with a tool that can achieve distributed
+execution of measurements, because the quality of the solutions still depend on
+the velocity of exploration of the search space.  To mitigate this problem and
+enable the autotuning of applications with large measurement times, which can
+be thought of as\textit{expensive-to-evaluate functions}, we are going to study
+the development of suitable experimental designs. We will work in this
+direction in collaboration and supervision of professors Arnaud Legrand, Brice
+Videau and Jean-Marc Vincent from the Université de Grenoble Alpes, in
+Grenoble, France.
 
 \subsection{Background}
 \label{sec:FPGAbackground}
@@ -103,6 +153,7 @@ Vanderbauwhede~\cite{nabi2016fast} present a model for performance and resource
 utilization for designs based on an intermediate representation.
 
 \subsection{Autotuner \& Search Space}
+\label{sec:FPGAautotuner}
 
 This section describes our autotuner implementation, the LegUp HLS parameters
 selected for tuning, and the autotuning metrics used to measure the quality of
@@ -122,15 +173,12 @@ LegUp~\cite{canis2015legup} HLS parameters, according to our cost function, for
     \label{fig:fpga-stack}
 \end{figure}
 
-The autotuner used a combination of four techniques: two variations of greedy
-genetic algorithms, a differential evolution algorithm and an implementation of
-the Nelder-Mead method.  Whenever a good set of parameters is found it is
-shared between techniques and they update their local values. Computational
-resources were shared between search techniques according to their past
-results. The algorithm used to share resources was the \textit{Multi-Armed
-Bandit with sliding window, Area Under the Curve credit assignment} (MAB AUC).
-We refer the reader to the OpenTuner paper~\cite{ansel2014opentuner} for a
-detailed description.
+Figure \ref{fig:fpga-stack} shows the steps to generate a hardware description
+from C code. It also shows the Quartus steps to generate bitstreams from
+hardware descriptions and to obtain the hardware metrics we targeted. Our
+autotuner used LegUp's HLS parameters as the search space, but it completed the
+hardware generation process to obtain metrics from Quartus, as represented by
+blue highlights in Figure \ref{fig:fpga-stack}.
 
 \begin{figure}[htpb]
     \centering
@@ -138,13 +186,6 @@ detailed description.
     \caption{Autotuner Setup}
     \label{fig:autotuner}
 \end{figure}
-
-Figure \ref{fig:fpga-stack} shows the steps to generate a hardware description
-from C code. It also shows the Quartus steps to generate bitstreams from
-hardware descriptions and to obtain the hardware metrics we targeted. Our
-autotuner used LegUp's HLS parameters as the search space, but it completed the
-hardware generation process to obtain metrics from Quartus, as represented by
-blue highlights in Figure \ref{fig:fpga-stack}.
 
 Figure \ref{fig:autotuner} shows our setup using Docker containers running
 LegUp and Quartus. This virtualized setup enabled the portable installation of
@@ -193,17 +234,16 @@ Type & \multicolumn{1}{c}{Parameters} \\ \midrule
 \subsubsection{Autotuning Metrics}
 \label{sec:metrics}
 
-LegUp does not provide accurate metric estimates for its HLS process. To obtain
-values for hardware metrics we needed to perform the synthesis, mapping and
-place \& route steps. We used Quartus to do so, and selected 8 hardware metrics
-reported by Quartus to compose our cost or fitness function. From the fitter
-summary we obtained 6 metrics. \textit{Logic Utilization} (\textit{LUT})
-measures the number of logic elements and is composed of Adaptive Look-Up Table
-(ALUTs), memory ALUTs, logic registers or dedicated logic registers.  The
-\textit{Registers} (\textit{Regs.}), \textit{Virtual Pins} (\textit{Pins}),
-\textit{Block Memory Bits} (\textit{Blocks}), \textit{RAM Blocks}
-(\textit{BRAM}) and \textit{DSP Blocks} (\textit{DSP}) metrics measure the
-usage of the resources indicated by their names.
+To obtain values for hardware metrics we needed to perform the synthesis,
+mapping and place \& route steps. We used Quartus to do so, and selected 8
+hardware metrics reported by Quartus to compose our cost or fitness function.
+From the fitter summary we obtained 6 metrics. \textit{Logic Utilization}
+(\textit{LUT}) measures the number of logic elements and is composed of
+Adaptive Look-Up Table (ALUTs), memory ALUTs, logic registers or dedicated
+logic registers.  The \textit{Registers} (\textit{Regs.}), \textit{Virtual
+Pins} (\textit{Pins}), \textit{Block Memory Bits} (\textit{Blocks}),
+\textit{RAM Blocks} (\textit{BRAM}) and \textit{DSP Blocks} (\textit{DSP})
+metrics measure the usage of the resources indicated by their names.
 
 From the timing analysis we obtained the \textit{Cycles} and \textit{FMax}
 metrics, used to compute the \textit{Wall-Clock Time} metric. This metric
@@ -304,10 +344,10 @@ applications we used. We were not able to compile the \textit{jpeg} CHStone
 application, so did not use it.  All experiments targeted the \textit{Intel
 StratixV 5SGXEA7N2F45C2} FPGA.
 
-\subsubsection{Experimental Design and Settings}
+\subsubsection{Experiments}
 
 We performed $10$ tuning runs of $1.5h$ for each application.  Section
-\ref{sec:results} presents the mean relative improvements for each application
+\ref{sec:FPGAresults} presents the mean relative improvements for each application
 and individual metric. The code needed to run the experiments and generate the
 figures, as well as the implementation of the autotuner and all data we
 generated, is open and hosted at
@@ -323,7 +363,7 @@ hosted at GitHub~\footnote{\url{https://github.com/phrb/legup-dockerfile}
 [Accessed in 18/07/2017]}.
 
 \subsection{Results}
-\label{sec:FPGAres}
+\label{sec:FPGAresults}
 
 This section presents summaries of the results from $10$ autotuning runs of
 $1.5h$ in the scenarios from Table \ref{tab:scenarios}.  Results are presented
@@ -368,7 +408,7 @@ application, and $56\%$ and $55\%$ smaller for \textit{Regs} and
 \textit{Cycles}, respectively, for the \textit{mips} application.
 
 We believe that the \textit{Random} start found worst values in most cases
-because of the size of the search space. We recommend that autotuners use
+because of the size of the search space. It is important that autotuners use
 default starting points specific to a given application and board.  The
 remaining results in this Section used the \textit{Default} starting point
 provided by LegUp.
@@ -474,38 +514,19 @@ shows the average decreases for each scenario.
     \label{fig:wns-comp}
 \end{figure}
 
-\subsection{Large Measurement Time}
-\label{sec:bigtime}
-\todo[inline,author=Pedro,color=cyan]{Discuss the larger time for this
-example, presenting the overview figure for this case. Discuss that
-more complex and bigger FPGA applications may take much longer. Relate
-this to the work to be performed in France.}
-
-\subsection{Summary and Future Work}
+\subsection{Summary}
 \label{sec:FPGAconcl}
 
-We used the OpenTuner framework to implement an autotuner for LegUp HLS
-parameters in 11 applications from the CHStone benchmark suite and targeting
-the StratixV FPGA. We evaluated the improvements achieved by the autotuner in 8
-hardware metrics and 4 optimization scenarios, using as optimization target the
-weighted normalized sum of the hardware metrics.
+The results of this experiment show that it is always valuable to have a
+sensible starting position for an autotuner. This becomes more relevant as the
+size of the search space and the number of targeted metrics increase.  The
+flexibility of our virtualized approach is evidenced by the results for
+different optimization scenarios.  Improvements in \textbf{WNS} increased when
+higher weights were assigned to metrics that express a coherent objective such
+as area, performance and latency.  The improvements of metrics related to those
+objectives also increased.
 
-Our results show that it is always valuable to have a sensible starting
-position for an autotuner, and this becomes more relevant as the size of the
-search space and the number of targeted metrics increase.  The flexibility of
-our approach is evidenced by the results for different optimization scenarios.
-Improvements in \textbf{WNS} increased when higher weights were assigned to
-metrics that express a coherent objective such as area, performance and
-latency.  The improvements of metrics related to those objectives also
-increased.
-
-As shown in Figure \ref{fig:wns-comp}, the autotuner decreased \textbf{WNS} by
-$7\%$ on average and up to $16\%$ in the \textit{Balanced} scenario, $9\%$ on
-average and up to $23\%$ for \textit{Area} scenario, $11\%$ on average and up
-to $23\%$ in the \textit{Performance} scenario and $10\%$ on average and up to
-$24\%$ in the \textit{Performance \& Latency} scenario.
-
-In future work we will study the impact of different starting points on the
+Future work in this direction will study the impact of different starting points on the
 final tuned values in each optimization scenario, for example we could start
 tuning for \textit{Performance} at the best autotuned \textit{Area} value.  We
 expected that starting positions tailored for each target application will

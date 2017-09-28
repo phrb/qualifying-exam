@@ -16,7 +16,8 @@ OpenTuner framework~\cite{ansel2014opentuner} and used it to search for the
 compilation parameters that optimize the performance of 17 heterogeneous GPU
 applications, 12 of which are from the Rodinia Benchmark
 Suite~\cite{che2009rodinia}.  We used 3 different NVIDIA GPUs in the
-experiments, the Tesla K40, the GTX 980 and the GTX 750.
+experiments, the Tesla K40, the GTX 980 and the GTX 750. We worked with
+Hewlett-Packard Enterprise on this project.
 
 The optimization achieved by autotuning often beat the compiler high-level
 optimization options, such as \texttt{-O1}, \texttt{-O2} and \texttt{-O3}.  The
@@ -39,15 +40,16 @@ smaller input sizes, had a \textit{small measurement time}.
 \begin{figure}[htpb]
     \centering
     \includegraphics[width=.65\textwidth]{./images/overview_gpus}
-    \caption{Autotuner Representation}
+    \caption{Autotuner representation and time scale of our experiments}
     \label{fig:overview-gpus}
 \end{figure}
 
 Figure~\ref{fig:overview-gpus} shows a representation of the autotuner
-implemented in this study. The autotuner, in light blue, receives as input a
-Rodinia application, a target GPU, input data for the application in the order
-of Gigabytes and a search space composed of NVCC flags. The autotuner outputs
-a flag selection subject to its input application and GPU.
+implemented in this study, and illustrates the time scale of our experiments.
+The autotuner, in light blue, receives as input a Rodinia application, a target
+GPU, input data for the application in the order of Gigabytes and a search
+space composed of NVCC flags. The autotuner outputs a flag selection subject to
+its input application and GPU.
 
 Since in this study it was fast to compile and measure a program's performance,
 an autotuner iteration is shown in Figure~\ref{fig:overview-gpus} to last in
@@ -186,19 +188,33 @@ exhaustive searches very time consuming.
         \begin{tabular}{lp{0.6\textwidth}}
         \toprule
         \textbf{Flag}&\textbf{Description} \\\midrule
-        \texttt{no-align-double} & Specifies that \texttt{malign-double} should not be passed as a compiler argument on 32-bit platforms. \textbf{Step}: NVCC \\ \midrule
-        \texttt{use\_fast\_math} & Uses the fast math library, implies \texttt{ftz=true}, \texttt{prec-div=false}, \texttt{prec-sqrt=false} and \texttt{fmad=true}. \textbf{Step}: NVCC \\\midrule
-        \texttt{gpu-architecture} & Specifies the NVIDIA virtual GPU architecture for which the CUDA input files must be compiled. \textbf{Step}: NVCC \textbf{Values}: \texttt{sm\_20}, \texttt{sm\_21}, \texttt{sm\_30}, \texttt{sm\_32}, \texttt{sm\_35}, \texttt{sm\_50}, \texttt{sm\_52} \\\midrule
-        \texttt{relocatable-device-code} & Enables the generation of relocatable device code. If disabled, executable device code is generated. Relocatable device code must be linked before it can be executed. \textbf{Step}: NVCC \\\midrule
-        \texttt{ftz} & Controls single-precision denormals support. \texttt{ftz=true} flushes denormal values to zero and \texttt{ftz=false} preserves denormal values. \textbf{Step}: NVCC \\\midrule
-        \texttt{prec-div} & Controls single-precision floating-point division and reciprocals. \texttt{prec-div=true} enables the IEEE round-to-nearest mode and \texttt{prec-div=false} enables the fast approximation mode. \textbf{Step}: NVCC \\\midrule
-        \texttt{prec-sqrt} & Controls single-precision floating-point squre root. \texttt{prec-sqrt=true} enables the IEEE round-to-nearest mode and \texttt{prec-sqrt=false} enables the fast approximation mode. \textbf{Step}: NVCC \\\midrule
-        \texttt{def-load-cache} & Default cache modifier on global/generic load. \textbf{Step}: PTX \textbf{Values}: \texttt{ca}, \texttt{cg}, \texttt{cv}, \texttt{cs} \\\midrule
-        \texttt{opt-level} & Specifies high-level optimizations. \textbf{Step}: PTX \textbf{Values}: \texttt{0 - 3} \\\midrule
-        \texttt{fmad} & Enables the contraction of floating-point multiplies and adds/subtracts into floating-point multiply-add operations (FMAD, FFMA, or DFMA). \textbf{Step}: PTX \\\midrule
-        \texttt{allow-expensive-optimizations} & Enables the compiler to perform expensive optimizations using maximum available resources (memory and compile-time). If unspecified, default behavior is to enable this feature for optimization level $\geqslant$O2. \textbf{Step}: PTX \\\midrule
-        \texttt{maxrregcount} & Specifies the maximum number of registers that GPU functions can use. \textbf{Step}: PTX \textbf{Values}: \texttt{16 - 64} \\\midrule
-        \texttt{preserve-relocs} & Makes the \texttt{PTX} assembler generate relocatable references for variables and preserve relocations generated for them in the linked executable. \textbf{Step}: NVLINK \\\midrule
+            \addlinespace{}
+        \texttt{no-align-double} & Specifies that \texttt{malign-double} should not be passed as a compiler argument on 32-bit platforms. \textbf{Step}: NVCC \\
+            \addlinespace{}
+        \texttt{use\_fast\_math} & Uses the fast math library, implies \texttt{ftz=true}, \texttt{prec-div=false}, \texttt{prec-sqrt=false} and \texttt{fmad=true}. \textbf{Step}: NVCC \\
+            \addlinespace{}
+        \texttt{gpu-architecture} & Specifies the NVIDIA virtual GPU architecture for which the CUDA input files must be compiled. \textbf{Step}: NVCC \textbf{Values}: \texttt{sm\_20}, \texttt{sm\_21}, \texttt{sm\_30}, \texttt{sm\_32}, \texttt{sm\_35}, \texttt{sm\_50}, \texttt{sm\_52} \\
+            \addlinespace{}
+        \texttt{relocatable-device-code} & Enables the generation of relocatable device code. If disabled, executable device code is generated. Relocatable device code must be linked before it can be executed. \textbf{Step}: NVCC \\
+            \addlinespace{}
+        \texttt{ftz} & Controls single-precision denormals support. \texttt{ftz=true} flushes denormal values to zero and \texttt{ftz=false} preserves denormal values. \textbf{Step}: NVCC \\
+            \addlinespace{}
+        \texttt{prec-div} & Controls single-precision floating-point division and reciprocals. \texttt{prec-div=true} enables the IEEE round-to-nearest mode and \texttt{prec-div=false} enables the fast approximation mode. \textbf{Step}: NVCC \\
+            \addlinespace{}
+        \texttt{prec-sqrt} & Controls single-precision floating-point squre root. \texttt{prec-sqrt=true} enables the IEEE round-to-nearest mode and \texttt{prec-sqrt=false} enables the fast approximation mode. \textbf{Step}: NVCC \\
+            \addlinespace{}
+        \texttt{def-load-cache} & Default cache modifier on global/generic load. \textbf{Step}: PTX \textbf{Values}: \texttt{ca}, \texttt{cg}, \texttt{cv}, \texttt{cs} \\
+            \addlinespace{}
+        \texttt{opt-level} & Specifies high-level optimizations. \textbf{Step}: PTX \textbf{Values}: \texttt{0 - 3} \\
+            \addlinespace{}
+        \texttt{fmad} & Enables the contraction of floating-point multiplies and adds/subtracts into floating-point multiply-add operations (FMAD, FFMA, or DFMA). \textbf{Step}: PTX \\
+            \addlinespace{}
+        \texttt{allow-expensive-optimizations} & Enables the compiler to perform expensive optimizations using maximum available resources (memory and compile-time). If unspecified, default behavior is to enable this feature for optimization level $\geqslant$O2. \textbf{Step}: PTX \\
+            \addlinespace{}
+        \texttt{maxrregcount} & Specifies the maximum number of registers that GPU functions can use. \textbf{Step}: PTX \textbf{Values}: \texttt{16 - 64} \\
+            \addlinespace{}
+        \texttt{preserve-relocs} & Makes the \texttt{PTX} assembler generate relocatable references for variables and preserve relocations generated for them in the linked executable. \textbf{Step}: NVLINK \\
+            \bottomrule
         \end{tabular}
     \caption{Description of flags in the search space}
     \label{tab:flags}
@@ -219,11 +235,11 @@ Table~\ref{tab:GPUs} summarizes the hardware characteristics of the three GPUs.
 \begin{table}[thpb]
     \centering
     \footnotesize
-    \begin{tabular}{cccccccc}
+    \begin{tabular}{llllllll}
         \toprule
         \textbf{Model}&\textbf{C.C.}&\textbf{Global Memory}&\textbf{Bus}&\textbf{Bandwidth}&\textbf{L2}&\textbf{Cores/SM}&\textbf{Clock} \\ \midrule
-        Tesla-K40&3.5&12 GB&384-bit&276.5 GB/s&1.5 MB&2880/15&745 Mhz \\ \midrule
-        GTX-750&5.0&1 GB&128-bit&86.4 GB/s&2 MB&512/4&1110 Mhz \\ \midrule
+        Tesla-K40&3.5&12 GB&384-bit&276.5 GB/s&1.5 MB&2880/15&745 Mhz \\
+        GTX-750&5.0&1 GB&128-bit&86.4 GB/s&2 MB&512/4&1110 Mhz \\
         GTX-980&5.2&4 GB&256-bit&224.3 GB/s&2 MB&2048/16&1216 Mhz \\ \bottomrule
     \end{tabular}
     \caption{Hardware specifications of the GPUs in the testbed}
@@ -266,17 +282,17 @@ the benchmark were CUDA implementations of the following:
         \begin{tabular}{lll}
             \toprule
             \textbf{Application} & \textbf{Berkeley Dwarf\cite{asanovic2009view}} & \textbf{Domain} \\\midrule
-            B+Tree (BPT) & Graph Traversal& Search \\\midrule
-            Back Propagation (BCK) & Unstructured Grid & Pattern Recognition \\\midrule
-            Breadth-First Search (BFS) & Graph Traversal & Graph Algorithms \\\midrule
-            Gaussian Elimination (GAU) & Dense Linear Algebra & Linear Algebra \\\midrule
-            Heart Wall (HWL) & Structured Grid & Medical Imaging \\\midrule
-            Hot Spot (HOT) & Structured Grid & Physics Simulation \\\midrule
-            K-Means (KMN) & Dense Linear Algebra & Data Mining \\\midrule
-            LavaMD (LMD) & N-Body & Molecular Dynamics \\\midrule
-            LU Decomposition (LUD) & Dense Linear Algebra & Linear Algebra \\\midrule
-            Myocyte (MYO) & Structured Grid & Biological Simulation \\\midrule
-            Needleman-Wunsch (NDL) & Dynamic Programming & Bioinformatics \\\midrule
+            B+Tree (BPT) & Graph Traversal& Search \\
+            Back Propagation (BCK) & Unstructured Grid & Pattern Recognition \\
+            Breadth-First Search (BFS) & Graph Traversal & Graph Algorithms \\
+            Gaussian Elimination (GAU) & Dense Linear Algebra & Linear Algebra \\
+            Heart Wall (HWL) & Structured Grid & Medical Imaging \\
+            Hot Spot (HOT) & Structured Grid & Physics Simulation \\
+            K-Means (KMN) & Dense Linear Algebra & Data Mining \\
+            LavaMD (LMD) & N-Body & Molecular Dynamics \\
+            LU Decomposition (LUD) & Dense Linear Algebra & Linear Algebra \\
+            Myocyte (MYO) & Structured Grid & Biological Simulation \\
+            Needleman-Wunsch (NDL) & Dynamic Programming & Bioinformatics \\
             Path Finder (PTF) & Dynamic Programming & Grid Traversal \\\bottomrule
         \end{tabular}
     \caption{Rodinia applications used in the experiments}
@@ -466,22 +482,22 @@ corresponding figures~\ref{fig:K40hwl}, \ref{fig:980gau}, \ref{fig:K40ptf} and
 \begin{table}[htpb]
     \centering
     \footnotesize
-    \begin{tabular}{ccc}
+    \begin{tabular}{lll}
         \toprule
         \textbf{Flag} & \textbf{Cluster 0 (17\%)} & \textbf{Cluster 1 (83\%)} \\\midrule
-        no-align-double               & on     & on     \\\midrule
-        use\_fast\_math               & on     & on     \\\midrule
-        preserve-relocs               & off    & off    \\\midrule
-        relocatable-device-code       & true   & false  \\\midrule
-        ftz                           & true   & true   \\\midrule
-        prec-div                      & true   & false  \\\midrule
-        prec-sqrt                     & true   & true   \\\midrule
-        fmad                          & false  & false  \\\midrule
-        allow-expensive-optimizations & false  & true   \\\midrule
-        gpu-architecture              & sm\_20 & sm\_50 \\\midrule
-        def-load-cache                & cv     & ca     \\\midrule
-        opt-level                     & 1      & 3      \\\midrule
-        maxrregcount                  & 42     & 44.6   \\\bottomrule
+        \texttt{no-align-double}               & on     & on     \\
+        \texttt{use\_fast\_math}               & on     & on     \\
+        \texttt{preserve-relocs}               & off    & off    \\
+        \texttt{relocatable-device-code}       & true   & false  \\
+        \texttt{ftz}                           & true   & true   \\
+        \texttt{prec-div}                      & true   & false  \\
+        \texttt{prec-sqrt}                     & true   & true   \\
+        \texttt{fmad}                          & false  & false  \\
+        \texttt{allow-expensive-optimizations} & false  & true   \\
+        \texttt{gpu-architecture}              & sm\_20 & sm\_50 \\
+        \texttt{def-load-cache}                & cv     & ca     \\
+        \texttt{opt-level}                     & 1      & 3      \\
+        \texttt{maxrregcount}                  & 42     & 44.6   \\\bottomrule
         \end{tabular}
     \caption{Parameter clusters for all Rodinia problems in the GTX 750}
     \label{tab:750RodiniaClusters}
