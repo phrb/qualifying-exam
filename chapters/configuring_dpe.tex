@@ -45,17 +45,6 @@ section presents our ongoing efforts on elaborating a search space for
 autotuning that represents the hardware design space of the DPE.  We are
 working with Hewlett-Packard Enterprise on this project.
 
-\subsection{Background}
-
-Many special-purpose accelerators have been proposed for neural network
-acceleration~\cite{chen2014dadiannao,chi2016prime,shafiee2016isaac}, for which
-dot-products are a fundamental operation.  Memristor-based DPEs have been shown
-to be particularly promising~\cite{shafiee2016isaac} for computation patterns,
-such as inference, where one of the operands is constant and frequently reused.
-The DPE accelerates this operation by programming the constant operand into a
-memristor crossbar and performing the computation in-situ with a streaming
-input.
-
 \subsection{Autotuning the Dot Product Engine}
 
 Figure~\ref{fig:dpe-stack} shows the steps needed to generate a DPE
@@ -107,6 +96,17 @@ running time may vary.
 
 This section presents the autotuner that we are implementing and the
 preliminary search space we developed with DPE hardware design parameters.
+
+\subsection{Background}
+
+Many special-purpose accelerators have been proposed for neural network
+acceleration~\cite{chen2014dadiannao,chi2016prime,shafiee2016isaac}, for which
+dot-products are a fundamental operation.  Memristor-based DPEs have been shown
+to be particularly promising~\cite{shafiee2016isaac} for computation patterns,
+such as inference, where one of the operands is constant and frequently reused.
+The DPE accelerates this operation by programming the constant operand into a
+memristor crossbar and performing the computation in-situ with a streaming
+input.
 
 \subsubsection{Autotuner}
 
