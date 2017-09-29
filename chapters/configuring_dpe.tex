@@ -110,12 +110,22 @@ preliminary search space we developed with DPE hardware design parameters.
 
 \subsubsection{Autotuner}
 
-\todo[inline,author=Pedro,color=cyan]{Describe autotuner implemented
-in StochasticSearch and its current limitations}
+We are implementing an autotuner for DPE hardware parameters.  We did not
+consider software parameters in this stage, since we are only targeting simple
+applications initially. The autotuner is being implemented using the autotuning
+library we are developing in the Julia language. The source code for the
+autotuner is available at GitHub~\footnote{Hosted at
+\url{https://github.com/phrb/dpe-emulate-autotuner}}The library is described in
+detail in chapter~\ref{chap:julia}.
+
+We did not want the autotuner's performance to impose limits to the size of the
+hardware design space that could be explored for the DPE. Using Julia's
+parallel and distributed programming interfaces, our library supports execution
+in many-core machines and distributed environments. Future experiments will
+partition the hardware design space between multiple instances of parallel
+search techniques, and target hardware metrics of tiles, IMAs and DACs/ADCs.
 
 \subsubsection{Search Space}
-
-\todo[inline,author=Pedro,color=cyan]{Fix these tables}
 
 Table \ref{tab:hard-soft-params} shows hardware and software parameters that
 define a design and reconfiguration space for the DPE. The impact of these
@@ -125,7 +135,7 @@ measurement strategies that can be optimized for the DPE.
 
 \begin{table}[htpb]
 \centering
-\begin{tabular}{@{}p{0.42\columnwidth}p{0.42\columnwidth}@{}}
+\begin{tabular}{@{}p{0.45\columnwidth}p{0.45\columnwidth}@{}}
 \toprule
 \textbf{Hardware} & \textbf{Software} \\ \midrule
 Routing tables, eDRAM buffer size; bit size in IMA, layer; bus width; crossbar \& IMA number in tiles & Memristor arrays, layers \& routing tables mapping  \\
@@ -142,8 +152,7 @@ ADC hardware configuration and heterogeneous tile designs & ADC and tile usage \
 \centering
 \begin{tabular}{@{}p{0.46\columnwidth}p{0.46\columnwidth}@{}}
 \toprule
-\multicolumn{2}{c}{\textit{Tuning Metrics and Measurements}} \\
-\multicolumn{1}{c}{\textit{Metrics}} & \multicolumn{1}{c}{\textit{Measurements}} \\ \midrule
+\textbf{Metrics} & \textbf{Measurements} \\ \midrule
 Bandwidth, latency, execution time, router area, throughput & Modelled area and power overhead for components \\
 \addlinespace
 Computation, power, crossbar efficiency & Cycle accurate simulation for: tile communication; eDRAM access \\
@@ -159,6 +168,9 @@ Usability, flexibility & Empirical, qualitative \\ \bottomrule
 
 \subsection{Summary}
 \label{subsec:DPEconcl}
-\todo[inline,author=Pedro,color=cyan]{Discuss that the simulator may produce
-results very fast. Aayush mentioned that it takes around 2 seconds to simulate
-the architecture with pre-generated assembly. It is still unclear for this case.}
+
+This work is still ongoing. The capability of changing each hardware metric
+still being studied and implementing, and code for the DPE simulator is still
+written by hand. We expect to advance more in the next months, leveraging code
+generators and simulator improvements that the HPE work group produces to
+explore the hardware and software design spaces with autotuning.
