@@ -63,10 +63,6 @@ of different configurations on identical GPUs on the same network. An autotuner
 with such capability would enable the exploration of more configurations in the
 same time.
 
-\subsection{A Tool for Compiler Autotuning}
-\todo[inline,author=Pedro,color=cyan]{Describe our new NVCC autotuner presented
-at the NVIDIA workshop. This could be left to the last chapter.}
-
 \subsection{Background}
 
 \subsubsection{NVIDIA GPU Microarchitecture}
@@ -255,27 +251,6 @@ a single application), 1 vector addition problem, 1 solution for the
 algorithms and 12 applications from the Rodinia Benchmark
 Suite~\cite{che2009rodinia}.
 
-Table~\ref{tab:Rodinia} shows the Rodinia applications contained in our
-benchmark and their correspondent three-letter code.  The other applications in
-the benchmark were CUDA implementations of the following:
-
-\begin{itemize}
-    \item Matrix multiplications using:
-        \begin{itemize}
-             \item Global memory with non-coalesced accesses (MMU)
-             \item Global memory with coalesced accesses (MMG)
-             \item Shared memory with non-coalesced accesses to global memory
-                 (MSU)
-             \item Shared memory with coalesced accesses to global memory (MMS)
-        \end{itemize}
-    \item Simple vector addition algorithm (VAD)
-    \item Solution~\cite{alves2004bsp,ferreira2014parallel} for the Maximum
-        Sub-Array Problem (MSA)
-    \item Quicksort (QKS) and Bitonicsort (BTN)~\footnote{Obtained from:
-        \url{http://digitalcommons.providence.edu/student\_scholarship/7/}
-        [Accessed on 10 February 2015]}
-\end{itemize}
-
 \begin{table}[htpb]
     \centering
     \footnotesize
@@ -299,6 +274,28 @@ the benchmark were CUDA implementations of the following:
     \label{tab:Rodinia}
 \end{table}
 
+Table~\ref{tab:Rodinia} shows the Rodinia applications contained in our
+benchmark and their correspondent three-letter code.  The other applications in
+the benchmark were CUDA implementations of the following:
+
+\begin{itemize}
+    \item Matrix multiplications using:
+        \begin{itemize}
+             \item Global memory with non-coalesced accesses (MMU)
+             \item Global memory with coalesced accesses (MMG)
+             \item Shared memory with non-coalesced accesses to global memory
+                 (MSU)
+             \item Shared memory with coalesced accesses to global memory (MMS)
+        \end{itemize}
+    \item Simple vector addition algorithm (VAD)
+    \item Solution~\cite{alves2004bsp,ferreira2014parallel} for the Maximum
+        Sub-Array Problem (MSA)
+    \item Quicksort (QKS) and Bitonicsort (BTN)~\footnote{Obtained from:
+        \url{http://digitalcommons.providence.edu/student\_scholarship/7/}
+        [Accessed on 10 February 2015]}
+\end{itemize}
+
+
 \subsection{Results}
 \label{sec:GPUresults}
 
@@ -315,14 +312,6 @@ box represent, respectively, the first and third quartiles of the data. The
 whiskers represent the third and first quartile plus and minus the \emph{inner
 quartile range} times 1.5. Finally, the circles represent the outliers.
 
-Figures~\ref{fig:K40hwl}, \ref{fig:980gau}, \ref{fig:K40ptf} and
-\ref{fig:K40myo} compare the distributions of 10 perfomance measurements of
-binaries compiled with high-level compiler optimizations and with autotuned
-compiler options. The results for the high-level optimizations
-\texttt{--opt-level=0,1,2,3} were denoted by \emph{-O0}, \emph{-O1}, \emph{-O2}
-and \emph{-O3}.  The results for the autotuned configurations were denoted by
-the keyword \emph{Tuned}.
-
 \begin{figure}[htpb]
     \centering
     \begin{minipage}{.48\textwidth}
@@ -338,7 +327,18 @@ the keyword \emph{Tuned}.
         \caption{Boxplots for the GTX 980 GPU, comparing autotuned results and high-level compiler optimizations for the Gaussian Elimination problem (GAU)}
         \label{fig:980gau}
     \end{minipage}%
+\end{figure}
 
+Figures~\ref{fig:K40hwl}, \ref{fig:980gau}, \ref{fig:K40ptf} and
+\ref{fig:K40myo} compare the distributions of 10 perfomance measurements of
+binaries compiled with high-level compiler optimizations and with autotuned
+compiler options. The results for the high-level optimizations
+\texttt{--opt-level=0,1,2,3} were denoted by \emph{-O0}, \emph{-O1}, \emph{-O2}
+and \emph{-O3}.  The results for the autotuned configurations were denoted by
+the keyword \emph{Tuned}.
+
+\begin{figure}[htpb]
+    \centering
     \begin{minipage}{.48\textwidth}
         \centering
         \includegraphics[scale=.22]{./images/Pathfinder-0-Tesla-K40-Box.eps}
@@ -363,13 +363,6 @@ Path Finder problem (PTF) in the Tesla K40.  Figure~\ref{fig:K40myo} shows over
 5\% speedup of the autotuned solution, also in the Tesla K40, for the Myocyte
 problem (MYO).
 
-Figures~\ref{fig:matrixsummary}, \ref{fig:summary}, \ref{fig:rodiniasummary}
-and \ref{fig:rodiniasummarysmall} present summaries of the results. The
-autotuner did not find solutions that improved upon the high-level
-optimizations for the problems BTN and MSU in any of the GPUs of the testbed,
-but it found solutions that achieved speedups for at least one GPU for the
-other problems.
-
 \begin{figure}[htpb]
     \centering
     \begin{minipage}{.48\textwidth}
@@ -385,7 +378,17 @@ other problems.
         \caption{Summary of the speedups achieved versus \emph{-O2} in the other independent applications}
         \label{fig:summary}
     \end{minipage}%
+\end{figure}
 
+Figures~\ref{fig:matrixsummary}, \ref{fig:summary}, \ref{fig:rodiniasummary}
+and \ref{fig:rodiniasummarysmall} present summaries of the results. The
+autotuner did not find solutions that improved upon the high-level
+optimizations for the problems BTN and MSU in any of the GPUs of the testbed,
+but it found solutions that achieved speedups for at least one GPU for the
+other problems.
+
+\begin{figure}[htpb]
+    \centering
     \begin{minipage}{.48\textwidth}
         \centering
         \includegraphics[scale=.15]{./images/RodiniaSummary.eps}
@@ -423,29 +426,6 @@ autotuned solution for the best results in our experiments, the Heart Wall
 problem (HWL) and the Gaussian Elimination problem (GAU) in the GTX 980, and
 the Path Finder problem (PTF) and the Myocyte problem (MYO) in the Tesla K40.
 
-The points in each graph represent the performance, in the y-axis, of the best
-configuration found at the corresponding tuning time, shown in the x-axis. The
-leftmost point in each graph represents the performance of a configuration
-chosen at random by the autotuner. Each subsequent point represents the
-performance of the best configuration found so far.
-
-Note that the autotuner is able to quickly improve upon the initial random
-configuration, but the rate of improvement decays over tuning time. The
-duration of all tuning runs was two hours, or 7200 seconds.  The rightmost
-point in each graph represents the performance of the last improving
-configuration found by the autotuner. After the tuning time of this
-configuration, the autotuner did not find any improving configuration until the
-end of its tuning run.
-
-The autotuner used the mean of 10 performance measurements of a given
-configuration as the fitness value, reducing fluctuations and improving the
-measurement's accuracy. This is reflected in the proximity of the measurements
-reported by the autotuner during tuning, shown in figures~\ref{fig:K40hwBest},
-\ref{fig:980gauBest}, \ref{fig:K40ptfBest} and \ref{fig:K40myoBest} and the
-mean values of 10 measurements of the final solution, shown in the
-corresponding figures~\ref{fig:K40hwl}, \ref{fig:980gau}, \ref{fig:K40ptf} and
-\ref{fig:K40myo}.
-
 \begin{figure}[htpb]
     \centering
     \begin{minipage}{.48\textwidth}
@@ -461,7 +441,24 @@ corresponding figures~\ref{fig:K40hwl}, \ref{fig:980gau}, \ref{fig:K40ptf} and
         \caption{Best solutions found by the autotuner over time for the Gaussian Elimination problem (GAU) in the GTX 980}
         \label{fig:980gauBest}
     \end{minipage}%
+\end{figure}
 
+The points in each graph represent the performance, in the y-axis, of the best
+configuration found at the corresponding tuning time, shown in the x-axis. The
+leftmost point in each graph represents the performance of a configuration
+chosen at random by the autotuner. Each subsequent point represents the
+performance of the best configuration found so far.
+
+Note that the autotuner is able to quickly improve upon the initial random
+configuration, but the rate of improvement decays over tuning time. The
+duration of all tuning runs was two hours, or 7200 seconds.  The rightmost
+point in each graph represents the performance of the last improving
+configuration found by the autotuner. After the tuning time of this
+configuration, the autotuner did not find any improving configuration until the
+end of its tuning run.
+
+\begin{figure}[htpb]
+    \centering
     \begin{minipage}{.48\textwidth}
         \centering
         \includegraphics[scale=.22]{./images/Pathfinder-0-Tesla-K40-Best.eps}
@@ -476,6 +473,15 @@ corresponding figures~\ref{fig:K40hwl}, \ref{fig:980gau}, \ref{fig:K40ptf} and
         \label{fig:K40myoBest}
     \end{minipage}
 \end{figure}
+
+The autotuner used the mean of 10 performance measurements of a given
+configuration as the fitness value, reducing fluctuations and improving the
+measurement's accuracy. This is reflected in the proximity of the measurements
+reported by the autotuner during tuning, shown in figures~\ref{fig:K40hwBest},
+\ref{fig:980gauBest}, \ref{fig:K40ptfBest} and \ref{fig:K40myoBest} and the
+mean values of 10 measurements of the final solution, shown in the
+corresponding figures~\ref{fig:K40hwl}, \ref{fig:980gau}, \ref{fig:K40ptf} and
+\ref{fig:K40myo}.
 
 \subsubsection{Parameter Selection}
 
@@ -527,7 +533,5 @@ difficult to associate compiler optimization parameters, applications and GPUs.
 
 An interesting direction for future studies is including application parameters
 and options for the GCC compiler, which also composes the CUDA compilation
-chain. Section~\ref{} will discuss our efforts on spreading the autotuning
+chain. Section~\ref{sec:stochastic-gpu-tuner} will discuss our efforts on spreading the autotuning
 of CUDA compiler parameters to the NVIDIA CUDA programmer community.
-
-\todo[inline,author=Pedro,color=cyan]{Fix this reference}

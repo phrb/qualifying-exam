@@ -174,3 +174,30 @@ still being studied and implementing, and code for the DPE simulator is still
 written by hand. We expect to advance more in the next months, leveraging code
 generators and simulator improvements that the HPE work group produces to
 explore the hardware and software design spaces with autotuning.
+
+This chapter presented our work with OpenTuner, an original and
+state-of-the-art tool for general-purpose autotuning. During these case studies
+we were able to explore OpenTuner's capabilities in application domains
+with \textit{small} and \textit{large} measurement time, in computer
+architectures relevant for High-Performance Computing.
+
+During our work we also identified that OpenTuner has a tightly coupled
+execution flow, where search techniques must wait for a batch of measurement
+requests to complete in order before requesting new tests or updating its
+algorithm step. This means that the framework is not able to truly run
+measurements in parallel.
+
+Another shortcoming we identified is the current lack of support for
+distributed execution of measurements. We are attempting to extend the
+framework to support execution of measurements in public clouds, but even with
+that extension the execution flow of the framework still needs to be changed to
+allow parallel executions of requested measurements for each technique.
+
+These shortcomings motivated our work toward a general-purpose autotuning
+library that implements OpenTuner's great ideas, such as ensembles of
+search techniques, easily-definable search spaces using domain-agnostic
+parameters, and strategies for sharing computational resources, but that solves
+the shortcomings we identified. The next chapter summarizes the work
+we have done is this direction so far, describing our implementation of
+a library in the Julia language that enables the uncoupled, parallel
+and distributed execution of measurements.

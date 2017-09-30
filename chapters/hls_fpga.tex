@@ -365,8 +365,6 @@ hosted at GitHub~\footnote{\url{https://github.com/phrb/legup-dockerfile}
 \subsection{Results}
 \label{sec:FPGAresults}
 
-\todo[inline,author=Pedro,color=cyan]{Arrange heatmaps in two columns}
-
 This section presents summaries of the results from $10$ autotuning runs of
 $1.5h$ in the scenarios from Table \ref{tab:scenarios}.  Results are presented
 in \textit{heatmaps} where each row has one of the 11 CHStone applications in
@@ -437,10 +435,21 @@ worst results in this scenario, with $34\%$ larger \textit{Cycles} in
 improvements at all in most applications.
 
 \begin{figure}[htpb]
-    \centering
-    \includegraphics[width=0.5\columnwidth]{heatmap_default_stratixV}
-    \caption{Relative improvement for all metrics in the \textit{Balanced} scenario}
-    \label{fig:balanced}
+    \begin{minipage}{.48\textwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{heatmap_default_stratixV}
+        \caption{Relative improvement for all metrics in the \textit{Balanced}
+        scenario}
+        \label{fig:balanced}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}{.48\textwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{heatmap_default_stratixV_area}
+        \caption{Relative improvement for all metrics in the \textit{Area}
+        scenario}
+        \label{fig:area}
+    \end{minipage}%
 \end{figure}
 
 Figure \ref{fig:area} shows the results for the \textit{Area} scenario.  We
@@ -457,13 +466,6 @@ this scenario, metrics related to area had better improvements than in the
 and \textit{BRAM} in \textit{dfdiv} and smaller values overall for
 \textit{Regs} and \textit{LUTs}.
 
-\begin{figure}[htpb]
-    \centering
-    \includegraphics[width=0.5\columnwidth]{heatmap_default_stratixV_area}
-    \caption{Relative improvement for all metrics in the \textit{Area} scenario}
-    \label{fig:area}
-\end{figure}
-
 Figure \ref{fig:perf} shows the results for the \textit{Performance} scenario.
 The autotuner found values of \textbf{WNS} $23\%$ smaller for \textit{dfmul},
 $19\%$ smaller for \textit{dfdiv}, and smaller values overall than in the
@@ -476,9 +478,21 @@ $41\%$, $30\%$, $44\%$ and $37\%$ greater \textit{FMax} in \textit{dfdiv},
 
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=0.5\columnwidth]{heatmap_default_stratixV_perf}
-    \caption{Relative improvement for all metrics in the \textit{Performance} scenario}
-    \label{fig:perf}
+    \begin{minipage}{.48\textwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{heatmap_default_stratixV_perf}
+        \caption{Relative improvement for all metrics in the
+        \textit{Performance} scenario}
+        \label{fig:perf}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}{.48\textwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{heatmap_default_stratixV_perflat}
+        \caption{Relative improvement for all metrics in the
+        \textit{Performance \& Latency} scenario}
+        \label{fig:perflat}
+    \end{minipage}
 \end{figure}
 
 Figure \ref{fig:perflat} shows the results for the \textit{Performance \&
@@ -493,13 +507,6 @@ greater \textit{FMax} in \textit{adpcm}. Although \textit{FMax} had the worst
 improvements in relation to the \textit{Balanced} scenario, the
 \textit{Wall-Clock Time} was still decreased by the smaller values of
 \textit{Cycles}.
-
-\begin{figure}[htpb]
-    \centering
-    \includegraphics[width=0.5\columnwidth]{heatmap_default_stratixV_perflat}
-    \caption{Relative improvement for all metrics in the \textit{Performance \& Latency} scenario}
-    \label{fig:perflat}
-\end{figure}
 
 Figure \ref{fig:wns-comp} summarizes the average improvements on \textbf{WNS}
 in the 4 scenarios over 10 runs. Only the \textit{Weighted Normalized Sum} of
