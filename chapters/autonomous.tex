@@ -1,5 +1,9 @@
-\chapter{Autonomous Search}
+\chapter{Autonomous Search \& Autotuning}
 \label{chap:autonomous}
+\epigraph{\textit{There is nothing like looking, if you want to find something. You
+certainly usually find something, if you look, but it is not always quite the
+something you were after.}}{--- J.R.R. Tolkien, \textit{The Hobbit}}
+
 
 \section{Algorithm Selection and Autonomous Solvers}
 \label{sec:algselres}
@@ -27,6 +31,18 @@ framework.
 this work, given all the possibilities for solving the same problem
 presented in this chapter}
 
+\section{On-line Control}
+\label{sec:oncontrol}
+
+\subsection{Adaptive Parameter Configuration}
+\label{subsec:paramadaptive}
+
+\subsection{Credit Assignment}
+\label{subsec:creditassign}
+
+\subsection{Reinforcement Learning}
+\label{subsec:reinforce}
+
 \section{Off-line Configuration}
 \label{sec:offconfig}
 
@@ -39,14 +55,93 @@ presented in this chapter}
 \subsection{Machine Learning}
 \label{subsec:searchml}
 
-\section{On-line Control}
-\label{sec:oncontrol}
+\section{Autotuning}
+\label{chap:autotuning}
 
-\subsection{Adaptive Parameter Configuration}
-\label{subsec:paramadaptive}
+Rice's conceptual framework~\cite{rice1976algorithm} formed the foundation
+of autotuners in various problem domains.  In 1997, the PHiPAC
+system~\cite{bilmes1997optimizing} used code generators and search scripts to
+automatically generate high performance code
+for matrix multiplication. Since then, systems tackled different domains with a
+diversity of strategies. Whaley \emph{et al.}~\cite{dongarra1998automatically}
+introduced the ATLAS project, that optimizes dense matrix multiplication
+routines. The OSKI~\cite{vuduc2005oski} library provides automatically tuned
+kernels for sparse matrices. The FFTW~\cite{frigo1998fftw} library provides
+tuned C subroutines for computing the Discrete Fourier Transform.
+Periscope~\cite{gerndt2010automatic} is a distributed online autotuner for
+parallel systems and single-node performance.  In an effort to provide a common
+representation of multiple parallel programming models, the INSIEME compiler
+project~\cite{jordan2012multi} implements abstractions for OpenMP, MPI and
+OpenCL, and generates optimized parallel code for heterogeneous multi-core
+architectures.
 
-\subsection{Credit Assignment}
-\label{subsec:creditassign}
+Some systems provide generic tools that enable the implementation of
+autotuners in various domains. PetaBricks~\cite{ansel2009petabricks} is a
+language, compiler and autotuner that introduces abstractions, such as the
+\texttt{\footnotesize either...or} construct, that enable programmers to define
+multiple algorithms for the same problem.  The ParamILS
+framework~\cite{hutter2009paramils} applies stochastic local search methods
+for algorithm configuration and parameter tuning. The OpenTuner
+framework~\cite{ansel2014opentuner} provides ensembles of techniques that
+search spaces of program configurations. Bosboom \emph{et al.} and Eliahu use
+OpenTuner to implement a domain specific language for data-flow
+programming~\cite{bosboom2014streamjit} and a framework for recursive parallel
+algorithm optimization~\cite{eliahu2015frpa}.
 
-\subsection{Reinforcement Learning}
-\label{subsec:reinforce}
+\begin{tabular}{@{}lll@{}}
+    \toprule
+    System & Domain & Technique \\ \midrule
+    ATLAS & Dense Linear Algebra & Exhaustive \\
+    Insieme & Compiler & Genetic Algorithm \\
+    SPIRAL & DSP Algorithms & Pareto Active Learning \\
+    Active Harmony & Runtime & Nelder-Mead \\
+    Periscope & HPC Applications & Various \\
+    OpenTuner & Domain-Agnostic & Ensemble \\ \bottomrule
+\end{tabular}
+\caption{Some autotuning systems, their domains and techniques}
+\end{table}
+
+\subsection{OpenTuner}
+\label{sec:opentuner}
+\todo[inline,author=Pedro,color=cyan]{Discuss OpenTuner's limitations and shortcomings.}
+
+\subsubsection{Context}
+\label{sec:context}
+
+\subsubsection{Software Architecture}
+\label{sec:arch}
+
+\subsubsection{Parallel and Distributed Programming in OpenTuner}
+\label{sec:opentuner-parallel}
+\todo[inline,author=Pedro,color=cyan]{Discuss the difficulties and
+explain why they motivated the new Julia code.}
+
+\subsection{Search Techniques}
+\label{sec:techniques}
+
+\subsubsection{Numerical Methods}
+\label{subsec:num}
+
+\subsubsection{Evolutionary Computation}
+\label{subsec:tuninevolcomp}
+
+\subsubsection{Stochastic Local Search}
+\label{subsec:tuningsls}
+
+\subsubsection{Machine Learning}
+\label{subsec:tuningml}
+
+\subsection{Benchmarks}
+\label{sec:benchmarks}
+
+\subsubsection{Solvers of NP-Complete Problems}
+\label{subsec:np}
+
+\subsubsection{Algorithm Selection and Configuration}
+\label{subsec:algsel}
+
+\subsubsection{Compiler Configuration}
+\label{subsec:compilerconfig}
+
+\subsubsection{Measurement Time}
+\label{subsec:measure}
