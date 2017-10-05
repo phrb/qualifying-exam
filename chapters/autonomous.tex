@@ -88,18 +88,72 @@ OpenTuner to implement a domain specific language for data-flow
 programming~\cite{bosboom2014streamjit} and a framework for recursive parallel
 algorithm optimization~\cite{eliahu2015frpa}.
 
-\begin{tabular}{@{}lll@{}}
-    \toprule
-    System & Domain & Technique \\ \midrule
-    ATLAS & Dense Linear Algebra & Exhaustive \\
-    Insieme & Compiler & Genetic Algorithm \\
-    SPIRAL & DSP Algorithms & Pareto Active Learning \\
-    Active Harmony & Runtime & Nelder-Mead \\
-    Periscope & HPC Applications & Various \\
-    OpenTuner & Domain-Agnostic & Ensemble \\ \bottomrule
-\end{tabular}
-\caption{Some autotuning systems, their domains and techniques}
+\begin{table}[htpb]
+    \centering
+    \begin{tabular}{@{}lll@{}}
+        \toprule
+        System & Domain & Technique \\ \midrule
+        ATLAS & Dense Linear Algebra & Exhaustive \\
+        Insieme & Compiler & Genetic Algorithm \\
+        SPIRAL & DSP Algorithms & Pareto Active Learning \\
+        Active Harmony & Runtime & Nelder-Mead \\
+        Periscope & HPC Applications & Various \\
+        OpenTuner & Domain-Agnostic & Ensemble \\ \bottomrule
+    \end{tabular}
+    \caption{Some autotuning systems, their domains and techniques}
 \end{table}
+
+Petabricks~\cite{ansel2009petabricks} is a language and compiler that enables
+the expression of program implementation search spaces at language level.
+OpenTuner~\cite{ansel2014opentuner} is a domain-agnostic autotuning framework
+that provides ensembles of search techniques for user-defined program
+configurations.
+
+Williams~\cite{williams2009optimization} present optimization strategies for
+the sparse matrix-vector multiply kernel in multi-core processors.  Williams et
+al.~\cite{williams2009roofline} also present Roofline, a visual performance
+model for parallel hardware and software that helps in the optimization of
+floating-point computations.
+
+Tartara and Reghizzi~\cite{tartara2012parallel} use the MapReduce programming
+model to improve the performance of machine learning algorithms in the
+PetaBricks compiler. Later they presented a machine learning
+algorithm~\cite{tartara2013continuous} that learns compiler heuristics using
+data gathered after every compilation.
+
+LGen~\cite{spampinato2014basic} is a compiler for small-scale linear algebra
+computation that uses mathematical domain-specific languages to optimize loops
+and vectorization. LGen uses exhaustive or random search to test different
+optimizations.
+
+TuningGenie~\cite{ivanenko2014method} presents an autotuning framework that
+uses code annotations for generating autotuners for parallel programs.
+
+Hou et al.~\cite{hou2017auto} present an autotuning framework that uses
+decision trees to optimize the sparse matrix-vector multiply kernel
+for multi and many-core processors.
+
+Takizawa et al.~\cite{takizawa2017customizable} use OpenTuner and
+Xevolver~\cite{takizawa2014xevolver}, a code transformation framework, to
+enable the autotuning of code transformations in applications that were not
+implemented for autotuning. They present an autotuning ``scenario template''
+that uses compiler directives to inform the autotuner.
+
+Panda~\cite{sourouri2017panda} is compiler framework that uses code annotations
+to optimize 3D Stencil computations on heterogeneous architectures with CPUs
+and GPUs.
+
+Lang~\cite{lang2017data} reviews work on autotuning based on analytical
+performance models, arguing that the approach is feasible.
+
+Apollo~\cite{beckingsale2017apollo} is an autotuning framework for
+input-dependent kernels that uses a decision tree classifier that provides
+optimizations that can be selected during runtime.
+
+Shuchart et al.~\cite{schuchart2017readex} introduce the READEX (Runtime
+Exploitation of Application Dynamism for Energy-efficient eXascale computing)
+project and its methodology for developing tools to improve the energy
+efficiency of High-Performance Computing applications. 
 
 \subsection{OpenTuner}
 \label{sec:opentuner}
