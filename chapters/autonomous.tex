@@ -153,7 +153,42 @@ optimizations that can be selected during runtime.
 Shuchart et al.~\cite{schuchart2017readex} introduce the READEX (Runtime
 Exploitation of Application Dynamism for Energy-efficient eXascale computing)
 project and its methodology for developing tools to improve the energy
-efficiency of High-Performance Computing applications. 
+efficiency of High-Performance Computing applications.
+
+Falsch and Elster~\cite{falch2017machine} build performance models for
+OpenCL applications in different target architectures using machine learning.
+A statistical model learned and later used to pick promising configurations for
+testing.
+
+The Periscope Tuning Framework
+(PTF)~\cite{gerndt2005periscope,gerndt2010automatic,gerndt2017multi} is an
+online tool for performance analysis and tuning that has a modular architecture
+based on plugins.
+
+Xu et al.~\cite{xu2017parallel} present an autotuning strategy that uses
+parallel OpenTuner instances to autotune the FPGA compilation flow.  Their work
+dynamically partition the search space between MPI-communicating OpenTuner
+instances.
+
+Abdelfattah et al.~\cite{abdelfattah2016performance} present an autotuning
+strategy using exhaustive evaluation of General Matrix-Matrix Multiply (GEMM)
+kernel optimizations for GPUs. They later use this approach to optimize GPU
+kernels for large-scale tensor contractions~\cite{abdelfattah2016high}.
+
+Active Harmony~\cite{tapus2002active} provides an API that enables
+online autotuning of a program using a variation of the Nelder-Mead
+simplex algorithm~\cite{nelder1965simplex}.
+
+MASE-BDI~\cite{coelho2016mase} is a multi-agent system for the simulation of
+environmental land change that uses the Active Harmony
+API~\cite{tapus2002active} and search algorithms to autotune its parameters.
+Several simulator configurations are executed in parallel and communicate their
+results to a tuning manager using MPI.
+
+Xu et al.~\cite{xu2016analytical} introduce an autotuning framework for
+loop scheduling in GPUs that uses analytical performance models.
+
+TANGRAM~\cite{chang2015tangram,chang2016efficient}
 
 \subsection{OpenTuner}
 \label{sec:opentuner}
