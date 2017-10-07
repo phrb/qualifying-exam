@@ -94,7 +94,7 @@ algorithm optimization~\cite{eliahu2015frpa}.
         \toprule
         System & Domain & Technique \\ \midrule
         ATLAS & Dense Linear Algebra & Exhaustive \\
-        Insieme & Compiler & Genetic Algorithm \\
+        INSIEME & Compiler & Genetic Algorithm \\
         SPIRAL & DSP Algorithms & Pareto Active Learning \\
         Active Harmony & Runtime & Nelder-Mead \\
         Periscope & HPC Applications & Various \\
@@ -188,7 +188,50 @@ results to a tuning manager using MPI.
 Xu et al.~\cite{xu2016analytical} introduce an autotuning framework for
 loop scheduling in GPUs that uses analytical performance models.
 
-TANGRAM~\cite{chang2015tangram,chang2016efficient}
+TANGRAM~\cite{chang2015tangram,chang2016efficient} is a kernel
+synthesis framework for different architecture hierarchies.
+It uses composition rules and breadth-first search to prune
+and explore the design space.
+
+Balaprakash et al.~\cite{balaprakash2016automomml} introduce a framework
+that uses machine learning algorithms to build models for metrics such as
+performance and energy consumption, which are used for multi-objective
+optimization.
+
+Ngoko et al.~\cite{ngoko2016automatic} introduce an autotuning system for
+$\NP$-hard problems that uses distributed measurements of configurations and
+machine learning algorithms aided by randomization, clustering and set
+intersection solvers.
+
+Ziegler et al.~\cite{ziegler2016synthesis,ziegler2016scalable} present an
+autotuning system for hardware synthesis parameters that uses genetic and
+learning algorithms to explore the hardware design space for real industrial
+chip designs from IBM.
+
+Jayasena et al.~\cite{jayasena2015auto} use OpenTuner to implement an autotuner
+for a Java Virtual Machine implementation.
+
+Luo et al.~\cite{luo2015fast} present a framework for stencil computations that
+uses Optimal-Solution Spaces, input feature extraction and machine learning.
+
+Guerreiro et al.~\cite{guerreiro2015multi} use search space pruning strategies
+and exhaustive evaluation to autotune CUDA GPU kernels.
+
+Garvey et al.~\cite{garvey2015automatic} present a strategy to autotune OpenCL
+GPU kernels using machine learning, heuristics for search space partitioning
+and exhaustive search.
+
+CLTune~\cite{nugteren2015cltune} is an autotuning framework for OpenCL kernels
+that uses search algorithms such as simulated annealing and particle swarm
+optimization.
+
+Mametjanov et al.~\cite{mametjanov2015autotuning} present an autotuning
+approach that uses machine learning and selective sampling of the search space
+to optimize FPGA hardware design parameters for performance and power.
+
+PolyMage~\cite{mullapudi2015polymage} is a domain-specific language and
+compiler for image processing pipelines. It uses heuristics and performance
+models to prune the search space, which is then explored exhaustively.
 
 \subsection{OpenTuner}
 \label{sec:opentuner}
