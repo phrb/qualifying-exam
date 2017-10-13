@@ -61,7 +61,7 @@
      id="layer1"
      transform="translate(-14.955967,283.96338)">
     <rect
-       style="opacity:1;fill:#eaeaea;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:2.64583325;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="opacity:1;fill:#eaeaea;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:1.05833333;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect1366"
        width="565.24921"
        height="270.40237"
@@ -79,7 +79,7 @@
          y="-249.25121"
          style="font-size:21.16666603px;stroke-width:0.26458332px">Autotuning Strategies</tspan></text>
     <rect
-       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:2.64583325;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:1.05833333;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect1366-3-2"
        width="257.57663"
        height="217.48573"
@@ -122,7 +122,7 @@
          style="font-size:17.63888931px;line-height:22.38375092px;stroke-width:0.26458332px"
          id="tspan1709">- Built by Machine Learning</tspan></text>
     <rect
-       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:2.64583325;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:1.05833333;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect1366-3-2-3"
        width="257.57663"
        height="217.48573"
@@ -175,7 +175,7 @@
          style="font-size:17.63888931px;line-height:22.38375092px;stroke-width:0.26458332px"
          id="tspan1705">- Heuristics</tspan></text>
     <rect
-       style="opacity:1;fill:#d4d4d4;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:2.64583325;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="opacity:1;fill:#d4d4d4;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:1.05833333;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect1366-3-5-1-2-3"
        width="490.40997"
        height="53.444141"

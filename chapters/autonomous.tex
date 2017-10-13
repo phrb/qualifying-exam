@@ -1,36 +1,74 @@
-\chapter{Autonomous Search \& Autotuning}
+\chapter{Algorithm Selection, Autonomous Solvers \& Autotuning}
 \label{chap:autonomous}
 \epigraph{\textit{There is nothing like looking, if you want to find something. You
 certainly usually find something, if you look, but it is not always quite the
 something you were after.}}{--- J.R.R. Tolkien, \textit{The Hobbit}}
 
 
-\section{Algorithm Selection and Autonomous Solvers}
+\section{Algorithm Selection}
 \label{sec:algselres}
 
 In 1976 John R. Rice published \textit{The Algorithm Selection
 Problem}~\cite{rice1976algorithm}, an influential paper where he formulated
 abstract models for the problem of selecting effective algorithms for a given
 problem. In Rice's framework the objective is to select the best algorithm,
-according a performance metric, for a given problem. Consider a \textit{problem
-space} $P$, and a problem $x \in P$.
-
-Figure~\ref{fig:riceframe} presents Rice's algorithm selection
-framework.
-\todo[inline,author=Pedro,color=cyan]{Describe the framework in more detail}
+according a performance metric, for a given problem.
+Figure~\ref{fig:riceframe} presents Rice's algorithm selection framework.
 
 \begin{figure}[htpb]
     \begin{center}
-        \includegraphics[width=.35\textwidth]{algorithm-selection}
+        \includegraphics[width=.4\textwidth]{algorithm-selection}
     \end{center}
-    \caption{Rice's framework}
+    \caption{Adapted Rice's algorithm selection framework~\cite{rice1976algorithm}}
     \label{fig:riceframe}
 \end{figure}
+
+Consider a \textit{problem space} $P$, and a problem $x \in P$. The features of
+this problem, such as its domain, number of variables and input size, determine
+which algorithms are able to solve the problem. The real problem solving
+circumstances may also be considered as problem features. For example, the
+computer architecture in which the problem will be solved might define problem
+features such as limits on accuracy, data accesses, execution time and memory
+and power consumption.  The set $\phi$ of features of problem $x$ is obtained
+by a feature mapping function $f$, such that $f(x) = \phi \in \Phi$, where
+$\Phi$ is the \textit{feature space}.
+
+With the set of features of a problem it is possible to determine which
+algorithms can solve the problem. For example, while the insertion sort
+algorithm is not useful to sort large arrays if time is a constraint, the
+binary tree sort algorithm is not useful if memory is a constraint.  Despite
+the absence of explicit algorithm parameters and features in the framework,
+it is still possible to consider differently configured versions of an
+algorithm as distinct algorithms in $A$.  The set $\alpha$ of algorithms that
+solve problem $x$ is obtained by a selection mapping function $s$, such that
+$s(\phi) = \alpha \in A$, where $A$ is the \textit{algorithm space}.
+
+After the algorithm is defined its performance can be obtained by empirically
+measuring metrics of interest, or computing them using an analytical model or a
+model trained using machine learning. The set $\pi$ of performance measurements
+of algorithm $\alpha$ when solving $x$ is obtained by a performance mapping
+function $p$, such that $p(\alpha,x) = \pi \in \Pi$, where $\Pi$ is the
+\textit{performance space}.
+
+A normalized performance measurement for the set $\pi$ is obtained by a norm
+mapping function. This function can combine measurements of metrics in
+different scales or optimization levels, such as execution time, memory and
+power consumption, and hardware occupancy and size. The normalized value
+$||\pi||$ is called the \textit{algorithm performance}.
+
+\section{Autonomous Solvers}
 
 \todo[inline,author=Pedro,color=cyan]{Discuss autonomous solvers}
 \todo[inline,author=Pedro,color=cyan]{Discuss the choice of autotuning for
 this work, given all the possibilities for solving the same problem
 presented in this chapter}
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=.46\textwidth]{general_solver}
+    \caption{General autonomous solver architecture adapted from Hamadi \emph{et al.}~\cite{hamadi2012autonomous}}
+    \label{fig:general_solver}
+\end{figure}
 
 \paragraph{On-line Control}
 \label{sec:oncontrol}
@@ -79,8 +117,8 @@ chapter~\ref{chap:usecases}, we also list autotuning systems that use it.
 
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=.6\textwidth]{autotuning_strategies}
-    \caption{Autotuning strategies discussed in this paper}
+    \includegraphics[width=.46\textwidth]{autotuning_strategies}
+    \caption{Categories of autotuning strategies discussed in this section}
     \label{fig:strategies}
 \end{figure}
 
