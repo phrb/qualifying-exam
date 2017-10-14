@@ -191,9 +191,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.24748737"
-     inkscape:cx="1052.1381"
-     inkscape:cy="751.23603"
+     inkscape:zoom="0.35"
+     inkscape:cx="663.50026"
+     inkscape:cy="395.53042"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -283,7 +283,12 @@
          x="326.86966"
          y="-135.32811"
          style="font-size:17.63888931px;line-height:21.16666603px;stroke-width:0.26458332px"
-         id="tspan889">- Empirical Evaluations</tspan></text>
+         id="tspan889">- Empirical Evaluations</tspan><tspan
+         sodipodi:role="line"
+         x="326.86966"
+         y="-112.05888"
+         style="font-size:17.63888931px;line-height:21.16666603px;stroke-width:0.26458332px"
+         id="tspan939">- Inference</tspan></text>
     <rect
        style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:1.05833333;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect817-7-6-7"
@@ -414,12 +419,12 @@
          x="326.86975"
          y="115.70647"
          style="font-size:17.63888931px;line-height:21.16666603px;stroke-width:0.26458332px"
-         id="tspan889-2">- Model Selection</tspan><tspan
+         id="tspan1038">- Resource Sharing</tspan><tspan
          sodipodi:role="line"
          x="326.86975"
          y="138.97569"
          style="font-size:17.63888931px;line-height:21.16666603px;stroke-width:0.26458332px"
-         id="tspan1038">- Resource Sharing</tspan></text>
+         id="tspan940">- Model Selection</tspan></text>
     <path
        style="fill:none;fill-rule:evenodd;stroke:#404040;stroke-width:2.11666656;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Arrow1Mstart-5-0);marker-end:url(#marker1347-3-3)"
        d="M 289.11913,-4.2012189 V -56.689697"

@@ -1,9 +1,18 @@
-\chapter{Algorithm Selection, Autonomous Solvers \& Autotuning}
+\chapter{Algorithm Selection \& Autotuning}
 \label{chap:autonomous}
 \epigraph{\textit{There is nothing like looking, if you want to find something. You
 certainly usually find something, if you look, but it is not always quite the
 something you were after.}}{--- J.R.R. Tolkien, \textit{The Hobbit}}
 
+This chapter presents the fundamentals and the literature background for the
+work described in the case studies of chapter~\ref{chap:usecases}.
+Section~\label{sec:algselres} describes the algorithm selection problem and
+the general architecture of autonomous solvers.
+Section~\ref{sec:autotuning} presents a literature review of autotuning works
+in different domains and using different strategies.
+Section~\ref{sec:opentuner} describes the OpenTuner framework, its software
+architecture and the difficulties we had in applying parallel and distributed
+programming models to it.
 
 \section{Algorithm Selection}
 \label{sec:algselres}
@@ -11,69 +20,142 @@ something you were after.}}{--- J.R.R. Tolkien, \textit{The Hobbit}}
 In 1976 John R. Rice published \textit{The Algorithm Selection
 Problem}~\cite{rice1976algorithm}, an influential paper where he formulated
 abstract models for the problem of selecting effective algorithms for a given
-problem. In Rice's framework the objective is to select the best algorithm,
-according a performance metric, for a given problem.
-Figure~\ref{fig:riceframe} presents Rice's algorithm selection framework.
+problem. The four main components of the abstract model are the \textit{problem
+space} $P$, the \textit{feature space} $\Phi$, the \textit{algorithm space}
+$A$, and the \textit{performance space} $\Pi$. The algorithm selection problem
+can be formally stated as~\cite{smith2009cross}:
+
+\begin{definition}[The Algorithm Selection Problem]
+    For a given problem $x \in P$, with features $f(x) = \phi \in \Phi$,
+    find the algorithm selection mapping $s(\phi) = \alpha \in A$, such
+    that the selected algorithms minimize the performance mapping
+    $p(\alpha,x) = \pi \in \Pi$.
+\end{definition}
 
 \begin{figure}[htpb]
     \begin{center}
         \includegraphics[width=.4\textwidth]{algorithm-selection}
     \end{center}
-    \caption{Adapted Rice's algorithm selection framework~\cite{rice1976algorithm}}
+    \caption{Algorithm Selection Framework, adapted from
+    Rice~\cite{rice1976algorithm}}
     \label{fig:riceframe}
 \end{figure}
 
-Consider a \textit{problem space} $P$, and a problem $x \in P$. The features of
-this problem, such as its domain, number of variables and input size, determine
-which algorithms are able to solve the problem. The real problem solving
-circumstances may also be considered as problem features. For example, the
-computer architecture in which the problem will be solved might define problem
-features such as limits on accuracy, data accesses, execution time and memory
-and power consumption.  The set $\phi$ of features of problem $x$ is obtained
-by a feature mapping function $f$, such that $f(x) = \phi \in \Phi$, where
-$\Phi$ is the \textit{feature space}.
+Figure~\ref{fig:riceframe} presents Rice's algorithm selection framework.
+Consider a \textit{problem space} $P$, and a problem $x \in P$. The
+features of this problem, such as its domain, number of variables and input
+size, determine which algorithms are able to solve the problem. The real
+problem solving circumstances may also be considered as problem features. For
+example, the computer architecture in which the problem will be solved might
+define problem features such as limits on accuracy, data accesses, execution
+time and memory and power consumption.  The set $\phi$ of features of problem
+$x$ is obtained by a feature mapping function $f$, such that $f(x) = \phi \in
+\Phi$, where $\Phi$ is the \textit{feature space}.
 
 With the set of features of a problem it is possible to determine which
 algorithms can solve the problem. For example, while the insertion sort
 algorithm is not useful to sort large arrays if time is a constraint, the
-binary tree sort algorithm is not useful if memory is a constraint.  Despite
-the absence of explicit algorithm parameters and features in the framework,
-it is still possible to consider differently configured versions of an
-algorithm as distinct algorithms in $A$.  The set $\alpha$ of algorithms that
-solve problem $x$ is obtained by a selection mapping function $s$, such that
-$s(\phi) = \alpha \in A$, where $A$ is the \textit{algorithm space}.
+binary tree sort algorithm is not useful if memory is a constraint.  The degree
+in which the problem input is already sorted can also be considered a
+problem feature. Despite the absence of explicit algorithm parameters and
+features in the framework, it is still possible to consider differently
+configured versions of an algorithm as distinct algorithms in $A$.  The set
+$\alpha$ of algorithms that solve problem $x$ is obtained by a selection
+mapping function $s$, such that $s(\phi) = \alpha \in A$, where $A$ is the
+\textit{algorithm space}.
 
-After the algorithm is defined its performance can be obtained by empirically
-measuring metrics of interest, or computing them using an analytical model or a
-model trained using machine learning. The set $\pi$ of performance measurements
-of algorithm $\alpha$ when solving $x$ is obtained by a performance mapping
-function $p$, such that $p(\alpha,x) = \pi \in \Pi$, where $\Pi$ is the
-\textit{performance space}.
+After the algorithm set $\alpha$ is defined its performance can be obtained by
+empirically measuring metrics of interest, or computing them using an
+analytical model or a model trained using machine learning. The set $\pi$ of
+performance measurements of the set of algorithms $\alpha$ when solving $x$ is
+obtained by a performance mapping function $p$, such that $p(\alpha,x) = \pi
+\in \Pi$, where $\Pi$ is the \textit{performance space}.
 
 A normalized performance measurement for the set $\pi$ is obtained by a norm
 mapping function. This function can combine measurements of metrics in
 different scales or optimization levels, such as execution time, memory and
-power consumption, and hardware occupancy and size. The normalized value
-$||\pi||$ is called the \textit{algorithm performance}.
+power consumption, and hardware occupancy and size. The set of normalized
+values $||\pi||$ is called the \textit{algorithm performance}.
 
-\section{Autonomous Solvers}
+A new set of algorithms $\alpha{}'$ is obtained by a selection mapping function
+$s_{a}$, such that $s_{a}(\phi,\alpha,||\pi||) = \alpha{}' \in A$, where $\phi$
+is the set of features, $\alpha$ is the previous algorithm set, and $||\pi||$
+is the algorithm performance.
 
-\todo[inline,author=Pedro,color=cyan]{Discuss autonomous solvers}
-\todo[inline,author=Pedro,color=cyan]{Discuss the choice of autotuning for
-this work, given all the possibilities for solving the same problem
-presented in this chapter}
+This last step makes clearer that solving the algorithm selection problem can
+be seen as an iterative and dynamic process, that improves by considering
+previous algorithm selections and their performance measurements. One problem
+that surfaces from this framework is finding the selection mapping functions
+$s$ and $s'$, which can again be seen as a new instance of the algorithm
+selection problem. This new problem can be interpreted, for example, as a
+function approximation problem, a learning problem, or a search problem.
+It can therefore be solved with many different strategies.
+The work we have done so far treats the problem of finding selection mapping
+functions as a search problem. The next section discusses autonomous
+solvers, dynamically configured systems that search for selection mapping
+functions.
+
+\subsection{Autonomous Solvers}
+
+An autonomous solver is a system capable of reconfiguring its components
+according to a set of pre-defined rules and subject to external circumstances.
+According to the general architecture of autonomous solvers presented by Hamadi
+\emph{et al.}~\cite{hamadi2011autonomous, hamadi2012autonomous} and shown in
+Figure~\ref{fig:general_solver}, the components of a solver consist of the
+algorithms involved in search, such as heuristics and inference mechanisms.
+Hamadi \emph{et al.} define the external circumstances a solver is subject to
+as the information collected or computed during search.  The control layer of a
+solver is responsible for configuring the solver's internal components.
+
+A solver can use multiple simultaneous search techniques, each with its own
+search algorithm, performance model or heuristic. Search techniques apply
+operators, such as randomization and perturbation, to a point in the search
+space to obtain new points to measure. The selection and ordering of operators
+is controlled by the configuration parameters of each search technique.
 
 \begin{figure}[htpb]
     \centering
     \includegraphics[width=.46\textwidth]{general_solver}
-    \caption{General autonomous solver architecture adapted from Hamadi \emph{et al.}~\cite{hamadi2012autonomous}}
+    \caption{General autonomous solver architecture, adapted from Hamadi \emph{et al.}~\cite{hamadi2012autonomous}}
     \label{fig:general_solver}
 \end{figure}
 
-\paragraph{On-line Control}
-\label{sec:oncontrol}
+Search techniques use performance values associated with points in the
+search space to guide their search. These values are measured or computed
+using performance or inference models, or empirical evaluations.
+Models can be analytically built or trained using machine learning
+algorithms, and evaluations are usually done by running the program
+with the configuration correspondent to a given point in the search
+space and measuring a software or hardware metric.
+
+The control layer of an autonomous solver is responsible to reconfigure the
+search and measurement components of the solver to adapt to information
+collected during search, such as search space size and local minima, available
+computational resources and hardware metrics. The control layer can also use
+information computed during search, such as search technique performance over
+time and heuristic pruning capacity.
+
+In the search component the control layer can configure search algorithms and
+their parameters, select search space dimensions to use in search, and define
+operator ordering and computational resource sharing schedules.  In the
+measurement component the control layer can select which performance and
+inference models will be used for predictions, in which computational resource
+the evaluations will be performed, and also resource sharing schedules.
+
+The stage of the target program's execution in which an autonomous solver
+operates is a distinctive property. Solvers that search for optimized
+parameters of an algorithm during its runtime are called \textit{online}
+autonomous solvers, and solvers that search for optimized parameters before
+runtime, for example, by using test runs with different parameters, are called
+\textit{offline} autonomous solvers. In this work we did not experiment with
+\textit{online} autonomous solvers, so the following section does not distinct
+the two categories, although most of the works presented there are on
+\textit{offline} autonomous solvers.
 
 % Final thesis should contain:
+%
+%\section{On-line Control}
+%\label{sec:oncontrol}
 %
 %\subsection{Adaptive Parameter Configuration}
 %\label{subsec:paramadaptive}
@@ -83,11 +165,10 @@ presented in this chapter}
 %
 %\subsection{Reinforcement Learning}
 %\label{subsec:reinforce}
-
-\paragraph{Off-line Configuration}
-\label{sec:offconfig}
-
-% Final thesis should contain:
+%
+%\section{Off-line Configuration}
+%\label{sec:offconfig}
+%
 %\subsection{Evolutionary Computing}
 %\label{subsec:evolcomp}
 %
@@ -103,7 +184,7 @@ presented in this chapter}
 This section presents autotuning systems from different application domains,
 categorized by the autotuning strategy they use. We gathered from the Google
 Scholar bibliographic database the most relevant autotuning systems published
-in the years of 2015, 2016 and 2017. We also discuss briefly notable autotuning
+in the years of 2015, 2016 and 2017. We also briefly discuss notable autotuning
 systems published before 2015.
 
 The categories of autotuning strategies we use in this section are
@@ -324,17 +405,59 @@ implement an autotuner for a Java Virtual Machine implementation.
 
 \section{The OpenTuner Framework}
 \label{sec:opentuner}
-\todo[inline,author=Pedro,color=cyan]{This section will describe OpenTuner in
-more detail}
+
+OpenTuner search spaces are defined by \emph{Configuration}s, that are composed
+of \emph{Parameter}s of various types. Each type has restricted bounds and
+manipulation functions that enable the exploration of the search space.
+OpenTuner implements ensembles of optimization techniques that perform well in
+different problem domains. The framework uses \emph{meta-techniques} to
+coordinate the distribution of resources among techniques.  Results found
+during search are shared through a database. An OpenTuner application can
+implement its own search techniques and meta-techniques, making the ensemble
+more robust.  OpenTuner's source code is available\footnote{Hosted at GitHub:
+\texttt{\scriptsize github.com/jansel/opentuner} [Accessed on October 13,
+2017]} under the MIT License.
 
 \subsection{Software Architecture}
 \label{sec:arch}
-\todo[inline,author=Pedro,color=cyan]{Describe OpenTuner architecture and the
-dependent execution flow of measurement and search}
+
+Figure~\ref{fig:ot-imp} shows a high-level view of OpenTuner's architecture.
+Measurement and searching are done in separate modules, whose main classes are
+called \emph{drivers}. The search driver requests measurements by registering
+configurations to the database. The measurement driver reads those
+configurations and writes back the desired results. Using the measurement
+driver available in the framework, the measurements are performed sequentially.
+Before running the user-defined measurement function the measurement
+driver calls compilation hooks that can be run in parallel using Python
+threads.
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=.58\textwidth]{opentuner_arch}
+    \caption{OpenTuner Architecture, reproduced from Ansel \emph{et
+    al.}~\cite{ansel2014opentuner}}
+    \label{fig:ot-imp}
+\end{figure}
 
 \subsection{Search Techniques}
 \label{sec:techniques}
-\todo[inline,author=Pedro,color=cyan]{Describe search techniques and MAB}
+
+OpenTuner implements optimization techniques such as the
+Nelder-Mead~\cite{nelder1965simplex} simplex method and Simulated
+Annealing~\cite{kirkpatrick1983optimization}. A resource sharing mechanism,
+called \emph{meta-technique}, aims to take advantage of the strengths of each
+technique by balancing the exploitation of a technique that has produced good
+results in the past and the exploration of unused and possibly better ones.
+
+The autotuner used a combination of four techniques: two variations of greedy
+genetic algorithms, a differential evolution algorithm and an implementation of
+the Nelder-Mead method.  Whenever a good set of parameters is found it is
+shared between techniques and they update their local values. Computational
+resources were shared between search techniques according to their past
+results. The algorithm used to share resources was the \textit{Multi-Armed
+Bandit with sliding window, Area Under the Curve credit assignment} (MAB AUC).
+We refer the reader to the OpenTuner paper~\cite{ansel2014opentuner} for a
+detailed description.
 
 \subsection{Parallel and Distributed Programming in OpenTuner}
 \label{sec:opentuner-parallel}
