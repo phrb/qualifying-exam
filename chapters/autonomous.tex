@@ -6,12 +6,12 @@ something you were after.}}{--- J.R.R. Tolkien, \textit{The Hobbit}}
 
 This chapter presents the fundamentals and the literature background for the
 work described in the case studies of chapter~\ref{chap:usecases}.
-Section~\label{sec:algselres} describes the algorithm selection problem and
+Section~\ref{sec:algselres} describes the algorithm selection problem and
 the general architecture of autonomous solvers.
 Section~\ref{sec:autotuning} presents a literature review of autotuning works
 in different domains and using different strategies.
 Section~\ref{sec:opentuner} describes the OpenTuner framework, its software
-architecture and the difficulties we had in applying parallel and distributed
+architecture, and the difficulties we had in applying parallel and distributed
 programming models to it.
 
 \section{Algorithm Selection}
@@ -23,7 +23,7 @@ abstract models for the problem of selecting effective algorithms for a given
 problem. The four main components of the abstract model are the \textit{problem
 space} $P$, the \textit{feature space} $\Phi$, the \textit{algorithm space}
 $A$, and the \textit{performance space} $\Pi$. The algorithm selection problem
-can be formally stated as~\cite{smith2009cross}:
+can be formally stated~\cite{smith2009cross} as:
 
 \begin{definition}[The Algorithm Selection Problem]
     For a given problem $x \in P$, with features $f(x) = \phi \in \Phi$,
@@ -82,18 +82,17 @@ $s_{a}$, such that $s_{a}(\phi,\alpha,||\pi||) = \alpha{}' \in A$, where $\phi$
 is the set of features, $\alpha$ is the previous algorithm set, and $||\pi||$
 is the algorithm performance.
 
-This last step makes clearer that solving the algorithm selection problem can
+This last step makes it clear that solving the algorithm selection problem can
 be seen as an iterative and dynamic process, that improves by considering
 previous algorithm selections and their performance measurements. One problem
 that surfaces from this framework is finding the selection mapping functions
-$s$ and $s'$, which can again be seen as a new instance of the algorithm
+$s$ and $s_{a}$, which can again be seen as a new instance of the algorithm
 selection problem. This new problem can be interpreted, for example, as a
-function approximation problem, a learning problem, or a search problem.
-It can therefore be solved with many different strategies.
-The work we have done so far treats the problem of finding selection mapping
-functions as a search problem. The next section discusses autonomous
-solvers, dynamically configured systems that search for selection mapping
-functions.
+function approximation problem, a learning problem, or a search problem.  It
+can therefore be solved by many different strategies.  The work we have done so
+far treats the problem of finding selection mapping functions as a search
+problem. The next section discusses autonomous solvers, dynamically configured
+systems that search for selection mapping functions.
 
 \subsection{Autonomous Solvers}
 
@@ -109,8 +108,8 @@ solver is responsible for configuring the solver's internal components.
 
 A solver can use multiple simultaneous search techniques, each with its own
 search algorithm, performance model or heuristic. Search techniques apply
-operators, such as randomization and perturbation, to a point in the search
-space to obtain new points to measure. The selection and ordering of operators
+operators, such as randomization and perturbation, to points in the search
+space, obtaining new points to measure. The selection and ordering of operators
 is controlled by the configuration parameters of each search technique.
 
 \begin{figure}[htpb]
@@ -126,10 +125,10 @@ using performance or inference models, or empirical evaluations.
 Models can be analytically built or trained using machine learning
 algorithms, and evaluations are usually done by running the program
 with the configuration correspondent to a given point in the search
-space and measuring a software or hardware metric.
+space, and measuring a software or hardware metric.
 
 The control layer of an autonomous solver is responsible to reconfigure the
-search and measurement components of the solver to adapt to information
+search and measurement components, adapting the solver to information
 collected during search, such as search space size and local minima, available
 computational resources and hardware metrics. The control layer can also use
 information computed during search, such as search technique performance over
@@ -144,13 +143,13 @@ the evaluations will be performed, and also resource sharing schedules.
 
 The stage of the target program's execution in which an autonomous solver
 operates is a distinctive property. Solvers that search for optimized
-parameters of an algorithm during its runtime are called \textit{online}
-autonomous solvers, and solvers that search for optimized parameters before
-runtime, for example, by using test runs with different parameters, are called
-\textit{offline} autonomous solvers. In this work we did not experiment with
-\textit{online} autonomous solvers, so the following section does not distinct
-the two categories, although most of the works presented there are on
-\textit{offline} autonomous solvers.
+parameters of an algorithm by changing parameters during the algorithm's
+runtime are called \textit{online} autonomous solvers, and solvers that search
+for optimized parameters before runtime, for example, by using test runs with
+different parameters, are called \textit{offline} autonomous solvers. In this
+work we did not experiment with \textit{online} autonomous solvers, so the
+following section does not distinct the two categories, although most of the
+work presented there studies \textit{offline} autonomous solvers.
 
 % Final thesis should contain:
 %
@@ -406,34 +405,70 @@ implement an autotuner for a Java Virtual Machine implementation.
 \section{The OpenTuner Framework}
 \label{sec:opentuner}
 
-OpenTuner search spaces are defined by \emph{Configuration}s, that are composed
-of \emph{Parameter}s of various types. Each type has restricted bounds and
-manipulation functions that enable the exploration of the search space.
-OpenTuner implements ensembles of optimization techniques that perform well in
-different problem domains. The framework uses \emph{meta-techniques} to
-coordinate the distribution of resources among techniques.  Results found
-during search are shared through a database. An OpenTuner application can
-implement its own search techniques and meta-techniques, making the ensemble
-more robust.  OpenTuner's source code is available\footnote{Hosted at GitHub:
-\texttt{\scriptsize github.com/jansel/opentuner} [Accessed on October 13,
-2017]} under the MIT License.
+The OpenTuner framework~\cite{ansel2014opentuner}  aims to ease the
+implementation of autotuners for various domains. Its approach is to provide to
+the user an \emph{ensemble} of search techniques from various domains, where
+search techniques run concurrently and share results using a common
+database.  OpenTuner is implemented in Python 2.7.  This section will describe
+OpenTuner in more detail, discussing its software architecture, search
+techniques and how the framework uses parallel and distributed programming.
+
+The first step to implement an autotuner using OpenTuner is to define the
+search space of a problem by identifying relevant \emph{program parameters} and
+their limits. Parameters can represent many configurable properties and
+variables of a program. For example, one can define a search space with the
+flags and parameters of a compiler, or with the parameters of a genetic
+algorithm.  Each parameter type has its own operators that provide valid
+ways to manipulate parameter values.  The set of parameters of a search space
+is called a \emph{configuration}.
+
+The next step after defining the search space is to write a cost function.  The
+input of the cost function is an OpenTuner configuration that becomes a program
+configuration by parsing the values of each parameter.  For a compiler, the
+cost function will build the command string with flag and parameter values from
+the configuration, compile and run the target program, and measure the desired
+metric, such as the execution time.  Since OpenTuner does not provide means to
+specify parameter constraints, users must treat each parameter constraint
+inside the cost function.
+
+With the definitions of the search space and cost function the framework can
+start to search for an optimized set of parameters using its built-in search
+techniques.  OpenTuner uses \emph{meta-techniques} to coordinate the
+distribution of computational resources between search techniques. An autotuner
+implemented with OpenTuner can select and implement its own search techniques
+and meta-techniques, generating a tailored ensemble.  OpenTuner's source code
+is available\footnote{Hosted at GitHub: \texttt{\scriptsize
+github.com/jansel/opentuner} [Accessed on October 13, 2017]} under the MIT
+License.
 
 \subsection{Software Architecture}
 \label{sec:arch}
 
 Figure~\ref{fig:ot-imp} shows a high-level view of OpenTuner's architecture.
 Measurement and searching are done in separate modules, whose main classes are
-called \emph{drivers}. The search driver requests measurements by registering
-configurations to the database. The measurement driver reads those
-configurations and writes back the desired results. Using the measurement
-driver available in the framework, the measurements are performed sequentially.
-Before running the user-defined measurement function the measurement
-driver calls compilation hooks that can be run in parallel using Python
-threads.
+called \emph{drivers}. The \texttt{TuniningRunMain} class is responsible for
+initializing the application and controlling its execution flow and
+communication between the search and measurement drivers.
+
+The search driver requests measurements by registering to the common database
+program configurations whose associated performance measurement is not known.
+The configurations registered for evaluation are suggested by each technique.
+For example, a genetic algorithm registers for evaluation the offspring of its
+current population, and a random walk registers the next point it will move to.
+In the current OpenTuner implementation all search techniques run sequentially,
+and must register its configurations before measurement can start.
+
+After the search driver registered all configurations that need to be
+evaluated, the measurement driver reads them from the database and launches
+different program instances using Python threads. After all measurements are
+done, the driver writes them to the database. Using the measurement driver
+available in the framework, the measurements are performed sequentially.
+Before running the user-defined measurement function the measurement driver
+calls compilation hooks that can be run in parallel using Python threads.
 
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=.58\textwidth]{opentuner_arch}
+    \includegraphics[width=.45\textwidth]{opentuner_arch}
     \caption{OpenTuner Architecture, reproduced from Ansel \emph{et
     al.}~\cite{ansel2014opentuner}}
     \label{fig:ot-imp}
@@ -462,8 +497,16 @@ detailed description.
 \subsection{Parallel and Distributed Programming in OpenTuner}
 \label{sec:opentuner-parallel}
 \todo[inline,author=Pedro,color=cyan]{Discuss OpenTuner's limitations and shortcomings.}
+\todo[inline,author=Pedro,color=cyan]{Discuss Python 2.7 GIL}
 \todo[inline,author=Pedro,color=cyan]{Discuss the difficulties and
 explain why they motivated the new Julia code.}
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=.99\textwidth]{opentuner_callgraph}
+    \caption{OpenTuner search and measurement simplified call graph}
+    \label{fig:ot-imp}
+\end{figure}
 
 % Final thesis should contain:
 %
