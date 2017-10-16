@@ -408,10 +408,10 @@ implement an autotuner for a Java Virtual Machine implementation.
 The OpenTuner framework~\cite{ansel2014opentuner}  aims to ease the
 implementation of autotuners for various domains. Its approach is to provide to
 the user an \emph{ensemble} of search techniques from various domains, where
-search techniques run concurrently and share results using a common
-database.  OpenTuner is implemented in Python 2.7.  This section will describe
-OpenTuner in more detail, discussing its software architecture, search
-techniques and how the framework uses parallel and distributed programming.
+search techniques run concurrently and share results using a common database.
+This section will describe OpenTuner in more detail, discussing its software
+architecture, search techniques and how the framework uses parallel and
+distributed programming.
 
 The first step to implement an autotuner using OpenTuner is to define the
 search space of a problem by identifying relevant \emph{program parameters} and
@@ -423,32 +423,32 @@ ways to manipulate parameter values.  The set of parameters of a search space
 is called a \emph{configuration}.
 
 The next step after defining the search space is to write a cost function.  The
-input of the cost function is an OpenTuner configuration that becomes a program
-configuration by parsing the values of each parameter.  For a compiler, the
-cost function will build the command string with flag and parameter values from
-the configuration, compile and run the target program, and measure the desired
-metric, such as the execution time.  Since OpenTuner does not provide means to
-specify parameter constraints, users must treat each parameter constraint
-inside the cost function.
+cost function receives an input an OpenTuner configuration whose parameter
+values are used to generate a configuration of the target program.  For a
+compiler, the cost function will build the command string with flag and
+parameter values from the configuration, compile and run the target program,
+and measure the desired metric, such as the execution time.  Since OpenTuner
+does not provide means to specify parameter constraints, users must treat each
+parameter interdependency inside the cost function.
 
 With the definitions of the search space and cost function the framework can
 start to search for an optimized set of parameters using its built-in search
 techniques.  OpenTuner uses \emph{meta-techniques} to coordinate the
-distribution of computational resources between search techniques. An autotuner
-implemented with OpenTuner can select and implement its own search techniques
-and meta-techniques, generating a tailored ensemble.  OpenTuner's source code
-is available\footnote{Hosted at GitHub: \texttt{\scriptsize
-github.com/jansel/opentuner} [Accessed on October 13, 2017]} under the MIT
-License.
+distribution of computational resources between search techniques during the
+search process. An autotuner implemented with OpenTuner can select and
+implement its own search techniques and meta-techniques, generating a tailored
+ensemble.  OpenTuner's source code is available\footnote{Hosted at GitHub:
+\texttt{\scriptsize github.com/jansel/opentuner} [Accessed on October 13,
+2017]} under the MIT License.
 
 \subsection{Software Architecture}
 \label{sec:arch}
 
 Figure~\ref{fig:ot-imp} shows a high-level view of OpenTuner's architecture.
-Measurement and searching are done in separate modules, whose main classes are
+Measurement and search are executed by separate modules, whose main classes are
 called \emph{drivers}. The \texttt{TuniningRunMain} class is responsible for
 initializing the application and controlling its execution flow and
-communication between the search and measurement drivers.
+the communication between the search and measurement drivers.
 
 The search driver requests measurements by registering to the common database
 program configurations whose associated performance measurement is not known.
@@ -460,11 +460,10 @@ and must register its configurations before measurement can start.
 
 After the search driver registered all configurations that need to be
 evaluated, the measurement driver reads them from the database and launches
-different program instances using Python threads. After all measurements are
-done, the driver writes them to the database. Using the measurement driver
-available in the framework, the measurements are performed sequentially.
-Before running the user-defined measurement function the measurement driver
-calls compilation hooks that can be run in parallel using Python threads.
+different program instances using Python threads. The driver writes all
+complete measurements to the database. The default measurement driver available
+in the framework is able to perform compilations and executions in parallel
+using Python threads.
 
 \begin{figure}[htpb]
     \centering
@@ -477,36 +476,168 @@ calls compilation hooks that can be run in parallel using Python threads.
 \subsection{Search Techniques}
 \label{sec:techniques}
 
-OpenTuner implements optimization techniques such as the
-Nelder-Mead~\cite{nelder1965simplex} simplex method and Simulated
-Annealing~\cite{kirkpatrick1983optimization}. A resource sharing mechanism,
-called \emph{meta-technique}, aims to take advantage of the strengths of each
-technique by balancing the exploitation of a technique that has produced good
-results in the past and the exploration of unused and possibly better ones.
+OpenTuner implements search techniques such as the
+Nelder-Mead~\cite{nelder1965simplex} simplex method, Simulated
+Annealing~\cite{kirkpatrick1983optimization}, and different versions of genetic
+algorithms. Search techniques share their results through a common database,
+so whenever a globally better configuration is found, all techniques move
+to the new point.
 
-The autotuner used a combination of four techniques: two variations of greedy
-genetic algorithms, a differential evolution algorithm and an implementation of
-the Nelder-Mead method.  Whenever a good set of parameters is found it is
-shared between techniques and they update their local values. Computational
-resources were shared between search techniques according to their past
-results. The algorithm used to share resources was the \textit{Multi-Armed
-Bandit with sliding window, Area Under the Curve credit assignment} (MAB AUC).
-We refer the reader to the OpenTuner paper~\cite{ansel2014opentuner} for a
-detailed description.
+A resource sharing mechanism, called \emph{meta-technique}, aims to take
+advantage of the strengths of each technique by balancing the exploitation of a
+technique that has produced good results in the past and the exploration of
+less prolific but potentially effective ones.  Meta-techniques balance
+exploitation and exploration by determining how many measurements each
+technique will be allowed to perform, according to its past results.
+
+Although OpenTuner also provides simpler meta-techniques such as round-robin,
+its default meta-technique is the \textit{Multi-Armed Bandit with sliding
+window, Area Under the Curve credit assignment} (MAB AUC).  This meta-technique
+uses a solution for the multi-armed bandit problem, where,
+informally~\cite{ansel2014opentuner}, the objective is to maximize the payout
+of pulling a certain number of levers of a slot-machine, where each of the many
+levers has an unknown payout probability.
+
+The MAB AUC meta-technique~\cite{ansel2014opentuner} allots a measurement to
+search technique $t^{*} \in T$, where $T$ is the current ensemble of
+techniques, according to Equation~\ref{eq:mabauc}, where $AUC_t$ is the credit
+assignment of technique $t$ in a time window of length $|H|$, $H_t$ is the
+number of times technique $t$ was used in the time window, and $C$ is a
+constant that controls the trade-off between exploitation and exploration.
+
+\begin{equation}
+    t^{*} = \mathop{\text{argmax}}_{t \in T}\left(AUC_t + C \sqrt{\frac{2log|H|}{H_t}}\right)
+    \label{eq:mabauc}
+\end{equation}
+
+The credit assignment $AUC_t$ for a technique $t$ in a given time window is given
+by Equation~\ref{eq:auct}, where $V_t$ is the list of uses of technique $t$ in
+the time window, and $V_{t,i}$ is 1 if the technique found a better configuration
+than the best so far in its $i$\textsuperscript{th} usage.
+
+\begin{equation}
+    AUC_t = \frac{2}{|V_t|(|V_t| + 1)} \sum\limits_{i = 1}^{|V_t|}{iV_{t,i}}
+    \label{eq:auct}
+\end{equation}
 
 \subsection{Parallel and Distributed Programming in OpenTuner}
 \label{sec:opentuner-parallel}
-\todo[inline,author=Pedro,color=cyan]{Discuss OpenTuner's limitations and shortcomings.}
-\todo[inline,author=Pedro,color=cyan]{Discuss Python 2.7 GIL}
-\todo[inline,author=Pedro,color=cyan]{Discuss the difficulties and
-explain why they motivated the new Julia code.}
+
+Running an ensemble of multiple independent search algorithms in the same
+search space is an easy problem to parallelize. Each search algorithm can run
+on an independent machine or processor core, and no communication between
+algorithms is strictly necessary. Each algorithm added to the ensemble can
+potentially explore a different portion of the search space, increasing the
+chances of finding good results.
+
+Our studies of OpenTuner's source code and our experiments with the framework,
+described in chapter~\ref{chap:usecases}, enabled us to conclude that the
+OpenTuner architecture described in section~\ref{sec:arch} is not entirely
+effective in realizing the potential parallelism of the autotuning process.
+
+We identified four problems related to parallelism in the OpenTuner framework.
+Three problems related to its architecture and implementation and one
+problem related to the Python 2 implementation of processes and threads.
+The remaining of this section discusses these problems.
+
+\subsubsection{The Python Global Interpreter Lock}
+
+Python 2 threads are operating system threads, implemented with the
+\textit{pthreads} library in POSIX systems. They are scheduled by the operating
+system and represent threaded execution of the C Python interpreter.
+
+The Global Interpreter Lock (GIL) simplifies memory management in the Python
+interpreter by allowing only one Python thread at a time to be run.  This means
+that only the thread that currently has the lock can run, while all other
+threads must keep attempting to get the lock to run.  Parallel execution of
+Python 2 threads is therefore impossible.  We believe this is why OpenTuner has
+built-in support for parallelism in the measurement module but not in the
+search module.
+
+In its measurement module OpenTuner uses the Python 2 \texttt{ThreadPool}
+module from the \texttt{multiprocessing} package.  This module is not
+officially
+documented~\footnote{http://lucasb.eyer.be/snips/python-thread-pool.html
+[Accessed in 15/10/2017]}, and its objective is to provide context switching
+for I/O-bound Python 2 threads.  When a Python thread from a thread pool starts
+to perform blocking I/O it releases the GIL, potentially allowing other Python
+threads attempting to acquire the lock to run.
+
+Unfortunately, the Python 2 GIL implementation presents a race
+condition~\cite{beazley2010understanding}, where threads are allowed to release
+and immediately recover the GIL.  There is no guarantee that threads that
+request the lock will be able to run in a given time interval. This problem is
+compounded by I/O buffering, where the operating system fulfills I/O requests
+immediately and keeps the thread running.  I/O buffering is specially relevant
+in the autotuning case, since the same program is executed repeatedly, more
+often than not accessing the same data over and over again and increasing the
+chances of buffering.
+
+\subsubsection{Global Result Sharing}
+
+OpenTuner shares results between techniques, that is, a technique can check for
+the best configuration found so far and move there if some circumstance is met.
+For example, the simulated annealing search algorithm can move to the global
+best if the current temperature is too low.
+
+Resetting a technique to the best configuration so far may not achieve good
+results, since the chance is high that other techniques, or even the
+technique that found the configuration for the first time, already explored
+that region of the search space.
+
+\subsubsection{Sequential Ensemble Search}
+
+As described in section~\ref{sec:arch}, OpenTuner search techniques must
+request measurements for configurations in the search space by registering them
+to a database. After that, they must wait until the measurement module
+runs the configuration and writes the results back into the database.
+
+Since OpenTuner does not parallelize search, techniques must wait until
+all techniques register their configurations, and wait again until all
+requested measurements are completed.
+
+This means that if a technique requested a measurement of a configuration that
+causes an error it will not acknowledge this until all other measurements are
+done. This is also a problem when techniques would find a much better
+configuration than the current best, but still have to wait for much slower
+configurations to be measured.
+
+The ensemble of search techniques would benefit greatly if techniques could
+independently request and wait for measurements, since there is no inherent
+need for communication between search techniques.
+
+\subsubsection{Dependent Execution Flow}
+
+The sequential execution of search techniques and the need to wait for all
+techniques to request their results becomes clear by looking at the OpenTuner
+call graph for the search and measurement modules.  A simplified version of
+this call graph is shown in Figure~\ref{fig:opentuner_callgraph}.
 
 \begin{figure}[htpb]
     \centering
     \includegraphics[width=.99\textwidth]{opentuner_callgraph}
     \caption{OpenTuner search and measurement simplified call graph}
-    \label{fig:ot-imp}
+    \label{fig:opentuner_callgraph}
 \end{figure}
+
+The \texttt{main} function of the \texttt{TuningRunMain} class calls the
+\texttt{main} function of the search driver, which runs in a single thread.
+The \texttt{main} search driver function calls the function
+\texttt{run\_generation\_techniques}, which generates the
+configurations from all techniques that need measurement.  After all requests
+are written to the database, the search driver calls the
+\texttt{wait\_for\_results} function, which is in fact the
+\texttt{results\_wait} function from the \texttt{TuningRunMain} class.  The
+search driver blocks until all measurements are complete, after which it
+updates search techniques by calling the \texttt{process\_new\_results}
+function.
+
+The \texttt{results\_wait} function from \texttt{TuningRunMain} calls the
+measurement driver's \texttt{process\_all} function, which then uses the
+measurement interface to run the user defined cost function.  Therefore, the
+OpenTuner execution flow is not decoupled as Figure~\ref{fig:ot-imp} shows, and
+the execution of all techniques in the search module is dependent on the
+execution of the measurement module.
 
 % Final thesis should contain:
 %
@@ -524,3 +655,7 @@ explain why they motivated the new Julia code.}
 %
 %\subsubsection{Measurement Time}
 %\label{subsec:measure}
+
+\section{Summary}
+
+
