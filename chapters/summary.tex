@@ -1,8 +1,85 @@
 \chapter{Summary}
 \label{chap:final-summary}
 
-\section{Objectives and Future Work}
-\label{sec:future-work}
+In this document we presented our work during the first three years of the
+Ph.D.  program of the Institute of Mathematics and Statistics of the University
+of São Paulo. Chapter~\ref{chap:autonomous} presented the Algorithm Selection
+Problem, discussed the general architecture of autonomous solvers and presented
+a literature overview of the autotuning research topic. In
+chapter~\ref{chap:autonomous}, we also discussed the implementation of the
+OpenTuner framework and problems we identified in its architecture and
+execution flow.
+
+In chapter~\ref{chap:usecases} we presented four case studies on autotuning
+High-Performance Computing applications for different hardware architectures.
+Three of these case studies used the OpenTuner framework, and were instrumental
+in identifying the problems with the framework presented in
+chapter~\ref{chap:autonomous}. The case study with HPE's DPE architecture is
+still incomplete. We are using NODAL in this case study and we expect that the
+experiments we will perform help guiding its development.  We discussed
+interesting properties of each case study as they were presented, from the
+point of view of a domain-agnostic autotuning system.
+
+We used the knowledge about domain-agnostic autotuning and the OpenTuner
+framework, acquired during the elaboration of the case studies, to start
+development of NODAL, a parallel and distributed domain-agnostic autotuning
+library in the Julia language. Chapter~\ref{chap:julia} presents NODAL, and our
+software architecture and implementation choices. We still have not presented
+real autotuning examples with NODAL, but we expect that work with autotuning
+GPU compiler parameters and with the DPE architectures will be the first case
+studies.
+
+From the case studies using OpenTuner we identified that empirical autotuners
+must not rely only on stochastic local search techniques or machine learning.
+For autotuning cases when the time to obtain a single measurement is in the
+order of hours or greater, it is not effective for an autotuner to have to wait
+for measurements in order to decide a next step. This need for a developing
+more informed exploration of search spaces led us to purse a collaboration in
+autotuning research with french professors Arnaud Legrand, Jean-Marc Vincent
+and Brice Videau, from the University of Grenoble Alpes.
+
+The professors have investigated the application of Design of
+Experiments~\cite{fisher1937design} to other autotuning use cases involving
+GPUs, and have obtained encouraging methods. They were able to systematically
+find near-optimal solutions within a reasonable amount of configuration
+evaluations. They are interested in extending this approach to FPGAs using real
+applications and industry partners who can directly benefit from the process.
+
+We expect that devising new robust and cheap experimental designs that enable
+mixing binary, factorial and continuous variables will present an interesting
+challenge.  This collaboration is therefore an interesting opportunity, and
+Pedro will spend 18 months in Grenoble with funding from the CAPES/COFECUB
+project, starting in November 2017. Pedro was already accepted at the Doctoral
+School of the Univesity of Grenoble Alpes and will pursue a double diploma.
 
 \section{Schedule}
 \label{sec:schedule}
+
+Table \ref{tab:sched} presents our tentative schedule for the 18 months of
+co-tutelage at the University of Grenoble Alpes, in the period from 01/11/2017
+to 01/05/2019. In the first semester we will develop a deeper understanding of
+autotuning techniques in the context of design-of-experiments literature, as
+well as begin to devise an autotuning model for expensive-to-evaluate
+functions. In the subsequent semesters we will work on implementing, testing
+and validating our autotuning approach. In the third semester we will write
+research papers summarizing our findings and work on the Ph.D. thesis.
+
+\begin{table}[htpb]
+\centering
+    \begin{tabular}{@{}p{0.36\textwidth}p{0.14\textwidth}p{0.14\textwidth}p{0.14\textwidth}@{}}
+        \toprule
+        \multirow{2}{*}{\textbf{Planned Research Activities}} & \multicolumn{3}{c}{\textbf{Semesters}} \\
+        & \multicolumn{1}{c}{\footnotesize{11/17-05/18}} & \multicolumn{1}{c}{\footnotesize{05/18-11/18}} & \multicolumn{1}{c}{\footnotesize{11/18-05/19}} \\ \midrule
+        \textit{Bibliographic Review} & \cellcolor[HTML]{C0C0C0} &  &  \\
+        \addlinespace
+        \textit{Autotuning Model Development} & \cellcolor[HTML]{C0C0C0} & \cellcolor[HTML]{C0C0C0} &  \\
+        \addlinespace
+        \textit{Implementation \& Testing} & \cellcolor[HTML]{C0C0C0} & \cellcolor[HTML]{C0C0C0} & \cellcolor[HTML]{C0C0C0} \\
+        \addlinespace
+        \textit{Experiments \& Validation} &  & \cellcolor[HTML]{C0C0C0} & \cellcolor[HTML]{C0C0C0} \\
+        \addlinespace
+        \textit{Paper \& Thesis Writing} &  &  & \cellcolor[HTML]{C0C0C0} \\ \bottomrule
+    \end{tabular}
+    \caption{Research Activities Schedule}
+    \label{tab:sched}
+\end{table}

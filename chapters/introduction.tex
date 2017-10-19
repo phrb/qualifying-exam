@@ -38,46 +38,46 @@ selection in code generation, it is possible to expose optimization and
 configuration opportunities in various stages of program development and
 execution.  The time to measure the results of an optimization choice depends
 on the selected stage and on the metric to be optimized.
+Some stages are more expensive to measure and therefore to optimize.
+For example, access to certain architectures might be costly and limited,
+or it may take a long time to solve certain problem instances.
 
-\todo[inline,author=Pedro,color=cyan]{Describe variety of heterogeneous
-architectures: NUMA, memory centric, ...}
+Domain-specific autotuning systems must gather expert knowledge to build
+performance models or use tailored search techniques.  Despite achieving good
+results for its domain, the work on a domain-specific system must be repeated
+if one needs an autotuner for another problem domain. The objective of
+domain-agnostic autotuning systems is to reuse the effort of selecting search
+techniques and implementing a search space to help build autotuners for
+different domains.
 
-\todo[inline,author=Pedro,color=cyan]{Show some example: (Genetic Algorithm,
-Sorting, Compiler Flag, LLVM Pass)?}
+In a domain-agnostic system, search techniques gathered from different problem
+domains can be added to the system, composing an ensemble.  This search
+technique ensemble can contain algorithms from areas such as evolutionary
+programming, machine learning, statistics and stochastic local search.
+Another distinctive feature of domain-agnostic autotuners enable
+the representation of diverse search spaces by providing a comprehensive
+set of data types, such as integers, floating-point numbers, permutations
+and enumerations.
 
-Different steps of a program's development and deployment can be optimized.
-Some steps can be more expensive to measure and therefore optimize.  For
-example, access to certain architectures might be costly and limited, or it may
-take a long time to solve certain problem instances.
-\todo[inline,author=Pedro,color=cyan]{Examples: GPU \& CPU compilation,
-FPGA hardware generation, compilation for supercomputers, ...}
+Current domain-agnostic autotuning systems are not capable of fully leveraging
+parallel and distributed computing, and typically rely on multiple evaluations
+of program configurations to achieve a good result. As a consequence, it is
+still inefficient to use domain-agnostic autotuners in domains were evaluating
+a configuration is very expensive, such as supercomputer programming, FPGA
+compilation and the co-design of hardware and software.
 
-\todo[inline,author=Pedro,color=cyan]{How to autotune:
- Complex systems, such as HACC?;
- Programs for a supercomputer, like the Titan?;
- FPGA compilation?;
- Hardware and software co-design?}
-
-\todo[inline,author=Pedro,color=cyan]{Current autotuning approaches:
- Require multiple expensive evaluations;
- Do not leverage parallel and distributed computing;
- Not flexible to target multiple development and execution steps}
-
-\section{Objectives and Expected Contributions}
+\section{Expected Contribution}
 \label{sec:contributions}
 
-\todo[inline,author=Pedro,color=cyan]{A new approach must:
- Leverage distributed and parallel computing power;
- Target different steps of development and execution;
- Handle expensive to measure cases efficiently}
-
-\todo[inline,author=Pedro,color=cyan]{Our expected contribution
-is advancing the state-of-the-art of autotuning tools,
-leveraging distributed and parallel computing to perform
-autotuning in a variety of HPC domains}
-
-\todo[inline,author=Pedro,color=cyan]{Briefly describe the
-Julia system}
+The expected contribution of this work is a domain-agnostic autotuning system
+that is capable of leveraging parallel and distributed computing. This system
+must be able to aid in different steps of hardware and software development,
+and handle expensive-to-measure cases efficiently.  We expect to advance the
+state-of-the-art of domain-agnostic autotuning tools, enabling the application
+of this strategy in a variety of High-Performance Computing Domains.  We
+present NODAL, an open distributed autotuning library written in the Julia
+language. NODAL is domain-agnostic, and is capable of running parallel and
+distributed search and measurement.
 
 \section{Efforts for a Reproducible and Open Research}
 
@@ -111,8 +111,20 @@ we used.
 With these efforts for a reproducible and open research we believe we have
 provided a better foundation for our conclusions and expected contributions.
 
-\section{Text Structure}
+\section{Text Organization}
 \label{sec:org}
 
-\todo[inline,author=Pedro,color=cyan]{Describe each chapter (and
-the papers attached to end of the document?)}
+The remainder of this document is organized as follows.  In
+chapter~\ref{chap:autonomous} we present the Algorithm Selection Problem, and
+the general architecture of autonomous solvers. This chapter also presents a
+literature review on autotuning systems for various problem domains, and
+discusses the software architecture of OpenTuner~\cite{ansel2014opentuner}, a
+domain-agnostic autotuning framework.  In chapter~\ref{chap:usecases} we
+present four autotuning case studies targeting different High-Performance
+Computing problems and architectures.  In chapter~\ref{chap:julia} we introduce
+NODAL, a domain-agnostic autotuning library written in the Julia language. The
+implementation of NODAL is the result of the knowledge acquired during this
+period, and it proposes solutions to some of the problems we identified along
+the way.  Chapter~\ref{chap:final-summary} summarizes the document, and
+appendix~\ref{chap:papers} lists the papers we submitted or published during
+the period.

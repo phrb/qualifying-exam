@@ -10,14 +10,14 @@ memories (PCM), and oxide-based memristors.  Circuit demonstrations have been
 shown in stand alone platforms~\cite{prezioso2015training}, as well as part of
 larger programmable analog computing systems~\cite{george2016programmable}.
 
-A full architecture was recently proposed~\cite{shafiee2016isaac} that
-integrates analog DPE components in a scalable, pipelined flow with digital
-routing, buffers, and other components to flexibly support inference
-computations for a broad range of Convolutional Neural Networks (CNN).  An
-ISAAC chip is contains a number of tiles, composed of eDRAM buffers to store
-input values, a number of in-situ multiply-accumulate (IMA) units, and output
-registers to aggregate results.  All components are connected with a shared
-bus.  Each IMA contains several crossbar arrays as well as shared ADCs.
+A recently proposed architecture~\cite{shafiee2016isaac} integrates analog DPE
+components in a scalable, pipelined flow with digital routing, buffers, and
+other components to flexibly support inference computations for a broad range
+of Convolutional Neural Networks (CNN).  An ISAAC chip is contains a number of
+tiles, composed of eDRAM buffers to store input values, a number of in-situ
+multiply-accumulate (IMA) units, and output registers to aggregate results.
+All components are connected with a shared bus.  Each IMA contains several
+crossbar arrays as well as shared ADCs.
 
 A key performance aspect of the ISAAC architecture is the use of in-memory
 processing, that is, memristor arrays not only store neural network weights,
@@ -48,9 +48,9 @@ working with Hewlett-Packard Enterprise on this project.
 \subsection{Autotuning the Dot Product Engine}
 
 Figure~\ref{fig:dpe-stack} shows the steps needed to generate a DPE
-implementation from a hardware configuration or specification and to generate
-application code using software parameters. These two steps present
-autotuning opportunities for hardware and software parameters.
+implementation from a hardware configuration or specification, and to generate
+application code using software parameters. These two steps present autotuning
+opportunities for hardware and software parameters.
 
 \begin{figure}[htpb]
     \centering
@@ -112,11 +112,11 @@ input.
 
 We are implementing an autotuner for DPE hardware parameters.  We did not
 consider software parameters in this stage, since we are only targeting simple
-applications initially. The autotuner is being implemented using the autotuning
-library we are developing in the Julia language. The source code for the
-autotuner is available at GitHub~\footnote{Hosted at
-\url{https://github.com/phrb/dpe-emulate-autotuner}}The library is described in
-detail in chapter~\ref{chap:julia}.
+applications initially. The autotuner is being implemented using NODAL, the
+autotuning library we are developing in the Julia language. The source code for
+the autotuner is available at GitHub~\footnote{Hosted at
+\url{https://github.com/phrb/dpe-emulate-autotuner}}. NODAL is described in
+chapter~\ref{chap:julia}.
 
 We did not want the autotuner's performance to impose limits to the size of the
 hardware design space that could be explored for the DPE. Using Julia's
@@ -170,36 +170,37 @@ Usability, flexibility & Empirical, qualitative \\ \bottomrule
 \label{subsec:DPEconcl}
 
 This work is still ongoing. The capability of changing each hardware metric
-still being studied and implementing, and code for the DPE simulator is still
-written by hand. We expect to advance more in the next months, leveraging code
-generators and simulator improvements that the HPE work group produces to
-explore the hardware and software design spaces with autotuning.
+still being studied and implemented in the simulator, and assembly code for the
+DPE simulator is still written by hand. We expect to advance more in the next
+months, leveraging code generators and simulator improvements that the HPE work
+group produces to explore the hardware and software design spaces with
+autotuning.
 
 \section{Summary}
 
 This chapter presented our work with OpenTuner, an original and
-state-of-the-art tool for general-purpose autotuning. During these case studies
-we were able to explore OpenTuner's capabilities in application domains
-with \textit{small} and \textit{large} measurement time, in computer
+state-of-the-art tool for domain-agnostic autotuning. Elaborating these case
+studies we were able to explore OpenTuner's capabilities in application domains
+with \textit{small} and \textit{large} measurement times, using computer
 architectures relevant for High-Performance Computing.
 
-During our work we also identified that OpenTuner has a tightly coupled
+During our work we identified that OpenTuner has a tightly coupled
 execution flow, where search techniques must wait for a batch of measurement
-requests to complete in order before requesting new tests or updating its
-algorithm step. This means that the framework is not able to truly run
-measurements in parallel.
+requests to complete before requesting new tests or updating their algorithms.
+This means that the framework is incapable of effectively managing parallel
+search and measurement.
 
-Another shortcoming we identified is the current lack of support for
-distributed execution of measurements. We are attempting to extend the
-framework to support execution of measurements in public clouds, but even with
-that extension the execution flow of the framework still needs to be changed to
-allow parallel executions of requested measurements for each technique.
+We identified that OpenTuner currently lacks support for distributed execution
+of measurements. We are attempting to extend the framework to support execution
+of measurements in public clouds, but the execution flow of the framework still
+needs to be changed to allow parallel executions of requested measurements for
+each technique.
 
-These shortcomings motivated our work toward a general-purpose autotuning
-library that implements OpenTuner's great ideas, such as ensembles of
-search techniques, easily-definable search spaces using domain-agnostic
-parameters, and strategies for sharing computational resources, but that solves
-the shortcomings we identified. The next chapter summarizes the work
-we have done is this direction so far, describing our implementation of
-a library in the Julia language that enables the uncoupled, parallel
-and distributed execution of measurements.
+These problems motivated our work toward a domain-agnostic autotuning library
+that implements OpenTuner's great ideas, such as ensembles of search
+techniques, easily-definable search spaces using domain-agnostic parameters,
+and strategies for sharing computational resources, but that solves the
+problems we identified. The next chapter summarizes the work we have done is
+this direction, describing our implementation of a domain-agnostic autotuning
+library in the Julia language that enables the uncoupled, parallel and
+distributed execution of measurements.

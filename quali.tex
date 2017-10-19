@@ -28,6 +28,8 @@
 \usepackage[explicit]{titlesec} % cabeçalhos dos títulos: menores e compactos
 \usepackage[bold,full]{complexity}
 \usepackage{tocloft}
+\usepackage[super]{nth}
+\usepackage{multirow}
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{relsize}
@@ -37,6 +39,7 @@
 \usepackage[usenames,svgnames,dvipsnames,table,xcdraw]{xcolor}
 \usepackage{wrapfig}
 \usepackage[a4paper,top=2.54cm,bottom=2.0cm,left=2.0cm,right=2.54cm]{geometry} % margens
+\usepackage{pdfpages}
 %\usepackage[pdftex,plainpages=false,pdfpagelabels,pagebackref,colorlinks=true,citecolor=black,linkcolor=black,urlcolor=black,filecolor=black,bookmarksopen=true]{hyperref} % links em preto
 \usepackage[pdftex,plainpages=false,pdfpagelabels,pagebackref,colorlinks=true,citecolor=DarkGreen,linkcolor=NavyBlue,urlcolor=DarkRed,filecolor=green,bookmarksopen=true]{hyperref} % links coloridos
 \usepackage[all]{hypcap}                    % soluciona o problema com o hyperref e capitulos
@@ -149,6 +152,20 @@ framexrightmargin=10pt
 \renewcommand\cfttoctitlefont{\hfill\itshape\bfseries\Large}
 
 \renewcommand{\cftaftertoctitle}{\hfill}
+
+\newcommand{\fakechapter}[1]{%
+  \par\refstepcounter{chapter}% Increase section counter
+  \chaptermark{#1}% Add section mark (header)
+  \addcontentsline{toc}{chapter}{\protect\numberline{\thechapter}#1}% Add section to ToC
+  % Add more content here, if needed.
+}
+
+\newcommand{\fakesection}[1]{%
+  \par\refstepcounter{section}% Increase section counter
+  \sectionmark{#1}% Add section mark (header)
+  \addcontentsline{toc}{section}{\protect\numberline{\thesection}#1}% Add section to ToC
+  % Add more content here, if needed.
+}
 
  \titleformat{\section}
   {\itshape\large\bfseries}{\thesection}{1em}{#1}
@@ -329,25 +346,36 @@ framexrightmargin=10pt
 
 % ---------------------------------------------------------------------------- %
 % Resumo
-%\chapter*{Resumo}
-%
-%\noindent BRUEL, P. \textbf{Título do trabalho em português}.
-%2017. xxx f.
-%Qualificação (Doutorado) - Instituto de Matemática e Estatística,
-%Universidade de São Paulo, São Paulo, 2010.
-%\\
-%
-%Elemento obrigatório, constituído de uma sequência de frases concisas e
-%objetivas, em forma de texto.  Deve apresentar os objetivos, métodos empregados,
-%resultados e conclusões.  O resumo deve ser redigido em parágrafo único, conter
-%no máximo 500 palavras e ser seguido dos termos representativos do conteúdo do
-%trabalho (palavras-chave).
-%\\
-%
-%\noindent \textbf{Palavras-chave:} palavra-chave1, palavra-chave2, palavra-chave3.
-%
-%\vspace*{1cm}%
-%\thickhrulefill
+\chapter*{Resumo}
+
+\noindent BRUEL, P. \textbf{Auto-Ajuste Fino para Computação de Alto Desempenho}.
+2017. xxx f.
+Qualificação (Doutorado) - Instituto de Matemática e Estatística,
+Universidade de São Paulo, São Paulo, 2010.
+\\
+O uso de modelos e arquiteturas de computador heterogêneos tem aumentado,
+apesar da dificuldade de se otimizar e configurar código legado, e de se
+desenvolver novas soluções para computação heterogênea.  Devido à sua grande
+diversidade, não há uma única estratégia de otimização que possa ser aplicada
+em todos os problemas, arquiteturas e modelos de programação.
+Uma otimização específica a um problema requer tempo e conhecimento de
+especialistas. Usar otimizações generalistas é mais fácil e rápido,
+mas implica em perder otimizações específicas a uma aplicação.
+Uma possível solução para esse problema é a automação do processo
+de otimização, ou auto-ajuste fino.
+Este trabalho apresenta uma série de casos de estudo relacionados ao
+auto-ajuste fino, em diferentes domínios da Computação de Alto-Desempenho,
+e usando ferramentas no estado da arte para ajuste-fino automatizado.
+Este trabalho identifica oportunidades para melhorar a estratégia
+de ajuste-fino automatizado dessas ferramentas, e apresenta nosso
+trabalho com a NODAL, uma biblioteca distribuída para auto-ajuste
+fino de propósito geral, implementada na linguagem Julia.
+\\
+
+\noindent \textbf{Palavras-chave:} auto-ajuste fino, computação de alto desempenho, linguagem julia, computação paralela e distribuída.
+
+\vspace*{1cm}%
+\thickhrulefill
 
 % ---------------------------------------------------------------------------- %
 % Abstract
@@ -357,14 +385,23 @@ framexrightmargin=10pt
 Qualifying Examination (PhD) - Institute of Mathematics and Statistics,
 University of São Paulo, São Paulo, 2017.
 \\
-
-
-Elemento obrigatório, elaborado com as mesmas características do resumo em
-língua portuguesa. De acordo com o Regimento da Pós- Graduação da USP (Artigo
-99), deve ser redigido em inglês para fins de divulgação.
+The use of heterogeneous programming models and computer architectures in
+High-Performance Computing has increased despite the difficulty of optimizing
+and configuring legacy code and of developing new solutions for heterogeneous
+computing.  Due to their great diversity, there is no single optimization
+strategy that fits all problems, architectures, and programming models.  An
+optimization solution tailored for a specific problem requires time and expert
+knowledge. Using general optimizations is faster and cheaper, often at the cost
+of application-specific performance improvements. A possible solution to this
+trade-off is the automation of the program optimization process, or autotuning.
+This work presents a series of autotuning case studies on different domains of
+High-Performance Computing, using a state-of-the art domain-agnostic autotuning
+framework. We identify opportunities for improving the framework's autotuning
+strategy and present our ongoing work on NODAL, a parallel and distributed
+domain-agnostic autotuning library in the Julia language.
 \\
 
-\noindent \textbf{Keywords:} keyword1, keyword2, keyword3.
+\noindent \textbf{Keywords:} domain-agnostic autotuning, high-performance computing, julia language, parallel and distributed computing.
 
 \vspace*{1cm}%
 \thickhrulefill
@@ -429,7 +466,43 @@ língua portuguesa. De acordo com o Regimento da Pós- Graduação da USP (Artig
 %\fancyhead[RE,LO]{}
 \appendix
 
-%\include{ape/conjuntos}
+\chapter{Papers}
+\label{chap:papers}
+
+This appendix presents all papers submitted and published during the first
+three years of the Ph.D. program of the Institute of Mathematics and Statistics
+of the University of São Paulo. We also included two
+papers~\cite{goncalves2016openmp,bruel2017openmp} related to teaching parallel
+and distributed languages that were written in the context of the Concurrent,
+Parallel and Distributed Computing course at the Institute of Mathematics and
+Statistics.
+
+\newpage
+
+\fakesection{Autotuning GPU Compiler Parameters using OpenTuner}
+\includepdf[pages={-}]{ape/bruel2015autotuning}
+
+\fakesection{Autotuning CUDA Compiler Parameters for Heterogeneous Applications
+using the OpenTuner Framework}
+\includepdf[pages={-}]{ape/bruel2016autotuning_CCPE}
+
+\fakesection{A New Program Autotuning Methodology Using Cloud Computing and
+OpenTuner}
+\includepdf[pages={-}]{ape/bruel2016protocol_submitted}
+
+\fakesection{Autotuning High-Level Synthesis for FPGAs Using OpenTuner and
+LegUp}
+\includepdf[pages={-}]{ape/bruel2017autotuning}
+
+\fakesection{Generalize or Die: Operating Systems Support for Memristor-based
+Accelerators}
+\includepdf[pages={-}]{ape/bruel2017generalize}
+
+\fakesection{OpenMP is Not as Easy as It Appears}
+\includepdf[pages={-}]{ape/goncalves2016openmp}
+
+\fakesection{OpenMP or Pthreads: Which is Better for Beginners?}
+\includepdf[pages={-}]{ape/bruel2017openmp}
 
 % ---------------------------------------------------------------------------- %
 % Bibliografia
@@ -440,12 +513,12 @@ língua portuguesa. De acordo com o Regimento da Pós- Graduação da USP (Artig
 
 % ---------------------------------------------------------------------------- %
 % Índice remissivo
-\index{TBP|see{periodicidade região codificante}}
-\index{DSP|see{processamento digital de sinais}}
-\index{STFT|see{transformada de Fourier de tempo reduzido}}
-\index{DFT|see{transformada discreta de Fourier}}
-\index{Fourier!transformada|see{transformada de Fourier}}
-
-\printindex   % imprime o índice remissivo no documento
+%\index{TBP|see{periodicidade região codificante}}
+%\index{DSP|see{processamento digital de sinais}}
+%\index{STFT|see{transformada de Fourier de tempo reduzido}}
+%\index{DFT|see{transformada discreta de Fourier}}
+%\index{Fourier!transformada|see{transformada de Fourier}}
+%
+%\printindex   % imprime o índice remissivo no documento
 
 \end{document}
