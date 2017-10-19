@@ -1,7 +1,7 @@
 \chapter[NODAL: an Open Distributed Autotuning Library]{NODAL: \\ an Open Distributed Autotuning Library}
 \label{chap:julia}
 
-This chapter presents NODAL, a domain-agnostic autotuning library written using
+This chapter presents NODAL, a domain-agnostic autotuning library written in
 the Julia language, and
 available~\footnote{\url{https://github.com/phrb/NODAL.jl} [Accessed in
 17/10/2017]} under the MIT license.  NODAL has had continuous integration from
@@ -32,9 +32,8 @@ can explore different regions of the search space.
 Section~\ref{sec:nodal-arch} presents the current NODAL architecture, a
 simplified call graph, and the improvements we have planned.
 Section~\ref{sec:nodal-components} presents a more detailed view of each search
-and measurement component.  Section~\ref{sec:nodal-examples} presents three
-NODAL examples and a preliminary autotuner performance comparison with
-OpenTuner.
+and measurement component.  Section~\ref{sec:nodal-examples} presents two
+autotuners implemented using NODAL.
 
 \section{The Julia Language}
 \label{sec:julia}
@@ -45,7 +44,8 @@ Julia has performance comparable to widely used statically typed, low-level
 languages. The time benchmarks~\footnote{Obtained from
 \url{https://julialang.org/benchmarks/} [Accessed in 17/10/2017]} shown in
 Figure~\ref{fig:julia_benchmarks} compare Julia's performance with other
-high-level dynamic programming languages.
+high-level dynamic programming languages, using the performance in the C
+language as a baseline.
 
 \begin{figure}[htpb]
     \centering
@@ -84,17 +84,17 @@ different distributed computing settings.
 
 \subsubsection{Remote Calls \& References}
 
-In Julia, a \textit{remote call} is a function call that is computed in a different
-process. Remote calls can be made with the \texttt{remotecall} function
-or macros from the \texttt{@spawn} family. The \texttt{remotecall} function
-receives a regular function \texttt{f}, a process ID, and the arguments to
-be passed to \texttt{f}. The \texttt{@spawn} macro receives an expression,
-which can be a regular function call or any valid Julia expression, and
-launches it in the next available Julia process.
+In Julia, a \textit{remote call} is a function call that is computed in a
+different process. Remote calls can be made with the \texttt{remotecall}
+function, or with macros from the \texttt{@spawn} family. The
+\texttt{remotecall} function receives a regular function \texttt{f}, a process
+ID, and the arguments to be passed to \texttt{f}. The \texttt{@spawn} macro
+receives an expression, which can be a regular function call or any valid Julia
+expression, and launches it in the next available Julia process.
 
 Remote calls return immediately after launching the computation. The
 results can be obtained using the \textit{remote reference} returned
-by the remote call. Remote references are objects that reference data
+by remote calls. Remote references are objects that reference data
 stored in other processes, and can be of type \texttt{Future} or
 \texttt{RemoteChannel}.
 
@@ -108,9 +108,9 @@ integer and launches the correspondent number of Julia processes.
 The code snippet in Figure~\ref{fig:remotecall_example} shows a remote call to
 the \texttt{rand} function, to be launched in the process with ID 2. The other
 arguments specify the 2 by 2 matrix that \texttt{rand} will fill with random
-numbers. After this remote call the computation has been launched in a remote
+numbers. After this remote call, the computation has been launched in a remote
 process, and a \texttt{Future} is returned. The interpreter does not wait for
-the computation to finish and goes back to wait for input.
+the computation to finish and waits for new input.
 
 \begin{figure}[htpb]
     \begin{minipage}{\linewidth}
@@ -125,7 +125,7 @@ the computation to finish and goes back to wait for input.
         },
         otherkeywords={::, \&, \*, +, -, /, [, ], >, <}
     ]
-$ ./julia -p 2
+% ./julia -p 2
 
 julia> r = remotecall(rand, 2, 2, 2)
 Future(2, 1, 4, Nullable{Any}())
@@ -137,9 +137,7 @@ julia> fetch(s)
 2x2 Array{Float64,2}:
  1.18526  1.50912
  1.16296  1.60607
-
     \end{lstlisting}
-    %$
     \end{minipage}
     \caption{Using Julia's \texttt{remotecall} function and the \texttt{@spawnat} macro}
     \label{fig:remotecall_example}
@@ -167,13 +165,13 @@ is required, the programmer needs to use remote channels.
 
 Figure~\ref{fig:remotechannel_example} shows a more complex parallel and
 distributed programming example using remote channels to manage a worker pool
-that perform arbitrary jobs. Remote channels are created in a specific process,
-but any process with a reference to a remote channel is able to write values to
-it using the \texttt{put!} function, and read values from it using the
-\texttt{take!} function. In remote channels from the standard library,
+that performs arbitrary jobs. Remote channels are created in a specific
+process, but any process with a reference to a remote channel is able to write
+values to it using the \texttt{put!} function, and to read values from it using
+the \texttt{take!} function. In remote channels from the standard library,
 \texttt{put!} blocks until there is space in the channel and \texttt{take!}
 blocks until there is a data object in the channel that can be taken, and
-removes it from the channel when it completes.
+removing it from the channel when the call completes.
 
 \begin{figure}[htpb]
     \begin{minipage}{\linewidth}
@@ -253,10 +251,10 @@ Our main concern when developing NODAL was to ensure that search techniques
 were independent from each other, making and managing their own requests for
 measurements. To achieve this objective we developed a software architecture
 that minimizes communication between processes and does not block on requests
-to channels. NODAL uses non-blocking custom remote channels, the
-\texttt{ResultChannel}.  The execution flow of search techniques is managed by
-the techniques themselves, with a central control process that regularly polls
-remote channels for results.
+to channels. NODAL uses a custom non-blocking remote channel, the
+\texttt{ResultChannel}. Search techniques manage their own execution flow, and
+write their results to remote channels. A central control process regularly
+polls those remote channels for results.
 
 \begin{figure}[htpb]
     \centering
@@ -268,13 +266,13 @@ remote channels for results.
 Figure~\ref{fig:nodal_architecture} shows a high-level representation of
 NODAL's architecture. User code that uses the library is responsible for
 launching the main NODAL process, or \textit{tuning run}, and communicates with
-it using remote channels. The NODAL main process is responsible to initialize
-parallel and distributed search techniques using all processes available. Each
-technique writes the best result it has found so far to its own remote channel.
-The main process has references for all technique remote channels, and
-periodically polls them for results.  After technique initialization there is
-no blocking communication between the main process and search techniques, and
-no communication between search techniques.
+it using remote channels. The NODAL main process is responsible for
+initializing parallel and distributed search techniques using all processes
+available. Each technique writes the best result it has found so far to its own
+remote channel.  The main process has references for all technique remote
+channels, and periodically polls them for results.  After technique
+initialization there is no blocking communication between the main process and
+search techniques, and no communication between search techniques.
 
 Search techniques are responsible for generating candidate configurations for
 evaluation and requesting their measurement. This is done using remote calls to
@@ -284,8 +282,8 @@ remote channel implementation used in NODAL  is described in
 section~\ref{sec:nodal-measurement}.
 
 Figure~\ref{fig:nodal_architecture} shows a grayed out database component,
-which is not yet implemented. This database will shorten the time to obtain a
-measurement of repeated configurations, and has the potential to be used to
+which is not yet implemented. This database will shorten the time to obtain
+measurements of repeated configurations, and has the potential to be used to
 train machine learning models or to give to the user knowledge about the search
 space.
 
@@ -293,20 +291,23 @@ space.
 
 A more detailed NODAL execution flow is presented in
 Figure~\ref{fig:nodal_callgraph}. Each colored box represents a colored
-component of Figure~\ref{fig:nodal_architecture}, and named smaller boxes
-represent functions of each component. When necessary, a number marks the order
-in which functions are called.
+component of Figure~\ref{fig:nodal_architecture}, and each smaller named box
+represents a function of each component. When necessary, a number marks the
+order in which functions are called.
 
 The entry point of a NODAL application is the user code, which calls the
 \texttt{optimize} function. This is the main NODAL process, and must be
 launched using a remote call. The main process initializes remote search
-techniques using remote calls, by calling the
+techniques, using remote calls, by calling the
 \texttt{initialize\_search\_tasks!} function. It is a non-enforced style of the
 Julia language to append a ``\texttt{!}'' to functions that modify their
 arguments. In this case, the modified argument is the list of remote channels
 stored by the main process.  The initialization process is non-blocking, and it
 returns after all techniques have been launched. The main process then enters a
 loop, periodically checking for results from its remote channel references.
+The \texttt{put!} and \texttt{take!} functions of \texttt{ResultChannel} are
+non-blocking, so the main process always instantly gets a result from the
+channel.
 
 Initialized search techniques run their algorithms using search building
 blocks, which are functions that perform some operation on the current
@@ -328,14 +329,14 @@ function in parallel and returns the average of the measurements.  This is
 useful for time measurements, for example, where fluctuations on the operating
 system or system load can interfere with the results.
 
-After a measurement is performed a search technique can update its algorithm
+After a measurement is performed, a search technique can update its algorithm
 and immediately request another measurement.  Search techniques do not share
-their best results so far, but this is an implementation choice and not an
-architecture limitation.  We intend to implement a main process parameter that
-can be set by the user and enable global result sharing in cases where may be
-beneficial.  Scheduling of all remote calls performed in NODAL is performed by
-Julia's scheduler. The next section describes the implementation of search
-techniques and tools, and of measurement functions.
+their current best results with other techniques, but this was an
+implementation choice and not an architecture limitation.  We intend to
+implement a main process parameter that can be set by the user, and enables
+global result sharing in cases where it may be beneficial. For example, the
+user should be able to select which groups of techniques from the ensemble will
+be allowed share their results.
 
 \section{Search \& Measurement Components}
 \label{sec:nodal-components}
@@ -345,23 +346,24 @@ discussing available parameters, search techniques, and measurement methods.
 
 \subsection{Search}
 
-The search space of an autotuner implemented using NODAL is defined as a
+The search space of an autotuner implemented using NODAL is defined by a
 \texttt{Configuration} object that contains a set of \texttt{Parameter}
 objects. Parameters are changed by search algorithms by using operator
 functions specific to each parameter type. Currently, the only operator
 available in NODAL is the neighbor operator, that randomizes a parameter's
-value inside user-defined neighborhood. The ``radius'' of the neighborhood
-can be changed on each call to the operator.
+value inside a user-defined neighborhood. The ``radius'' of the neighborhood
+can be changed on each call to the operator, enabling search techniques to
+dynamically manipulate parameters.
 
 \subsubsection{Parameters}
 
 Parameters are used to define performance-impacting program variables and their
-limits. They can represent compiler flags, enumerations of algorithms that
-solve a same problem, or numeric parameters of a program. Each parameter can be
-set to an initial value or left unspecified, in which case it will be
-randomized at the start of the search process.
-Table~\ref{tab:nodal-parameters} shows the parameters currently implemented in
-NODAL and the planned additions.
+limits. They represent program configurations such as compiler flags,
+enumerations of algorithms that solve a same problem, and any configurable
+property of a program. Each parameter can have an initial value or left
+uninitialized, in which case it will be randomized at the start of the search
+process.  Table~\ref{tab:nodal-parameters} shows the parameters currently
+implemented in NODAL and the planned additions.
 
 \begin{table}[htpb]
 \centering
@@ -385,8 +387,12 @@ configuration and launching parallel measurements for it. Search techniques can
 use one or more building blocks to implement their algorithms. Building blocks
 enable users to implement parallel and distributed search techniques without
 having to write parallel code in Julia or becoming familiar with NODAL
-specifics. Table~\ref{tab:nodal-blocks} shows the building blocks currently
-implemented in NODAL and the planned additions.
+specifics. The implemented and planned building blocks at this stage of NODAL's
+development comprise the necessary blocks for implementing the stochastic local
+search algorithms presented by Hoos and Stützle~\cite{hoos2015stochastic}.
+Other search building blocks may be necessary to implement future techniques.
+Table~\ref{tab:nodal-blocks} shows the building blocks currently implemented in
+NODAL and the planned additions.
 
 \begin{table}[htpb]
 \centering
@@ -403,6 +409,12 @@ Random Walk & \\ \bottomrule
 \end{table}
 
 \subsubsection{Search Techniques}
+
+The current available ensemble of search techniques in NODAL is composed of
+stochastic local search techniques from the study by Hoos and
+Stützle~\cite{hoos2015stochastic}.  Table~\ref{tab:nodal-techniques} present
+the search techniques currently implemented in NODAL and the planned
+additions.
 
 \begin{table}[htpb]
 \centering
@@ -421,8 +433,30 @@ Iterated Local Search & Tabu Search \\
  & Genetic Algorithms \\ \bottomrule
 \end{tabular}
 \caption{NODAL implemented and planned search techniques}
-\label{my-label}
+\label{tab:nodal-techniques}
 \end{table}
+
+NODAL provides a simple way of creating new search techniques from building
+blocks. Figure~\ref{fig:simulated_annealing} shows an implementation of the
+simulated annealing search technique using the probabilistic improvement search
+building block. This building block randomizes a configuration within a small
+neighborhood, measures it, and accepts a worse configuration with a given
+probability. This simulated annealing implementation uses a logarithmic
+decreasing temperature as the probability for the probabilistic improvement
+block.
+
+Search technique functions must receive references to a \texttt{Run} object and
+to a \texttt{RemoteChannel}.  The \texttt{Run} object contains the
+configuration of the current tuning run, with data such as its duration,
+configuration and cost function.
+
+The search technique function must define an iteration function, which is
+responsible for generating and measuring new configurations.  This function
+must receive a tuning run object and return an object of type \texttt{Result}.
+In NODAL, the \texttt{Result} object contains all information about a
+configuration measurement, such as the iteration in which it was measured, the
+measurement value and its associated configuration, and the search technique
+that found it.
 
 \begin{figure}[htpb]
     \begin{minipage}{\linewidth}
@@ -465,65 +499,32 @@ end
     %$
     \end{minipage}
     \caption{The simulated annealing search technique}
-    \label{fig:simulated annealing}
+    \label{fig:simulated_annealing}
 \end{figure}
 
-\subsubsection{Parallel and Distributed Search}
+The last operation of a search technique function definition must be to call
+the \texttt{technique} function, passing to it the current tuning run object,
+the remote channel and the iteration function. The search technique can also
+define a name for itself, which will be used to tag the results it finds.
+
+Each search technique runs in a separate Julia process, in its own
+memory space. The only communication it has with the main process
+is via remote result channels. We intend to add more communication
+channels for configuring whether a technique should share its results
+and for dynamically redistributing techniques in the search space.
 
 \subsection{Measurement}
 \label{sec:nodal-measurement}
 
-\subsubsection{Result Remote Channels}
-
-\begin{figure}[htpb]
-    \begin{minipage}{\linewidth}
-    \begin{lstlisting}[language=C, basicstyle=\ttfamily\scriptsize,
-        numbers=left,
-        frame=no, showspaces=false, showstringspaces=false,
-        numberstyle=\scriptsize,
-        xleftmargin=1.5cm,
-        keywords={%
-            @spawnat, remotecall, Nullable, Any,
-            @fetch, Future, Array, Float64, julia,
-            while, true, function, end, put!,
-            take!, sleep, RemoteChannel, Channel,
-            Int, Tuple, const, addprocs, @schedule,
-            @everywhere, for, in, myid, @async,
-            remote_do, workers, Result, Real,
-            AbstractFloat, deepcopy, rand, exp, true,
-            Function, false, Run, mutable, struct,
-            ResultChannel, AbstractChannel, return%
-        },
-        otherkeywords={::, \&, \*, +, -, /, [, ], >, <, put!, take!, neighbor!,
-                       update!}
-    ]
-mutable struct ResultChannel <: AbstractChannel
-    current_result::Result
-    ResultChannel(result::Result) = new(result)
-end
-
-function put!(channel::ResultChannel, result::Result)
-    if result.cost_minimum < channel.current_result.cost_minimum
-        channel.current_result = result
-    end
-    channel
-end
-
-function take!(channel::ResultChannel)
-    fetch(channel)
-end
-
-function fetch(channel::ResultChannel)
-    channel.current_result
-end
-    \end{lstlisting}
-    %$
-    \end{minipage}
-    \caption{\texttt{ResultChannel} Implementation}
-    \label{fig:resultchannel}
-\end{figure}
-
-\subsubsection{Parallel and Distributed Measurement}
+Measurements can also be performed in different processes.
+Figure~\ref{fig:nodal-measurement} shows the two measurement functions
+implemented in NODAL. The \texttt{measure\_mean!} function receives a tuning
+run object and a target configuration, and in this context, a configuration
+means a specific point in the search space. Then, the measurement function
+launches parallel measurements of the user-defined cost function with the
+received configuration. The number of measurements of the cost function is
+controlled by the user, and is useful for measurements that are influenced by
+system fluctuations, such as execution time measurements.
 
 \begin{figure}[htpb]
     \begin{minipage}{\linewidth}
@@ -571,17 +572,557 @@ end
     %$
     \end{minipage}
     \caption{Parallel and distributed measurement functions}
-    \label{fig:measurement}
+    \label{fig:nodal-measurement}
 \end{figure}
+
+The \texttt{sequential\_measure\_mean!} function is useful when all Julia
+processes are running on the same physical machine and the measured
+configuration consumes all the machine's resources, or suffers
+interference from other parallel measurements of the same target program. An
+example of this case in the autotuning of GPU compiler flags, where more than
+one of the same GPU is not always available and only one application at a time
+can effectively use all the GPU's computational power.
+
+\subsubsection{Result Remote Channels}
+
+Figure~\ref{fig:nodal-resultchannel} shows the implementation of the
+\texttt{ResultChannel} type, responsible for the communication of measurement
+results between search techniques, search building blocks, and the main
+process.
+
+Our implementation of the \texttt{put!} function adds a method to the standard
+library's \texttt{put!}, making sure that the result channel only updates its
+value if the new value is better than the last.  Julia uses multiple-dispatch
+to determine which function will be used for every argument set passed in a
+function call.  When a programmer writes a function with the name of
+an existing function, but with different arguments, Julia registers this new
+function as a \textit{method} of the original function. Julia always
+picks the most specific version of a function for its arguments, so our
+\texttt{put!} implementation will always be used for objects of type
+\texttt{ResultChannel}.
+
+\begin{figure}[htpb]
+    \begin{minipage}{\linewidth}
+    \begin{lstlisting}[language=C, basicstyle=\ttfamily\scriptsize,
+        numbers=left,
+        frame=no, showspaces=false, showstringspaces=false,
+        numberstyle=\scriptsize,
+        xleftmargin=1.5cm,
+        keywords={%
+            @spawnat, remotecall, Nullable, Any,
+            @fetch, Future, Array, Float64, julia,
+            while, true, function, end, put!,
+            take!, sleep, RemoteChannel, Channel,
+            Int, Tuple, const, addprocs, @schedule,
+            @everywhere, for, in, myid, @async,
+            remote_do, workers, Result, Real,
+            AbstractFloat, deepcopy, rand, exp, true,
+            Function, false, Run, mutable, struct,
+            ResultChannel, AbstractChannel, return%
+        },
+        otherkeywords={::, \&, \*, +, -, /, [, ], >, <, put!, take!, neighbor!,
+                       update!}
+    ]
+mutable struct ResultChannel <: AbstractChannel
+    current_result::Result
+    ResultChannel(result::Result) = new(result)
+end
+
+function put!(channel::ResultChannel, result::Result)
+    if result.cost_minimum < channel.current_result.cost_minimum
+        channel.current_result = result
+    end
+    channel
+end
+
+function take!(channel::ResultChannel)
+    fetch(channel)
+end
+
+function fetch(channel::ResultChannel)
+    channel.current_result
+end
+    \end{lstlisting}
+    %$
+    \end{minipage}
+    \caption{\texttt{ResultChannel} Implementation}
+    \label{fig:nodal-resultchannel}
+\end{figure}
+
+The \texttt{take!} function also a adds a method to the standard library's
+\texttt{take!}. Our implementation calls the \texttt{fetch} function,
+with is also a method of \texttt{fetch} from the standard library. Our
+version of \texttt{take!} immediately returns a reference to the
+current value in the channel.
+
+The \texttt{ResultChannel} constructor, shown in line 3 of
+Figure~\ref{fig:nodal-resultchannel}, requires an initial result to be put into
+the channel. This last implementation detail, combined with the \texttt{put!}
+and \texttt{take!} methods, guarantees that there will always be a valid result
+in the channel, and that only better results will be reported to the main
+process.
 
 \section{Examples}
 \label{sec:nodal-examples}
 
+This section presents two examples of using NODAL to implement
+autotuners.
+
+\subsection{The Rosenbrock Function}
+\label{sec:nodal-rosenbrock}
+
+The following is a very simple example, and you can find the source code for
+its latest version in the GitHub
+repository~\footnote{\url{https://github.com/phrb/NODAL.jl/blob/master/examples/rosenbrock/rosenbrock.jl}
+[Accessed in 18/10/2017]}.
+We will optimize the Rosenbrock function~\cite{rosenbrock1960automatic}, a
+performance test function for optimization algorithms defined in
+Equation~\ref{eq:rosenbrock}.  The Rosenbrock function has a global minimum
+$f(a, a^{2}) = f(1,1) = 0$.  Note that the Rosenbrock function is not a
+good empirical autotuning example, since its evaluation time is very short, but
+it is a good initial problem.
+
+\begin{equation}
+    f(x, y) = (a - x)^{2} + b(y - x^{2})^{2}, \; \text{where} \; a = 1, \; b = 100
+    \label{eq:rosenbrock}
+\end{equation}
+
+To optimize the Rosenbrock function using NODAL, the first step is defining a
+\texttt{Configuration} that represents the arguments to be tuned. We also have
+to create and configure a tuning run.  First, we will define the cost function
+as shown in Figure~\ref{fig:nodal-cost}.
+
+\begin{figure}[htpb]
+    \begin{minipage}{\linewidth}
+    \begin{lstlisting}[language=C, basicstyle=\ttfamily\scriptsize,
+        numbers=left,
+        frame=no, showspaces=false, showstringspaces=false,
+        numberstyle=\scriptsize,
+        xleftmargin=1.5cm,
+        keywords={%
+            @spawnat, remotecall, Nullable, Any,
+            @fetch, Future, Array, Float64, julia,
+            while, true, function, end, put!,
+            take!, sleep, RemoteChannel, Channel,
+            Int, Tuple, const, addprocs, @schedule,
+            @everywhere, for, in, myid, @async,
+            remote_do, workers, Result, Real,
+            AbstractFloat, deepcopy, rand, exp, true,
+            Function, false, Run, mutable, struct,
+            begin, Configuration, Dict, Symbol, using, import,
+            ResultChannel, AbstractChannel, return%
+        },
+        otherkeywords={::, \&, \*, +, -, /, [, ], >, <, put!, take!, neighbor!,
+                       update!}
+    ]
+addprocs()
+
+import NODAL
+
+@everywhere begin
+    using NODAL
+    function rosenbrock(x::Configuration, parameters::Dict{Symbol, Any})
+        return (1.0 - x["i0"].value)^2 + 100.0 * (x["i1"].value - x["i0"].value^2)^2
+    end
+end
+    \end{lstlisting}
+    \end{minipage}
+    \caption{Initializing NODAL and defining a cost function}
+    \label{fig:nodal-cost}
+\end{figure}
+
+The \texttt{addprocs} function adds the default number of Julia workers, one
+per processing core, to the application. The \texttt{import} statement loads
+NODAL in the current Julia worker, and the \texttt{@everywhere} macro defines
+the \texttt{rosenbrock} function and the module in all Julia workers available.
+
+Cost functions must accept a \texttt{Configuration} and a \texttt{Dict{Symbol,
+Any}} as input. The \texttt{Configuration} is used to define the autotuner's
+search space, and the parameter dictionary can store data or function
+configurations.
+
+This cost function ignores the parameter dictionary, and uses the \texttt{i0}
+and \texttt{i1} parameters of the received configuration to compute a value.
+There is no restriction on the names of \texttt{Configuration} parameters.
+
+This configuration has two parameters of type \texttt{FloatParameter}, which
+are \texttt{Float64} values constrained to an interval. The intervals are
+$[-2.0, 2.0]$ for both parameters, and their values start at $0.0$. Since we
+already used the \texttt{i0} and \texttt{i1} in the cost function, we must name
+the parameters the same way. Figure~\ref{fig:nodal-configuration} shows
+the configuration definition.
+
+\begin{figure}[htpb]
+    \begin{minipage}{\linewidth}
+    \begin{lstlisting}[language=C, basicstyle=\ttfamily\scriptsize,
+        numbers=left,
+        frame=no, showspaces=false, showstringspaces=false,
+        numberstyle=\scriptsize,
+        xleftmargin=1.5cm,
+        keywords={%
+            @spawnat, remotecall, Nullable, Any,
+            @fetch, Future, Array, Float64, julia,
+            while, true, function, end, put!,
+            take!, sleep, RemoteChannel, Channel,
+            Int, Tuple, const, addprocs, @schedule,
+            @everywhere, for, in, myid, @async,
+            remote_do, workers, Result, Real,
+            AbstractFloat, deepcopy, rand, exp, true,
+            Function, false, Run, mutable, struct,
+            begin, Configuration, Dict, Symbol, using, import,
+            FloatParameter,
+            ResultChannel, AbstractChannel, return%
+        },
+        otherkeywords={::, \&, \*, +, -, /, [, ], >, <, put!, take!, neighbor!,
+                       update!}
+    ]
+configuration = Configuration([FloatParameter(-2.0, 2.0, 0.0, "i0"),
+                               FloatParameter(-2.0, 2.0, 0.0, "i1")],
+                               "rosenbrock_config")
+    \end{lstlisting}
+    \end{minipage}
+    \caption{Defining a NODAL search space using a configuration}
+    \label{fig:nodal-configuration}
+\end{figure}
+
+The next step is configuring a new tuning run using the \texttt{Run} type.
+There are many parameters to configure, but they all have default values.
+Figure~\ref{fig:nodal-tuningrun} shows the tuning run configuration for this
+example.
+
+\begin{figure}[htpb]
+    \begin{minipage}{\linewidth}
+    \begin{lstlisting}[language=C, basicstyle=\ttfamily\scriptsize,
+        numbers=left,
+        frame=no, showspaces=false, showstringspaces=false,
+        numberstyle=\scriptsize,
+        xleftmargin=1.5cm,
+        keywords={%
+            @spawnat, remotecall, Nullable, Any,
+            @fetch, Future, Array, Float64, julia,
+            while, true, function, end, put!,
+            take!, sleep, RemoteChannel, Channel,
+            Int, Tuple, const, addprocs, @schedule,
+            @everywhere, for, in, myid, @async,
+            remote_do, workers, Result, Real,
+            AbstractFloat, deepcopy, rand, exp, true,
+            Function, false, Run, mutable, struct,
+            begin, Configuration, Dict, Symbol, using, import,
+            FloatParameter,
+            ResultChannel, AbstractChannel, return%
+        },
+        otherkeywords={::, \&, \*, +, -, /, [, ], >, <, put!, take!, neighbor!,
+                       update!}
+    ]
+tuning_run = Run(cost                = rosenbrock,
+                 starting_point      = configuration,
+                 stopping_criterion  = elapsed_time_criterion,
+                 report_after        = 10,
+                 reporting_criterion = elapsed_time_reporting_criterion,
+                 duration            = 60,
+                 methods             = [[:simulated_annealing 1];
+                                        [:iterative_first_improvement 1];
+                                        [:iterated_local_search 1];
+                                        [:randomized_first_improvement 1];
+                                        [:iterative_probabilistic_improvement 1];
+                                        [:iterative_greedy_construction 1];])
+    \end{lstlisting}
+    \end{minipage}
+    \caption{Configuring a NODAL tuning run}
+    \label{fig:nodal-tuningrun}
+\end{figure}
+
+The \texttt{methods} array defines the search methods that will be used in this
+tuning run, and their respective number of instances. This example uses one
+instance of every implemented search technique. The search will start at the
+point defined by \texttt{starting\_point}.
+
+The \texttt{stopping\_criterion} parameter is a function. It controls when the
+autotuner will stop searching. The two default criteria implemented are
+\texttt{elapsed\_time\_criterion} and \texttt{iterations\_criterion}.  The
+\texttt{reporting\_criterion} parameter is also function, and it controls when
+the autotuner reports the current results. The two default NODAL
+implementations of reporting criteria are
+\texttt{elapsed\_time\_reporting\_criterion} and
+\texttt{iterations\_reporting\_criterion}.
+
+Now we can start the autotuner using the \texttt{@spawn} macro. This macro runs
+the \texttt{optimize} method, which receives a tuning run configuration and
+runs the search techniques in the background. The autotuner will write its
+results to the \texttt{RemoteChannel} stored in the tuning run configuration.
+Figure~\ref{fig:nodal-launching} shows how to launch the autotuner.
+
+\begin{figure}[htpb]
+    \begin{minipage}{\linewidth}
+    \begin{lstlisting}[language=C, basicstyle=\ttfamily\scriptsize,
+        numbers=left,
+        frame=no, showspaces=false, showstringspaces=false,
+        numberstyle=\scriptsize,
+        xleftmargin=1.5cm,
+        keywords={%
+            @spawnat, remotecall, Nullable, Any,
+            @fetch, Future, Array, Float64, julia,
+            @spawn,
+            while, true, function, end, put!,
+            take!, sleep, RemoteChannel, Channel,
+            Int, Tuple, const, addprocs, @schedule,
+            @everywhere, for, in, myid, @async,
+            remote_do, workers, Result, Real,
+            AbstractFloat, deepcopy, rand, exp, true,
+            Function, false, Run, mutable, struct,
+            begin, Configuration, Dict, Symbol, using, import,
+            FloatParameter, @spawn,
+            ResultChannel, AbstractChannel, return%
+        },
+        otherkeywords={::, \&, \*, +, -, /, [, ], >, <, put!, take!, neighbor!,
+                       update!}
+    ]
+@spawn optimize(tuning_run)
+result = take!(tuning_run.channel)
+    \end{lstlisting}
+    %$
+    \end{minipage}
+    \caption{Launching a NODAL tuning run}
+    \label{fig:nodal-launching}
+\end{figure}
+
+The tuning run will use the default neighboring and perturbation methods
+implemented by NODAL to find new results. User code can process the
+current result at every iteration. In this example we just
+print it and loop until \texttt{optimize} is done, as shown in
+Figure~\ref{fig:nodal-mainloop}.
+
+\begin{figure}[htpb]
+    \begin{minipage}{\linewidth}
+    \begin{lstlisting}[language=C, basicstyle=\ttfamily\scriptsize,
+        numbers=left,
+        frame=no, showspaces=false, showstringspaces=false,
+        numberstyle=\scriptsize,
+        xleftmargin=1.5cm,
+        keywords={%
+            @spawnat, remotecall, Nullable, Any,
+            @fetch, Future, Array, Float64, julia,
+            while, true, function, end, put!,
+            take!, sleep, RemoteChannel, Channel,
+            Int, Tuple, const, addprocs, @schedule,
+            @everywhere, for, in, myid, @async,
+            remote_do, workers, Result, Real,
+            AbstractFloat, deepcopy, rand, exp, true,
+            Function, false, Run, mutable, struct,
+            begin, Configuration, Dict, Symbol, using, import,
+            FloatParameter, @spawn, while,
+            ResultChannel, AbstractChannel, return%
+        },
+        otherkeywords={::, \&, \*, +, -, /, [, ], >, <, put!, take!, neighbor!,
+                       update!}
+    ]
+print(result)
+while !result.is_final
+    result = take!(tuning_run.channel)
+    print(result)
+end
+    \end{lstlisting}
+    %$
+    \end{minipage}
+    \caption{Main loop of a NODAL application}
+    \label{fig:nodal-mainloop}
+\end{figure}
+
+Figure~\ref{fig:nodal-complete-example} shows the complete code for the NODAL
+Rosenbrock autotuner.  Running the complete example we get the output shown in
+Figure~\ref{fig:nodal-output}.  Note that every result reported shows the
+technique that found the result and the iteration in which it was found. Since
+the autotuner reports only at every 10 seconds, it is able to perform many
+iterations between results.
+
+\begin{figure}[htpb]
+    \begin{minipage}{\linewidth}
+    \begin{lstlisting}[language=C, basicstyle=\ttfamily\scriptsize,
+        numbers=left,
+        frame=no, showspaces=false, showstringspaces=false,
+        numberstyle=\scriptsize,
+        xleftmargin=1.5cm,
+        keywords={%
+            @spawnat, remotecall, Nullable, Any,
+            @spawn,
+            @fetch, Future, Array, Float64, julia,
+            while, true, function, end, put!,
+            take!, sleep, RemoteChannel, Channel,
+            Int, Tuple, const, addprocs, @schedule,
+            @everywhere, for, in, myid, @async,
+            remote_do, workers, Result, Real,
+            AbstractFloat, deepcopy, rand, exp, true,
+            Function, false, Run, mutable, struct,
+            begin, Configuration, Dict, Symbol, using, import,
+            ResultChannel, AbstractChannel, return%
+        },
+        otherkeywords={::, \&, \*, +, -, /, [, ], >, <, put!, take!, neighbor!,
+                       update!}
+    ]
+addprocs()
+
+import StochasticSearch
+
+@everywhere begin
+    using StochasticSearch
+    function rosenbrock(x::Configuration, parameters::Dict{Symbol, Any})
+        return (1.0 - x["i0"].value)^2 + 100.0 * (x["i1"].value - x["i0"].value^2)^2
+    end
+end
+
+configuration = Configuration([FloatParameter(-2.0, 2.0, 0.0,"i0"),
+                               FloatParameter(-2.0, 2.0, 0.0,"i1")],
+                               "rosenbrock_config")
+
+tuning_run = Run(cost                = rosenbrock,
+                 starting_point      = configuration,
+                 stopping_criterion  = elapsed_time_criterion,
+                 report_after        = 10,
+                 reporting_criterion = elapsed_time_reporting_criterion,
+                 duration            = 60,
+                 methods             = [[:simulated_annealing 1];
+                                        [:iterative_first_improvement 1];
+                                        [:iterated_local_search 1];
+                                        [:randomized_first_improvement 1];
+                                        [:iterative_greedy_construction 1];
+                                        [:iterative_probabilistic_improvement 1];])
+
+@spawn optimize(tuning_run)
+result = take!(tuning_run.channel)
+
+print(result)
+while !result.is_final
+    result = take!(tuning_run.channel)
+    print(result)
+end
+    \end{lstlisting}
+    \end{minipage}
+    \caption{Complete NODAL Rosenbrock autotuner}
+    \label{fig:nodal-complete-example}
+\end{figure}
+
+\begin{figure}[htpb]
+    \begin{minipage}{\linewidth}
+    \begin{lstlisting}[language=C, basicstyle=\ttfamily\scriptsize,
+        numbers=left,
+        frame=no, showspaces=false, showstringspaces=false,
+        numberstyle=\scriptsize,
+        xleftmargin=1.5cm,
+        keywords={%
+            ResultChannel, AbstractChannel, return%
+        },
+        otherkeywords={::, \&, \*, +, -, /, [, ], >, <, put!, take!, neighbor!,
+                       update!}
+    ]
+% julia rosenbrock.jl
+[Result]
+Cost              : 1.0
+Found in Iteration: 1
+Current Iteration : 1
+Technique         : Initialize
+Function Calls    : 1
+  ***
+[Result]
+Cost              : 1.0
+Found in Iteration: 1
+Current Iteration : 3973
+Technique         : Initialize
+Function Calls    : 1
+  ***
+[Result]
+Cost              : 0.18498399102098383
+Found in Iteration: 10
+Current Iteration : 52289
+Technique         : Iterative First Improvement
+Function Calls    : 455
+  ***
+[Result]
+Cost              : 0.01301071782455056
+Found in Iteration: 10
+Current Iteration : 70282
+Technique         : Randomized First Improvement
+Function Calls    : 3940
+  ***
+[Result]
+Cost              : 0.009463518035824526
+Found in Iteration: 11
+Current Iteration : 87723
+Technique         : Randomized First Improvement
+Function Calls    : 4594
+  ***
+[Final Result]
+Cost                  : 0.009463518035824526
+Found in Iteration    : 11
+Current Iteration     : 104261
+Technique             : Randomized First Improvement
+Function Calls        : 4594
+Starting Configuration:
+  [Configuration]
+  name      : rosenbrock_config
+  parameters:
+    [NumberParameter]
+    name : i0
+    min  : -2.000000
+    max  : 2.000000
+    value: 1.100740
+    ***
+    [NumberParameter]
+    name : i1
+    min  : -2.000000
+    max  : 2.000000
+    value: 1.216979
+Minimum Configuration :
+  [Configuration]
+  name      : rosenbrock_config
+  parameters:
+    [NumberParameter]
+    name : i0
+    min  : -2.000000
+    max  : 2.000000
+    value: 0.954995
+    ***
+    [NumberParameter]
+    name : i1
+    min  : -2.000000
+    max  : 2.000000
+    value: 0.920639
+    \end{lstlisting}
+    \end{minipage}
+    \caption{NODAL output for the Rosenbrock function example}
+    \label{fig:nodal-output}
+\end{figure}
+
+\newpage
+
 \subsection{A Tool for Compiler Autotuning}
 \label{sec:nodal-gpu-tuner}
 
-\subsection{Travelling Salesperson Problem}
-\label{sec:tsp}
+We implemented in NODAL an autotuner for the CUDA compiler parameters presented
+in section~\ref{sec:paramSelGPU}. We presented this implementation at an USP
+NVIDIA workshop, and its source code is available
+online~\footnote{\url{https://github.com/phrb/NODAL.jl/tree/master/examples/nvcc-flags}
+[Accessed in 18/10/2017]}.
+
+Our idea was to start a community of NODAL users from High-Performance
+Computing domains. We had positive feedback from the workshop, and were invited
+to visit the \textit{Laboratório Nacional de Luz Síncrotron}, the Brazilian
+Synchrotron Light Laboratory, a research institution on physics, chemistry,
+material science and life sciences.  With this visit we expect to start
+collaborating with them in autotuning their GPU applications.
 
 \section{Summary}
 \label{sec:concl}
+
+In this chapter we presented NODAL, a library for parallel and distributed
+autotuning written in Julia. We discussed relevant features of the Julia
+language and presented NODAL's architecture, execution flow and implementation
+details. We also discussed planned improvements, from adding a database
+component to aid search, to implementing more search techniques and building
+blocks. To illustrate the usage of the library, we presented two autotuners
+using NODAL.
+
+We plan to continue working in NODAL.  We expect that NODAL will be an ideal
+platform for our study of complex search techniques applied to autotuning and
+of strategies to divide the search space and share computational resources.  We
+will also work toward building a community of users, which we expect will help
+to validate and test NODAL in diverse autotuning domains.
