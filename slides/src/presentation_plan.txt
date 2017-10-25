@@ -1,0 +1,24 @@
+- 30 to 40 minutes and slides
+- less is more, aim for ~30 minutes
+
+- Introduction:
+    - Great variety of parallel and distributed high-performance architectures
+    - Autotuning as a solution aiding programming and developing
+      high-performance, parallel and distributed architectures
+    - Problems with current approaches
+    - Expected contribution
+    - Efforts for Reproducible Research
+
+- Background:
+    - Algorithm Selection Framework
+    - General Solver Architecture
+    - OpenTuner
+
+- Case Studies:
+    - Small Measurement Time
+    - Large Measurement Time
+    - Distributed Autotuning
+    - DPE
+
+- NODAL:
+    - Main contribution

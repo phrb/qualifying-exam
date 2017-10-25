@@ -1,0 +1,261 @@
+\documentclass[10pt, compress, aspectratio=169]{beamer}
+
+\usetheme[numbering=fraction, progressbar=none, titleformat=smallcaps, sectionpage=none]{metropolis}
+
+\usepackage{sourcecodepro}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+\usepackage[scale=2]{ccicons}
+\usepackage{url}
+\usepackage{relsize}
+\usepackage{wasysym}
+
+\usepackage{pgfplots}
+\usepgfplotslibrary{dateplot}
+
+\definecolor{Base}{HTML}{191F26}
+\definecolor{Accent}{HTML}{157FFF}
+
+\setbeamercolor{alerted text}{fg=Accent}
+\setbeamercolor{frametitle}{bg=Base}
+
+\setsansfont[BoldFont={Source Sans Pro Semibold},
+              Numbers={OldStyle}]{Source Sans Pro}
+
+\lstset{ %
+  backgroundcolor={},
+  basicstyle=\ttfamily\footnotesize,
+  breakatwhitespace=true,
+  breaklines=true,
+  captionpos=n,
+  commentstyle=\color{Accent},
+  escapeinside={\%*}{*)},
+  extendedchars=true,
+  frame=n,
+  keywordstyle=\color{Accent},
+  language=C++,
+  rulecolor=\color{black},
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  stepnumber=2,
+  stringstyle=\color{gray},
+  tabsize=2,
+  keywords={thrust,plus,device_vector, copy,transform,begin,end, copyin,
+  copyout, acc, \_\_global\_\_, void, int, float, main, threadIdx, blockIdx,
+  blockDim, if, else, malloc, NULL, cudaMalloc, cudaMemcpy, cudaSuccess,
+  cudaGetLastError, cudaDeviceSynchronize, cudaFree, cudaMemcpyDeviceToHost,
+  cudaMemcpyHostToDevice, const, data, independent, kernels, loop,
+  fprintf, stderr, cudaGetErrorString, EXIT_FAILURE, for, dim3},
+  otherkeywords={::, \#pragma, \#include, <<<,>>>, \&, \*, +, -, /, [, ], >, <}
+}
+
+\renewcommand*{\UrlFont}{\ttfamily\smaller\relax}
+
+\graphicspath{{../../images/}}
+
+\title{Parallel and Distributed Autotuning \\ for High-Performance Computing}
+\author{\footnotesize Pedro Bruel \\ {\scriptsize \emph{phrb@ime.usp.br}}}
+\institute{\includegraphics[height=2cm]{imelogo}\\[0.2cm] \emph{Institute of Mathematics and Statistics \\ University of São Paulo}}
+\date{\scriptsize Qualifying Exam, October 30, 2017}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}
+    \frametitle{Outline}
+    \setbeamertemplate{section in toc}[sections numbered]
+    \tableofcontents[hideallsubsections]
+\end{frame}
+
+\section{Introduction}
+
+\begin{frame}
+    \frametitle{Autotuning: Configuring Hardware \& Software as a Search Problem}
+    \begin{columns}
+        \column{.45\textwidth}
+            \begin{block}{Hardware Configurations}
+                \begin{itemize}
+                    \item CPUs
+                    \item GPUs
+                    \item FPGAs
+                    \item Supercomputers
+                    \item $\dots$
+                \end{itemize}
+            \end{block}
+            \begin{block}{Software Configurations}
+                \begin{itemize}
+                    \item Pthreads
+                    \item OpenCL
+                    \item MPI
+                    \item Algorithms
+                    \item $\dots$
+                \end{itemize}
+            \end{block}
+
+        \column{.1\textwidth}
+            \Huge{$\rightrightarrows$}
+
+        \column{.45\textwidth}
+            \begin{block}{}
+                \begin{center}
+                    \includegraphics[width=\columnwidth]{sample_search_space}
+                    \alert{Search Problem}
+                \end{center}
+            \end{block}
+
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Autotuning Systems: Multiple Approaches}
+    \begin{table}
+        \centering
+        \begin{tabular}{@{}lll@{}}
+            \toprule
+            System & Domain & \alert{Technique} \\ \midrule
+            ATLAS & Dense Linear Algebra & Exhaustive \\ \addlinespace
+            INSIEME & Compiler & Genetic Algorithm \\
+            TANGRAM & Heterogeneous Architectures & Breadth-First Search + Pruning \\
+            Active Harmony & Runtime & Nelder-Mead \\
+            ParamILS & \alert{Domain-Agnostic} & Stochastic Local Search \\
+            CLTune & OpenCL kernels & Stochastic Local Search\\
+            OPAL & \alert{Domain-Agnostic} & Direct Search \\ \addlinespace
+            MILEPOST GCC & Compiler & Central DB + Machine Learning \\
+            Apollo & GPU kernels & Decision Trees \\ \addlinespace
+            \alert{OpenTuner} & \alert{Domain-Agnostic} & Ensemble \\
+            Periscope & HPC Applications & Various \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Domain-Agnostic Autotuning}
+    \begin{columns}
+        \column{.45\textwidth}
+        \begin{block}{Problem Representation}
+            \begin{itemize}
+                \item Parameter \alert{types}
+                \item \alert{User-definable cost function}
+            \end{itemize}
+        \end{block}
+
+        \pause
+
+        \begin{block}{Robust Search Methods}
+            \begin{itemize}
+                \item \alert{Combinations} of techniques
+                \item \alert{Model-Aided}
+            \end{itemize}
+        \end{block}
+
+        \pause
+
+        \column{.45\textwidth}
+        \begin{block}{Current Systems' Limitations}
+            \begin{itemize}
+                \item Rely on \alert{multiple evaluations}
+                \item \alert{Do not leverage parallelism}
+            \end{itemize}
+        \end{block}
+
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Expected Contribution}
+    \begin{columns}
+        \column{.45\textwidth}
+        \begin{center}
+            \includegraphics[width=\columnwidth]{logo}
+        \end{center}
+
+        \column{.45\textwidth}
+        \begin{block}{NODAL}
+            \begin{itemize}
+                \item \alert{Domain-agnostic}
+                \item \alert{Parallel \& distributed}
+                \item \alert{Ensemble} of search techniques
+                \item Guided by \alert{Design-of-Experiments}
+            \end{itemize}
+        \end{block}
+
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Reproducible Research}
+\end{frame}
+
+\section{Algorithm Selection \& Autotuning}
+
+\begin{frame}
+    \frametitle{The Algorithm Selection Framework}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Autonomous Solvers}
+\end{frame}
+
+\begin{frame}
+    \frametitle{OpenTuner}
+\end{frame}
+
+\begin{frame}
+    \frametitle{OpenTuner: Identified Problems}
+\end{frame}
+
+\section{Case Studies}
+
+\begin{frame}
+    \frametitle{Small Measurement Time}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Key Results}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Large Measurement Time}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Large Measurement Time}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Key Results}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Distributed OpenTuner Extension}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Distributed OpenTuner Extension}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Dot Product Engine: Hardware \& Software Co-design}
+\end{frame}
+
+\section{NODAL: an Open Distributed Autotuning Library}
+
+\begin{frame}
+    \frametitle{}
+\end{frame}
+
+\section{Summary}
+
+\begin{frame}
+    \frametitle{}
+\end{frame}
+
+\maketitle
+
+\end{document}
