@@ -211,8 +211,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.35"
-     inkscape:cx="1678.8142"
-     inkscape:cy="234.3715"
+     inkscape:cx="1093.0999"
+     inkscape:cy="224.3715"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -302,14 +302,14 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="761.24872"
-       y="392.07895"
+       x="758.39496"
+       y="384.51895"
        id="text4168-6-9-6-7"><tspan
          sodipodi:role="line"
          id="tspan4170-7-1-0-5"
-         x="761.24872"
-         y="392.07895"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:80px;line-height:1.25;font-family:'TeX Gyre Schola';-inkscape-font-specification:'TeX Gyre Schola'">Autotuner Iteration: Long</tspan></text>
+         x="758.39496"
+         y="384.51895"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:80px;line-height:1.25;font-family:'TeX Gyre Schola';-inkscape-font-specification:'TeX Gyre Schola'">Autotuner Iteration: Large</tspan></text>
     <circle
        style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:8;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path4136"

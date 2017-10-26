@@ -21,6 +21,7 @@
 
 \setbeamercolor{alerted text}{fg=Accent}
 \setbeamercolor{frametitle}{bg=Base}
+\setbeamercolor{normal text}{bg=black!2,fg=Base}
 
 \setsansfont[BoldFont={Source Sans Pro Semibold},
               Numbers={OldStyle}]{Source Sans Pro}
@@ -73,6 +74,7 @@
 \end{frame}
 
 \section{Introduction}
+\plain{Introduction}
 
 \begin{frame}
     \frametitle{Autotuning: Configuring Hardware \& Software as a Search Problem}
@@ -152,8 +154,6 @@
             \end{itemize}
         \end{block}
 
-        \pause
-
         \begin{block}{Robust Search Methods}
             \begin{itemize}
                 \item \alert{Combinations} of techniques
@@ -164,7 +164,7 @@
         \pause
 
         \column{.45\textwidth}
-        \begin{block}{Current Systems' Limitations}
+        \begin{block}{Limitations of Current Systems}
             \begin{itemize}
                 \item Rely on \alert{multiple evaluations}
                 \item \alert{Do not leverage parallelism}
@@ -188,7 +188,7 @@
                 \item \alert{Domain-agnostic}
                 \item \alert{Parallel \& distributed}
                 \item \alert{Ensemble} of search techniques
-                \item Guided by \alert{Design-of-Experiments}
+                \item Guided by \alert{Design of Experiments}
             \end{itemize}
         \end{block}
 
@@ -207,8 +207,6 @@
                     \item Copyright-free paper versions
                 \end{itemize}
             \end{block}
-
-        \pause
 
         \column{.45\textwidth}
             \begin{block}{Reproducibility}
@@ -229,6 +227,7 @@
 \end{frame}
 
 \section{Algorithm Selection \& Autotuning}
+\plain{Algorithm Selection \& Autotuning}
 
 \begin{frame}
     \frametitle{The Algorithm Selection Framework}
@@ -253,55 +252,231 @@
 
 \begin{frame}
     \frametitle{OpenTuner: Identified Problems}
+        \begin{block}{Identified Problems}
+            \begin{center}
+                \begin{itemize}
+                    \item Python \alert{GIL}
+                    \item \alert{Global Result Sharing}
+                    \item \alert{Sequential search}
+                    \item \alert{Dependent execution flow}
+                \end{itemize}
+            \end{center}
+        \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{OpenTuner: Identified Problems}
     \begin{center}
-        \includegraphics[width=.9\textwidth]{opentuner_callgraph}
+        \includegraphics[width=\textwidth]{opentuner_callgraph}
     \end{center}
 \end{frame}
 
 \section{Case Studies}
+\plain{Case Studies}
 
 \begin{frame}
     \frametitle{Small Measurement Time}
+    \begin{center}
+        \includegraphics[width=.9\textwidth]{overview_gpus}
+    \end{center}
 \end{frame}
 
 \begin{frame}
     \frametitle{Key Results}
+    \begin{center}
+        \includegraphics[width=.9\textwidth]{GPU-tuning-summary}
+    \end{center}
 \end{frame}
 
 \begin{frame}
     \frametitle{Large Measurement Time}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{overview_fpgas_small}
+    \end{center}
 \end{frame}
 
 \begin{frame}
     \frametitle{Large Measurement Time}
+    \begin{center}
+        \includegraphics[width=.9\textwidth]{overview_fpgas_big}
+    \end{center}
 \end{frame}
 
 \begin{frame}
     \frametitle{Key Results}
+    \begin{center}
+        \includegraphics[width=.9\textwidth]{heatmap_wns_comparison}
+
+        \emph{Relative improvement for \textbf{WNS} in all scenarios}
+    \end{center}
 \end{frame}
 
 \begin{frame}
     \frametitle{Distributed OpenTuner Extension}
+    \begin{center}
+        \includegraphics[width=.9\textwidth]{overview_distributed}
+    \end{center}
 \end{frame}
 
 \begin{frame}
-    \frametitle{Distributed OpenTuner Extension}
+    \frametitle{Dot Product Engine: Hardware \& Software Co-Design}
+    \begin{center}
+        \includegraphics[width=.9\textwidth]{overview_dpe_hard}
+    \end{center}
 \end{frame}
 
 \begin{frame}
-    \frametitle{Dot Product Engine: Hardware \& Software Co-design}
+    \frametitle{Dot Product Engine: Hardware \& Software Co-Design}
+    \begin{center}
+        \includegraphics[width=.9\textwidth]{overview_dpe_app}
+    \end{center}
 \end{frame}
 
 \section{NODAL: an Open Distributed Autotuning Library}
+\plain{NODAL: an Open Distributed Autotuning Library}
 
 \begin{frame}
-    \frametitle{}
+    \frametitle{NODAL}
+    \begin{columns}[c]
+        \column{.45\textwidth}
+        \begin{center}
+            \includegraphics[width=\columnwidth]{logo}
+        \end{center}
+
+        \column{.45\textwidth}
+        \begin{block}{NODAL}
+            \begin{itemize}
+                \item \alert{Open-source}
+                \item \alert{Domain-agnostic}
+                \item \alert{Parallel \& distributed}
+                \item \alert{Ensemble} of search techniques
+                \item Written in the \alert{Julia language}
+            \end{itemize}
+        \end{block}
+
+    \end{columns}
 \end{frame}
 
-\section{Summary}
+\begin{frame}
+    \frametitle{NODAL}
+    \begin{columns}[c]
+        \column{.45\textwidth}
+        \begin{block}{Problem Representation}
+            \begin{itemize}
+                \item Parameter \alert{types}
+                \item \alert{User-definable cost function}
+                \item User-definable \alert{operators}
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{Robust Search Methods}
+            \begin{itemize}
+                \item \alert{Combinations} of techniques
+                \item \alert{Model-Aided}
+                \item \alert{Design of Experiments}
+            \end{itemize}
+        \end{block}
+
+        \pause
+
+        \column{.45\textwidth}
+        \begin{block}{Overcoming Limitations}
+            \begin{itemize}
+                \item Parallel \alert{search \& measurement}
+                \item \alert{Design of Experiments}
+            \end{itemize}
+        \end{block}
+
+    \end{columns}
+\end{frame}
 
 \begin{frame}
-    \frametitle{}
+    \frametitle{NODAL: The Julia Language}
+    \begin{columns}[c]
+        \column{.45\textwidth}
+        \begin{block}{The Julia Language}
+            \begin{itemize}
+                \item \alert{High-level abstractions}
+                \item \alert{Parallel \& distributed} programming
+                \item \alert{High-performance} for a dynamic language
+            \end{itemize}
+        \end{block}
+
+        \column{.45\textwidth}
+        \begin{center}
+            \includegraphics[width=.6\columnwidth]{julia}
+        \end{center}
+
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{NODAL: The Julia Language}
+    \begin{center}
+        \includegraphics[width=.95\textwidth]{julia_benchmarks}
+    \end{center}
+\end{frame}
+
+\begin{frame}
+    \frametitle{NODAL: Search Techniques}
+    \begin{table}
+        \centering
+        \begin{tabular}{@{}p{.4\textwidth}p{.35\textwidth}@{}}
+            \toprule
+            \textit{Implemented} & \textit{Planned} \\ \midrule
+            Iterative First Improvement & Iterative Best Improvement \\
+            Iterative Greedy Construction & Randomized Best Improvement \\
+            Iterative Probabilistic Improvement & Randomized Best Improvement \\
+            Randomized First Improvement & Iterative Best Construction \\
+            Simulated Annealing & Dynamic Local Search \\
+            Iterated Local Search & Tabu Search \\
+            & Ant Colony Optimization \\
+            & Particle Swarm Optimization \\
+            & Nelder-Mead \\
+            & Genetic Algorithms \\ \bottomrule
+        \end{tabular}
+    \end{table}
+\end{frame}
+
+\begin{frame}
+    \frametitle{NODAL: Architecture}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{nodal_architecture}
+    \end{center}
+\end{frame}
+
+\begin{frame}
+    \frametitle{NODAL: Execution Flow}
+    \begin{center}
+        \includegraphics[height=.9\textheight]{nodal_callgraph}
+    \end{center}
+\end{frame}
+
+\section*{Summary}
+
+\begin{frame}
+    \frametitle{Summary}
+    \begin{columns}[c]
+        \column{.65\textwidth}
+        \begin{block}{Domain-Agnostic Autotuning}
+            \begin{itemize}
+                \item Autotuning as a \alert{search problem}
+                \item \alert{Parameters}, \alert{search spaces} \& \alert{cost
+                    functions}
+                \item Still need to \alert{leverage parallel \& distributed
+                    computing}
+                \item \alert{Limitations} of current tools
+            \end{itemize}
+        \end{block}
+
+        \pause
+
+        \column{.3\textwidth}
+        \begin{center}
+            \includegraphics[width=\columnwidth]{logo}
+        \end{center}
+
+    \end{columns}
 \end{frame}
 
 \maketitle
