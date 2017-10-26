@@ -76,7 +76,7 @@
 
 \begin{frame}
     \frametitle{Autotuning: Configuring Hardware \& Software as a Search Problem}
-    \begin{columns}
+    \begin{columns}[c]
         \column{.45\textwidth}
             \begin{block}{Hardware Configurations}
                 \begin{itemize}
@@ -135,8 +135,15 @@
 \end{frame}
 
 \begin{frame}
+    \frametitle{Autotuning Systems: Multiple Approaches}
+    \begin{center}
+        \includegraphics[width=.6\textwidth]{autotuning_strategies}
+    \end{center}
+\end{frame}
+
+\begin{frame}
     \frametitle{Domain-Agnostic Autotuning}
-    \begin{columns}
+    \begin{columns}[c]
         \column{.45\textwidth}
         \begin{block}{Problem Representation}
             \begin{itemize}
@@ -169,7 +176,7 @@
 
 \begin{frame}
     \frametitle{Expected Contribution}
-    \begin{columns}
+    \begin{columns}[c]
         \column{.45\textwidth}
         \begin{center}
             \includegraphics[width=\columnwidth]{logo}
@@ -189,25 +196,66 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{Reproducible Research}
+    \frametitle{Efforts for a Reproducible \& Open Research}
+    \begin{columns}[t]
+        \column{.45\textwidth}
+            \begin{block}{Openness}
+                \begin{itemize}
+                    \item Publicly hosted software
+                    \item Version control
+                    \item Free software licenses
+                    \item Copyright-free paper versions
+                \end{itemize}
+            \end{block}
+
+        \pause
+
+        \column{.45\textwidth}
+            \begin{block}{Reproducibility}
+                \begin{itemize}
+                    \item Publicly hosted data
+                    \item Hardware \& Software specifications
+                \end{itemize}
+            \end{block}
+
+    \end{columns}
+
+    \pause
+
+    \begin{center}
+        Not all was open and reproducible, since we used proprietary software
+        and hardware
+    \end{center}
 \end{frame}
 
 \section{Algorithm Selection \& Autotuning}
 
 \begin{frame}
     \frametitle{The Algorithm Selection Framework}
+    \begin{center}
+        \includegraphics[height=.9\textheight]{algorithm-selection}
+    \end{center}
 \end{frame}
 
 \begin{frame}
     \frametitle{Autonomous Solvers}
+    \begin{center}
+        \includegraphics[height=.9\textheight]{general_solver}
+    \end{center}
 \end{frame}
 
 \begin{frame}
     \frametitle{OpenTuner}
+    \begin{center}
+        \includegraphics[width=.6\textwidth]{opentuner_arch}
+    \end{center}
 \end{frame}
 
 \begin{frame}
     \frametitle{OpenTuner: Identified Problems}
+    \begin{center}
+        \includegraphics[width=.9\textwidth]{opentuner_callgraph}
+    \end{center}
 \end{frame}
 
 \section{Case Studies}
