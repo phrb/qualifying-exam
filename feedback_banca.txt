@@ -1,0 +1,198 @@
+Feedback Sucinto:
+
+- Não dá para produzir uma tese no tópico de busca paralela com o conteúdo
+apresentado até o momento. A literatura nessa área é vasta e não foi possível
+ver que há conhecimento dessa literatura
+
+- Não dá para focar a tese só no software. Precisa mostrar algoritmos
+
+- Não dá para ficar sem revisar os principais trabalhos na área (tanto artigos
+quando softwares que fazem coisas similares)
+
+- Não dá para ficar sem mostrar a questão de pesquisa e a definição do problema
+sendo resolvido
+
+- Não dá para ficar sem mostrar as justificativas para as decisões tomadas
+
+- Não dá para ficar trabalhando sem ter uma metodologia clara de pesquisa
+
+- Importante tomar cuidado com Propriedade Intelectual para garantir que o que
+vai ser feito com a HP possa de fato entrar na tese.
+
+########################################################################
+
+Feedback Detalhado
+
+Comentários do Afonso:
+
+- Bom ter feito apresentação em inglês. Afonso parabenizou a qualidade da
+pronúncia do Pedro.
+
+- Fará comentários principalmente com o objetivo de deixar o trabalho mais
+claro, não são muitas perguntas. A ideia é que os comentários ajudem a deixar a
+pesquisa mais fácil de compreender.
+
+- Quando vc define autotuning como um problema de busca, vc tem que entrar na
+"linguagem" de problemas de busca. Mais no texto do que na apresentação. Há uma
+confusão entre a parte de sistema e a parte de busca. Para o Afonso, que é
+alguém que não faz sistema, ficou difícil encontrar a definição do problema. No
+texto da tese ele recomenda que vc tenha uma seção "Problem Definition" onde vc
+deixa claro o problema que vc está tratando. Não ficou claro se vc estava
+procurando melhorias em termos de sistema ou em termos de técnicas para o
+problema de busca. Tem que deixar mais claro isso no texto. Nos slides
+inclusive (no terceiro, vc fala de "Technique", tinha que ser "Search
+Techniques"). Em resumo: a tese tem que seguir um caminho. Ou vai para a parte
+de busca ou vai para a parte de sistemas.
+
+- Não ficou claro nem no texto nem na apresentação como se faz a avaliação da
+função custo. Como ela é feita? Pelo que o Afonso entendeu, vc quer fixar
+parâmetros de compilação. Se vc está fazendo isso, tem que deixar claro qual o
+elemento que vc vai usar para calcular a função custo. Por exemplo, no caso do
+MMS (slide 14), quem é o elemento? Se o Afonso fosse seu cliente, o que vc
+devolveria para ele? Os parâmetros ou o binário? E como vc garante que para
+qualquer entrada esse binário vai ser o melhor de todos? E se o cliente tiver
+milhares de entradas diferentes? Nesse caso como saber as melhores flags para
+todas as milhares de entradas? Só serviria para uma entrada específica? Vc não
+busca a solução para um problema específico, mas algo que poderá ser usado
+várias vezes depois, certo? Afonso recomenda que vc ponha um caso concreto para
+ficar claro qual o problema. Com esse problema concreto ficaria claro o que vc
+está tentando resolver.
+
+- Sentiu falta de metodologia. Qual a sua metodologia? Para uma tese de
+doutorado isso é muito importante. Precisa de um método para o que vc está
+fazendo. Por que vc decidiu fazer isso? "Por que, quem, quando, qual o
+objetivo, qual a saída esperada", tudo isso ficaria claro se vc tivesse
+especificado a metodologia. Isso merece uma seção, só sobre a metodologia. Tem
+que ficar bem claro como vc conduz a pesquisa. Decisões de projeto precisam
+estar justificadas. Fica difícil sabermos o que vc está fazendo com relação a
+paralelismo e distribuído. No texto é confuso.
+
+- Sobre o modelo do Rice, vc deveria adaptar para o que vc está fazendo. A
+impressão que dá é que são coisas diferentes. Não "abuse" do modelo dele.
+Melhor adaptar para fazer sentido pro seu trabalho. Vc não está falando de
+algoritmos como ele, mas sim de flags de compilação por exemplo. Fazendo essa
+adaptação pode te levar a um modelo mais rico pro problema que vc está
+resolvendo e isso seria uma contribuição importante.
+
+- Slide 23: o gráfico: é impossível entender. Tem que ter isso mais claro. Vc
+tem que se colocar na posição do observador. O Afonso tinha pensado que Julia
+era uma cor específica. Vc não descreveu como é o gráfico. Afonso "usava" os
+amigos dele que não entendiam muito do tópico para ver se eles entendiam toda
+vez que ele precisava apresentar algum resultado do trabalho dele. Isso pode
+ser uma boa prática.
+
+- O NODAL é um sistema de busca paralela ou não? Tem que comparar o seu com os
+outros que existem. Há uma literatura imensa nisso.
+
+- Parabenizou o trabalho por conta das publicações. A questão principal a ser
+resolvida é metodológica. Tem que ser mais claro com o que vc está fazendo,
+principalmente na hora de trabalhar com outras pessoas e comunicar suas ideias
+para eles.
+
+Comentários do George:
+
+- Ficou um buraco muito grande entre o que vc quer fazer e o que já tem na
+área. Tem muita coisa pronta. Fica difícil saber onde vc vai chegar. Vc quer
+melhorar o que existe? Vc vai produzir um novo sistema? Parece que vc tem muita
+capacidade. Vc está preparado para continuar no doutorado mas o texto deixa a
+desejar.
+
+- Na Introdução vc desviou muito do problema de tuning. Começa com termos de
+várias áreas já na introdução mas o leitor só entende lá para o meio do
+documento. Tem que repensar o processo. Tuning usa muito de otimização então
+comece com uma introdução mais focada.
+
+- O foco muito genérico ficou bem diferente dos trabalhos de tuning que ele
+costuma ver. George tem um problema com isso e usou o teorema "No free lunch"
+para justificar o incômodo dele. Quando falamos de um sistema que é agnóstico
+há um embasamento nesse teorema de que precisamos de técnicas distintas. Num
+mesmo domínio, por exemplo, flags de compilação, vai exigir técnicas
+específicas. Por exemplo, FPGA e multiplicação de matrizes devem ser muito
+diferentes. Tentar ser muito generalista torna difícil de resolver. Vc não vai
+conseguir implementar todas as técnicas de otimização dentro do seu sistema.
+Ter que rodar tudo isso vai fazer com que a vantagem de rodar poucos testes
+seja perdida. Vc vai ficar implementando um monte de técnica de otimização
+dentro do seu sistema e isso reduz a contribuição científica.
+
+- Vc fala que seu doutorado é o NODAL. Mas não é. Ele é basicamente um
+arcabouço que vc está criando para avaliar cenários no ambiente de autotuning.
+Tudo que vc fala sobre ter o software disponibilizado para a comunidade de fato
+é importante mas não é o mais importante. Não está clara a questão científica
+neste ponto. O que vc tem até agora existe em outros sistemas. A paralelização
+que foi feita por exemplo, é trivial. Na parte dos algoritmos de busca, não há
+nada novo. Em termos de autotuning já há formas de permitir escrever códigos
+com interfaces genéricas. Inclusive quando se fala em um sistema agnóstico o
+melhor é focar em outra vantagem como por exemplo a flexibilidade (outros
+sistemas que existem por exemplo não tentam resolver tudo). Inclusive muitas
+vezes o sistema sendo avaliado é caixa-preta. George acha que o seu foco
+deveria ser em melhorar / achar o melhor ponto com poucas execuções. Achar o
+compromisso entre o tempo de execução e o melhor tuning poderia ser o principal
+ponto a ser resolvido na sua tese.
+
+- Já há várias ferramentas que cuidam da representação e lidam com distribuição
+e paralelismo como o Dakota e o Active Harmony. Não pode esquecer do background
+de busca na tese. A contribuição não parece uma contribuição de doutorado.
+
+- Ficou confuso com a sua definição de funções que não são caras, que são caras
+e que são muito caras. Qual a diferença do ponto de vista de solução no seu
+projeto / doutorado? Pq isso faria com que vc tomasse decisões diferentes? Se
+isso está de fato no documento, não está fácil de achar, o que é um problema
+porque essa parece ser a principal contribuição do doutorado. Ainda acha que
+seria melhor focar nos experimentos mais custosos. Não vê benefício em focar
+com funções que são baratas.
+
+- Tem outras classes de algoritmos que vc pode pensar como as baseadas em redes
+bayesianas. Eles tentam fazer o fit e criar a curva de resposta do seu domínio
+usando as execuções que foram sendo colhidas. Isso pode ser bom para os casos
+em que as funções são muito caras. Ao invés de rodar a execução vc só
+precisaria rodar o ajuste. Com isso evita fazer vários testes. Se vc consegue
+salvar 10, 8 vezes, isso é relevante nesse domínio. Vc pode considerar usar
+surrogate models. Durante o ajuste vc rodaria o simulador ao invés da aplicação
+e só em certos casos vc voltaria para rodar a aplicação.
+
+- Sobre o que foi feito até agora, tem muita coisa que está na literatura e vc
+não cita (o trabalho de GPUs por exemplo). O capítulo que fala do que já foi
+feito ficou bem "jogado". Não tem muito nexo entre as seções.
+
+- Do ponto de vista de busca, vc quer ter os algoritmos trabalhando de forma
+independente. Pq vc não quer eles compartilhando informações? Na opinião dele,
+compartilhar um pouco pode ser interessante. Em ajuste de parâmetros tem
+hiper-heurística, que muita gente está começando a usar. É diferente da
+meta-heurística do OpenTuner. Vale a pena estudar essa técnica. Tem tido
+resultados bem legais nessa área. Seria uma boa coisa para tornar seu trabalho
+mais genérico.
+
+- Nos seus resultados tem algumas coisas que não estão bem justificadas. O
+tempo que gasta (milhares de segundo) para ganhar pouco (milésimos) será que
+vale a pena? Isso tem que aparecer no texto. Dizer que isso vale a pena caso o
+programa seja rodado tantas vezes. Em alguns casos, tomar decisões em tempo de
+execução é melhor do que manter os mesmos parâmetros para todas as entradas e
+para diferentes arquiteturas das máquinas usadas.
+
+- Organização do texto: gastou muito tempo falando de Julia. O texto não
+convenceu que Julia é a melhor. O mais importante é falar das decisões de
+projeto ao invés de falar como usar. Por exemplo, porque Julia e porque não
+MPI? Muita coisa que vc explicou ali alguém aprende lendo o manual da
+linguagem.
+
+- De agora pra frente vc tem que pensar mais em questões de pesquisa. Esquece
+um pouco software, passa para a parte de ciência. Tem que pensar em como
+avançar o estado-da-arte.
+
+Comentários do Daniel:
+
+- Concordou com todos os pontos falados pelos outros membros e reforçou que:
+
+. A questão de pesquisa não está clara
+
+. O texto foca muito no software e não nos algoritmos por trás, que deveriam
+ser a principal contribuição
+
+. As revisão de trabalhos relacionados resume esses trabalhos a uma frase,
+quando o certo seria ter um parágrafo de forma crítica falando o que aquele
+trabalho tem de bom, o que tem de ruim e como se compara ao que vc quer fazer
+
+. Não tem justificativas para as decisões de projeto
+
+. Introdução sem referências. Fica difícil convencer o leitor de que vc leu as
+principais referências
